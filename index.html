@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gerber Viewer</title>
+</head>
+<body>
+  <h1>Gerber Viewer</h1>
+  <input type="file" id="gerberFile" />
+  <button id="button">View Gerber</button>
+  <div id="svgdiv"></div>
+  <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script>
+  <script>
+    function initializeGerberToSVG() {
+      // The gerberToSVG object should be accessible after the script has loaded
+      if (document.getElementById("button") !== null) {
+        document.getElementById("button").addEventListener("click",viewGerber); 
+      }
+    }
+
+    function viewGerber() {
+      const fileInput = document.getElementById("gerberFile");
+      if (fileInput.files !== null && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+          const fileContent = event.target.result;
+          const uint8Array = new Uint8Array(fileContent);
+          const gerber = gerberToSvg(uint8Array, 'my-gbr-file');
+          gerberToSvg(uint8Array, 'my-gerber-file', function(error, svg) {
+            if (error) {
+              return console.error('gerber to svg error - ' + error.message)
+            }
+            document.getElementById("svgdiv").innerHTML = svg;
+          });
+        };
+        reader.onerror = function () {
+          alert("Error reading the file.");
+        };
+
+        reader.readAsArrayBuffer(file);
+      } else {
+        alert("Please upload a gerber file.");
+      }
+    }
+  </script>
+</body>
+</html>
