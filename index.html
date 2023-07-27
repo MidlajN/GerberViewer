@@ -2,47 +2,132 @@
 <html>
 <head>
   <title>Gerber Viewer</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </head>
 <body>
   <h1>Gerber Viewer</h1>
-  <input type="file" id="gerberFile" />
+  <input type="file" id="gerberFile" multiple/>
   <button id="button">View Gerber</button>
-  <div id="svgdiv"></div>
+  <div class="container">
+    <div class="row p-5">
+      <div class="col">
+        <div id="svgdiv" style="width: fit-content;height: auto;"></div>
+      </div>
+      <div id="layer" class="col input-group">
+  
+      </div>
+    </div>
+  </div>
+  
   <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script>
   <script>
     function initializeGerberToSVG() {
-      // The gerberToSVG object should be accessible after the script has loaded
       if (document.getElementById("button") !== null) {
-        document.getElementById("button").addEventListener("click",viewGerber); 
+        document.getElementById("button").addEventListener("click", viewGerber); 
       }
     }
 
-    function viewGerber() {
-      const fileInput = document.getElementById("gerberFile");
-      if (fileInput.files !== null && fileInput.files.length > 0) {
-        const file = fileInput.files[0];
+
+  function viewGerber() {
+    const fileInput = document.getElementById("gerberFile");
+    if (fileInput.files !== null && fileInput.files.length > 0) {
+      let files = fileInput.files;
+      let combinedSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      combinedSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg"); // Set the XML namespace
+
+      let maxWidth = 0;
+      let maxHeight = 0;
+      let allLayerGroups = []; // To store references to all the layer groups
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
         const reader = new FileReader();
 
         reader.onload = function (event) {
           const fileContent = event.target.result;
           const uint8Array = new Uint8Array(fileContent);
-          const gerber = gerberToSvg(uint8Array, 'my-gbr-file');
-          gerberToSvg(uint8Array, 'my-gerber-file', function(error, svg) {
+          const parser = new DOMParser();
+          gerberToSvg(uint8Array, `my-gerber-file-${i}`, function(error, svg) {
             if (error) {
-              return console.error('gerber to svg error - ' + error.message)
+              return console.error(`Gerber To Svg error for file ${i}: ${error.message}`);
             }
-            document.getElementById("svgdiv").innerHTML = svg;
+
+            const svgDoc = parser.parseFromString(svg, "image/svg+xml");
+            const svgElem = svgDoc.documentElement;
+
+            // Get the width and height of the current layer
+            const layerWidth = parseFloat(svgElem.getAttribute("width"));
+            const layerHeight = parseFloat(svgElem.getAttribute("height"));
+
+            // Update the maximum width and height if necessary
+            maxWidth = Math.max(maxWidth, layerWidth);
+            maxHeight = Math.max(maxHeight, layerHeight);
+
+            // Create a new group (g element) for each layer and append the layer's SVG to it
+            const layerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            layerGroup.setAttribute("layer", `layer-${i}`);
+            layerGroup.appendChild(svgElem);
+            allLayerGroups.push(layerGroup);
+
+            // Check if this is the last layer group, then append all the groups to the combinedSVG
+            if (allLayerGroups.length === files.length) {
+              // Update the final width and height of the combinedSVG element
+              combinedSVG.setAttribute("width", `${maxWidth}mm`);
+              combinedSVG.setAttribute("height", `${maxHeight}mm`);
+              
+              // Adjust the position of the layer groups to center align
+              for (let j = 0; j < allLayerGroups.length; j++) {
+                const layerGroup = allLayerGroups[j];
+                combinedSVG.appendChild(layerGroup);
+
+                let layerdiv0 = document.getElementById(`layer`);
+                let layerdiv = document.createElement('div');
+                layerdiv.setAttribute('class', `form-check col-12`);
+                let layer = document.createElement('input');
+                layer.setAttribute('type', 'checkbox');
+                layer.setAttribute('id', `layer-${i}`);
+                layer.setAttribute('class', `form-check-input`);
+                layer.checked = true;
+
+                let layerlabel = document.createElement('label');
+                layerlabel.setAttribute('for', `layer-${i}`);
+                layerlabel.setAttribute('class', `form-check-label`);
+                layerlabel.innerText = `Layer ${j + 1}`;
+                layerdiv.appendChild(layer);
+                layerdiv.appendChild(layerlabel);
+                layerdiv0.appendChild(layerdiv); 
+                 
+                layer.addEventListener("change", function() {
+                  if (this.checked) {
+                    // If the checkbox is checked, append the layer to the SVG display
+                    combinedSVG.appendChild(layerGroup);
+                  } else {
+                    // If the checkbox is unchecked, remove the layer from the SVG display
+                    combinedSVG.removeChild(layerGroup);
+                  }
+                });
+              }
+            }
           });
         };
+
         reader.onerror = function () {
           alert("Error reading the file.");
         };
-
+        
         reader.readAsArrayBuffer(file);
-      } else {
-        alert("Please upload a gerber file.");
       }
+
+      // Append the combinedSVG to the svgdiv
+      document.getElementById("svgdiv").appendChild(combinedSVG);
+    } else {
+      alert("Please upload a gerber file.");
     }
+  }
+
+
   </script>
 </body>
 </html>
