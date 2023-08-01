@@ -5,12 +5,22 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-  <script src="index.js"></script>
+  <script src="https://unpkg.com/pcb-stackup@^4.0.0/dist/pcb-stackup.min.js" onload="initializeGerberToSVG()" defer></script>
+  <script src="https://unpkg.com/pcb-stackup-core@^4.0.0/dist/pcb-stackup-core.min.js"></script>  <script src="index.js"></script>
+  <style>
+    .o-0 {
+      opacity: 0;
+    }
+    .o-40 {
+      opacity: 0.4;
+    }
+  </style>
 </head>
 <body>
   <h1>Gerber Viewer</h1>
   <input type="file" id="gerberFile" multiple/>
   <button id="button">View Gerber</button>
+  <button id="buttonstack">PCB_STACKUP</button>
   <div class="container">
     <div class="row p-5">
       <div class="col">
@@ -18,9 +28,31 @@
       </div>
       <div id="layer" class="col input-group">
       </div>
+      <div id="result">
+        <div class="row">
+          <div class="col" id="toplayer">
+
+          </div>
+          <div class="col">
+            <h1>Top Layers</h1>
+            <button onclick="toggleLayer('top_copper')">Copper</button>
+            <button onclick="toggleLayer('top_silkscreen')">Silk Screen</button>
+            <button onclick="toggleLayer('top_solderpaste')">Solder Paste</button>
+            <button onclick="toggleLayer('top_soldermask')">Solder Mask</button>
+            <br></br>
+          </div>
+
+        </div>
+        
+      </div>
+      <button onclick="toggleLayer('bottom_solderpaste')">Layer 1</button>
+
     </div>
   </div>
   
   <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script>
+  <script>
+    
+  </script>
 </body>
 </html>

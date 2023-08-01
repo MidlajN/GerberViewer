@@ -1,10 +1,10 @@
+
 function initializeGerberToSVG() {
     if (document.getElementById("button") !== null) {
         document.getElementById("button").addEventListener("click", viewGerber); 
+        document.getElementById("buttonstack").addEventListener("click", viewPCBStackUp);
     }
-  }
-
-
+}
 function viewGerber() {
     const fileInput = document.getElementById("gerberFile");
     if (fileInput.files !== null && fileInput.files.length > 0) {
@@ -32,7 +32,6 @@ function viewGerber() {
                     if (error) {
                         return console.error(`Gerber To Svg error for file ${i}: ${error.message}`);
                     }
-
                     const svgDoc = parser.parseFromString(svg, "image/svg+xml");
                     const svgElem = svgDoc.documentElement;
 
@@ -106,4 +105,102 @@ function viewGerber() {
     } else {
         alert("Please upload a gerber file.");
     }
+}
+
+
+
+
+
+
+function viewPCBStackUp() {
+    const fileInput = document.getElementById("gerberFile");
+    
+    if (fileInput.files !== null && fileInput.files.length > 0) {
+        let files = fileInput.files;
+        const filePromises = Array.from(files).map((file) => {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const fileContent = event.target.result;
+                    resolve({
+                        filename: file.name,
+                        gerber: fileContent,
+                    });
+                };
+
+                reader.onerror = function () {
+                    reject(new Error("Failed to read the file."));
+                };
+                reader.readAsText(file);
+            });
+        });
+
+        Promise.all(filePromises).then((layers) => {
+            console.log(layers);
+            let coreStack = pcbStackupCore(layers);
+            console.log('Core Stack Layers : ',coreStack)
+            pcbStackup(layers).then((stackup) => {
+                
+                const resultDiv = document.getElementById("toplayer");
+                console.log('Stackup Layers : ',stackup);
+                top_layer = stackup.top.svg;
+                bottom_layer = stackup.bottom.svg;
+                resultDiv.innerHTML = `
+                <div>Top Layer : </div>
+                <div>${top_layer}</div>
+                <div>Bottom Layer : </div>
+                <div>${bottom_layer}</div>
+                `;
+            });
+        })
+
+    }
+}
+
+function overrideColor(svgContent, layerColor) {
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
+    const svgElem = svgDoc.documentElement;
+    console.log(svgElem);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function toggleLayer(LayerId) {
+    console.log(LayerId);
+    let result = document.getElementById('toplayer');
+    const layerElements = result.getElementsByTagName('g');
+    Array.from(layerElements).forEach(layer => {
+        if (layer.hasAttribute('id')){
+            const layerId = layer.getAttribute('id');
+            if (layerId.endsWith(LayerId)){
+                layer.style.color = 'black'
+                layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+        
+    });
 }

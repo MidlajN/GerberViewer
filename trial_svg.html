@@ -1,35 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <title>Client-Side PCB Stackup</title>
 </head>
 <body>
-    <h1>Gerber Viewer</h1>
-    <input type="file" id="gerberFile" multiple/>
-    <button id="button">View Gerber</button>
-    <div id="svgdiv"></div> <br><br>
-    <div id="svgnewdiv"></div>
-    <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script>
-    <script>
-    function initializeGerberToSVG() {
-        if (typeof gerberToSvg === "function") {
-            document.getElementById("button").addEventListener("click", viewGerber);
-        } else {
-            console.error("Gerber to SVG library not loaded properly.");
-        }
+  <input type="file" id="fileInput" multiple>
+  <div id="result">
+    <!-- Result will be shown here -->
+  </div>
+
+  <script>
+    function pcbStackup(fileList) {
+      const readFiles = [];
+
+      for (const file of fileList) {
+        readFiles.push(new Promise((resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onload = () => {
+            resolve({
+              filename: file.name,
+              gerber: reader.result,
+            });
+          };
+
+          reader.onerror = () => {
+            reject(new Error("Failed to read the file."));
+          };
+
+          reader.readAsText(file); // Adjust the read method as per your file type (binary, text, etc.)
+        }));
+      }
+
+      return Promise.all(readFiles)
+        .then(layers => {
+          // Your existing implementation for stackup calculation...
+          // (Assuming it returns the stackup object)
+
+          return stackup; // Modify this to return the calculated stackup
+        });
     }
 
-    function viewGerber() {
-        if (typeof gerberToSvg === "function") {
-            const svg = gerberToSvg(document.getElementById("gerberFile").files[0]);
-            console.log(svg);
-        } else {
-            console.error("Gerber to SVG library not available.");
-        }
+    // Function to handle file input change event
+    function handleFileInputChange(event) {
+      const fileList = event.target.files;
+      pcbStackup(fileList).then((stackup) => {
+        // Do something with the stackup result, e.g., display it on the page
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `
+          <pre>${JSON.stringify(stackup, null, 2)}</pre>
+        `;
+      }).catch((error) => {
+        console.error(error);
+      });
     }
-    </script>
+
+    // Add event listener to file input element
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', handleFileInputChange);
+  </script>
 </body>
 </html>
-
