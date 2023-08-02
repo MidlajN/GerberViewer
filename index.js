@@ -2,21 +2,24 @@
 function initializeGerberToSVG() {
     if (document.getElementById("button") !== null) {
         document.getElementById("button").addEventListener("click", viewGerber); 
-        document.getElementById("buttonstack").addEventListener("click", viewPCBStackUp);
+        document.getElementById("buttonstack").addEventListener("click", displayStack);
     }
 }
 function viewGerber() {
     const fileInput = document.getElementById("gerberFile");
-    if (fileInput.files !== null && fileInput.files.length > 0) {
+    viewPCBStackUp().then((stackup) => {
         let files = fileInput.files;
         let combinedSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         combinedSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg"); // Set the XML namespace
-
+        let trialSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        trialSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        
         let maxWidth = 0;
         let maxHeight = 0;
         let allLayerGroups = []; // To store references to all the layer groups
         let layerdiv0 = document.getElementById(`layer`);
         layerdiv0.innerHTML = "";
+
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -28,13 +31,14 @@ function viewGerber() {
                 const uint8Array = new Uint8Array(fileContent);
                 const parser = new DOMParser();
                 
-                gerberToSvg(uint8Array, `my-gerber-file-${i}`, function(error, svg) {
+                console.log('stackPromise : ' ,stackup);
+                
+                gerberToSvg(uint8Array, `${file.name}`, function(error, svg) {
                     if (error) {
                         return console.error(`Gerber To Svg error for file ${i}: ${error.message}`);
                     }
                     const svgDoc = parser.parseFromString(svg, "image/svg+xml");
                     const svgElem = svgDoc.documentElement;
-
                     // Get the width and height of the current layer
                     const layerWidth = parseFloat(svgElem.getAttribute("width"));
                     const layerHeight = parseFloat(svgElem.getAttribute("height"));
@@ -89,6 +93,12 @@ function viewGerber() {
                         }
                     }
                 });
+                const svgger = gerberToSvg(uint8Array);
+                console.log(`svgger ${file.name}`,svgger.defs);
+                let defElement = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+                trialSVG.appendChild(defElement);
+                defElement.appendChild(svgger.defs);
+                console.log(trialSVG)
             };
 
             reader.onerror = function () {
@@ -102,92 +112,44 @@ function viewGerber() {
         let svgdiv = document.getElementById("svgdiv");
         svgdiv.innerHTML = "";
         svgdiv.appendChild(combinedSVG);
-    } else {
-        alert("Please upload a gerber file.");
-    }
+    })
 }
 
 
 
 
-
-
-function viewPCBStackUp() {
-    const fileInput = document.getElementById("gerberFile");
-    
-    if (fileInput.files !== null && fileInput.files.length > 0) {
-        let files = fileInput.files;
-        const filePromises = Array.from(files).map((file) => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-
-                reader.onload = function (event) {
-                    const fileContent = event.target.result;
-                    resolve({
-                        filename: file.name,
-                        gerber: fileContent,
-                    });
-                };
-
-                reader.onerror = function () {
-                    reject(new Error("Failed to read the file."));
-                };
-                reader.readAsText(file);
-            });
-        });
-
-        Promise.all(filePromises).then((layers) => {
-            console.log(layers);
-            let coreStack = pcbStackupCore(layers);
-            console.log('Core Stack Layers : ',coreStack)
-            pcbStackup(layers).then((stackup) => {
-                
-                const resultDiv = document.getElementById("toplayer");
-                console.log('Stackup Layers : ',stackup);
-                top_layer = stackup.top.svg;
-                bottom_layer = stackup.bottom.svg;
-                resultDiv.innerHTML = `
-                <div>Top Layer : </div>
-                <div>${top_layer}</div>
-                <div>Bottom Layer : </div>
-                <div>${bottom_layer}</div>
-                `;
-            });
-        })
-
-    }
-}
-
-function overrideColor(svgContent, layerColor) {
+function overrideColor(svgContent) {
     const parser = new DOMParser();
     const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
     const svgElem = svgDoc.documentElement;
-    console.log(svgElem);
+    const defElem = svgElem.querySelector("defs");
+    if (defElem !== null && defElem.hasAttribute('style')) {
+        defElem.removeAttribute('style');
+        console.log('defElem removed');
+    }
+  
+    return svgElem;
+  }
+
+
+
+function displayStack(){
+    viewPCBStackUp().then((stackup) => {
+        overrideColor(stackup.top.svg);
+        const resultDiv = document.getElementById('toplayer');
+        console.log('Stackup Layers : ',stackup);
+        top_layer = overrideColor(stackup.top.svg);
+        console.log(top_layer)
+        bottom_layer = stackup.bottom.svg;
+        resultDiv.innerHTML = `
+        <div>Top Layer : </div>
+        <div></div>
+        <div>Bottom Layer : </div>
+        <div>${bottom_layer}</div>
+        `;
+        resultDiv.children[1].appendChild(top_layer);
+    })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function toggleLayer(LayerId) {
     console.log(LayerId);
@@ -197,10 +159,48 @@ function toggleLayer(LayerId) {
         if (layer.hasAttribute('id')){
             const layerId = layer.getAttribute('id');
             if (layerId.endsWith(LayerId)){
-                layer.style.color = 'black'
+                layer.removeAt
                 layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
             }
         }
         
+    });
+}
+
+
+// ---------------------------------------- Function For Converting All the PCB Layers to SVG ----------------------------------------
+function viewPCBStackUp() {
+    return new Promise((resolve, reject) => {
+        const fileInput = document.getElementById("gerberFile");
+        if (fileInput.files !== null && fileInput.files.length > 0) {
+            let files = fileInput.files;
+            const filePromises = Array.from(files).map((file) => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        const fileContent = event.target.result;
+                        resolve({
+                            filename: file.name,
+                            gerber: fileContent,
+                        });
+                    };
+
+                    reader.onerror = function () {
+                        reject(new Error("Failed to read the file."));
+                    };
+                    reader.readAsText(file);
+                });
+            });
+
+            Promise.all(filePromises).then((layers) => {
+                console.log(layers);
+                pcbStackup(layers).then((stackup) => {
+                    resolve(stackup);
+                }).catch(reject);
+            }).catch(reject);
+        }else {
+            reject(new Error("Please upload a gerber file."));
+        }
     });
 }
