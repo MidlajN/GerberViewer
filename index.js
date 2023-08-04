@@ -2,103 +2,133 @@
 function initializeGerberToSVG() {
     if (document.getElementById("button") !== null) {
         document.getElementById("button").addEventListener("click", viewGerber); 
-        document.getElementById("buttonstack").addEventListener("click", displayStack);
     }
 }
+
 function viewGerber() {
     const fileInput = document.getElementById("gerberFile");
-    viewPCBStackUp().then((stackup) => {
+    
+
+    // _______________________--- Gerber To SVG Conversion ---____________________________
+    viewPCBStackUp().then((result) => {
         let files = fileInput.files;
-        let combinedSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        combinedSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg"); // Set the XML namespace
-        let trialSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        trialSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        
-        let maxWidth = 0;
-        let maxHeight = 0;
-        let allLayerGroups = []; // To store references to all the layer groups
-        let layerdiv0 = document.getElementById(`layer`);
-        layerdiv0.innerHTML = "";
+        console.log(result);
+        const stackup = result.stackup;
+
+        // _________________--- Gerber To SVG with PCB-Stackup Library ---_________________
+
+        const topDiv = document.getElementById('toplayer');
+        const bottomDiv = document.getElementById('bottomlayer');
+        top_layer = stackup.top.svg;
+        bottom_layer = stackup.bottom.svg;
+
+        topDiv.innerHTML = top_layer;
+        bottomDiv.innerHTML = bottom_layer;
+
+
+    // _________________--- Initial Main SVG ---_________________
+
+        // ########### TOP ##########
+        let topSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        topSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        topSVG.setAttribute('viewBox', stackup.top.viewBox);
+        topSVG.setAttribute('width', `${stackup.top.width}mm`);
+        topSVG.setAttribute('height', `${stackup.top.height}mm`);
+        topSVG.setAttribute('stroke-linecap', 'round');
+        topSVG.setAttribute('stroke-line-join', 'round');
+        topSVG.setAttribute('fill-rule', 'evenodd');
+        document.getElementById('coreTopStack').innerHTML = "";
+        document.getElementById('coreTopStack').appendChild(topSVG);
+
+        // ########### BOTTOM ##########
+        let bottomSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        bottomSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        bottomSVG.setAttribute('viewBox', stackup.bottom.viewBox);
+        bottomSVG.setAttribute('width', `${stackup.bottom.width}mm`);
+        bottomSVG.setAttribute('height', `${stackup.bottom.height}mm`);
+        bottomSVG.setAttribute('stroke-linecap', 'round');
+        bottomSVG.setAttribute('stroke-line-join', 'round');
+        bottomSVG.setAttribute('fill-rule', 'evenodd');
+        document.getElementById('coreBottomStack').innerHTML = "";
+        document.getElementById('coreBottomStack').appendChild(bottomSVG);
+
+
+        // _________________--- Get The transform attribute from pcbStackup ---_________________
+        const svgData = stackup.top.svg;
+        const svgParser = new DOMParser();
+        const trailDoc = svgParser.parseFromString(svgData, "image/svg+xml");
+        const gElem = trailDoc.querySelector('g[transform]');
+        let gTransform = gElem.getAttribute('transform');
+
+        // _______________--- Create Main Top <G> ---_________________
+        let mainTopG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        mainTopG.setAttribute("id", "main_top");
+        mainTopG.setAttribute("transform", gTransform);
+        topSVG.appendChild(mainTopG);
+
+        // _______________--- Create Main Bottom <G> ---_________________
+        let mainBottomG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        mainBottomG.setAttribute("id", "main_bottom");
+        mainBottomG.setAttribute("transform", gTransform);
+        bottomSVG.appendChild(mainBottomG);
 
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
             const reader = new FileReader();
+            const id = result.match[i]
 
             reader.onload = function (event) {
                 const fileContent = event.target.result;
-                console.log(file.name)
                 const uint8Array = new Uint8Array(fileContent);
-                const parser = new DOMParser();
-                
-                console.log('stackPromise : ' ,stackup);
-                
-                gerberToSvg(uint8Array, `${file.name}`, function(error, svg) {
-                    if (error) {
-                        return console.error(`Gerber To Svg error for file ${i}: ${error.message}`);
-                    }
-                    const svgDoc = parser.parseFromString(svg, "image/svg+xml");
-                    const svgElem = svgDoc.documentElement;
-                    // Get the width and height of the current layer
-                    const layerWidth = parseFloat(svgElem.getAttribute("width"));
-                    const layerHeight = parseFloat(svgElem.getAttribute("height"));
 
-                    // Update the maximum width and height if necessary
-                    maxWidth = Math.max(maxWidth, layerWidth);
-                    maxHeight = Math.max(maxHeight, layerHeight);
+                const gerberToSvgStream = gerberToSvg(uint8Array);
+                let data = '';
 
-                    // Create a new group (g element) for each layer and append the layer's SVG to it
-                    const layerGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                    layerGroup.setAttribute("layer", `layer-${i}`);
-                    layerGroup.appendChild(svgElem);
-                    allLayerGroups.push(layerGroup);
+                gerberToSvgStream.on('data', (chunk) => {
+                data += chunk;
+                });
 
-                    // Check if this is the last layer group, then append all the groups to the combinedSVG
-                    if (allLayerGroups.length === files.length) {
-                        // Update the final width and height of the combinedSVG element
-                        combinedSVG.setAttribute("width", `${maxWidth}mm`);
-                        combinedSVG.setAttribute("height", `${maxHeight}mm`);
-                        
-                        // Adjust the position of the layer groups to center align
-                        for (let j = 0; j < allLayerGroups.length; j++) {
-                            const layerGroup = allLayerGroups[j];
-                            combinedSVG.appendChild(layerGroup);
+                gerberToSvgStream.on('end', () => {
+                    // 'data' now contains the full SVG output
 
-                            
-                            let layerdiv = document.createElement('div');
-                            layerdiv.setAttribute('class', `form-check col-12`);
-                            let layer = document.createElement('input');
-                            layer.setAttribute('type', 'checkbox');
-                            layer.setAttribute('id', `layer-${i}`);
-                            layer.setAttribute('class', `form-check-input`);
-                            layer.checked = true;
+                    const parser = new DOMParser();
+                    const svgDocument = parser.parseFromString(data, "image/svg+xml");
 
-                            let layerlabel = document.createElement('label');
-                            layerlabel.setAttribute('for', `layer-${i}`);
-                            layerlabel.setAttribute('class', `form-check-label`);
-                            layerlabel.innerText = `Layer ${j + 1}`;
-                            layerdiv.appendChild(layer);
-                            layerdiv.appendChild(layerlabel);
-                            layerdiv0.appendChild(layerdiv); 
-
-                            layer.addEventListener("change", function() {
-                                if (this.checked) {
-                                // If the checkbox is checked, append the layer to the SVG display
-                                combinedSVG.appendChild(layerGroup);
-                                } else {
-                                // If the checkbox is unchecked, remove the layer from the SVG display
-                                combinedSVG.removeChild(layerGroup);
-                                }
-                            });
+                    const defElements = svgDocument.querySelector('defs');
+                    
+                    if (defElements) {
+                        defElements.setAttribute('id', `def-${id}`);
+                        if (id.includes('top_')) {
+                            topSVG.appendChild(defElements);
+                        } else if (id.includes('bottom_')) {
+                            bottomSVG.appendChild(defElements);
+                        } else {
+                            const topSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for top
+                            const bottomSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for bottom
+                            topSVG.appendChild(topSVGCopy);
+                            bottomSVG.appendChild(bottomSVGCopy);
                         }
                     }
+                    
+                    const gElements = svgDocument.querySelector('g');
+                    
+                    if (gElements) {
+                        gElements.setAttribute('id', `g-${id}`); 
+                        gElements.removeAttribute('transform');
+                        if (id.includes('top_')) {
+                            mainTopG.appendChild(gElements);
+                        } else if (id.includes('bottom_')) {
+                            mainBottomG.appendChild(gElements);
+                        } else {
+                            const topGCopy = gElements.cloneNode(true); // Create a copy of gElements for top
+                            const bottomGCopy = gElements.cloneNode(true); // Create a copy of gElements for bottom
+                            mainTopG.appendChild(topGCopy);
+                            mainBottomG.appendChild(bottomGCopy);
+                        }
+                    }
+
                 });
-                const svgger = gerberToSvg(uint8Array);
-                console.log(`svgger ${file.name}`,svgger.defs);
-                let defElement = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-                trialSVG.appendChild(defElement);
-                defElement.appendChild(svgger.defs);
-                console.log(trialSVG)
             };
 
             reader.onerror = function () {
@@ -107,14 +137,37 @@ function viewGerber() {
             
             reader.readAsArrayBuffer(file);
         }
-
-        // Append the combinedSVG to the svgdiv
-        let svgdiv = document.getElementById("svgdiv");
-        svgdiv.innerHTML = "";
-        svgdiv.appendChild(combinedSVG);
+        
     })
+
 }
 
+
+
+
+function toggleLayer(LayerId) {
+    console.log(LayerId);
+    let stackTop = document.getElementById('mainTop');
+    let stackBottom = document.getElementById('mainBottom');
+    const topLayerElem = stackTop.getElementsByTagName('g');
+    const bottomLayerElem = stackBottom.getElementsByTagName('g');
+    Array.from(topLayerElem).forEach(layer => {
+        if (layer.hasAttribute('id')){
+            const layerId = layer.getAttribute('id');
+            if (layerId.endsWith(LayerId)){
+                layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
+            }
+        }   
+    });
+    Array.from(bottomLayerElem).forEach(layer => {
+        if (layer.hasAttribute('id')){
+            const layerId = layer.getAttribute('id');
+            if (layerId.endsWith(LayerId)){
+                layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+    })
+}
 
 
 
@@ -130,42 +183,6 @@ function overrideColor(svgContent) {
   
     return svgElem;
   }
-
-
-
-function displayStack(){
-    viewPCBStackUp().then((stackup) => {
-        overrideColor(stackup.top.svg);
-        const resultDiv = document.getElementById('toplayer');
-        console.log('Stackup Layers : ',stackup);
-        top_layer = overrideColor(stackup.top.svg);
-        console.log(top_layer)
-        bottom_layer = stackup.bottom.svg;
-        resultDiv.innerHTML = `
-        <div>Top Layer : </div>
-        <div></div>
-        <div>Bottom Layer : </div>
-        <div>${bottom_layer}</div>
-        `;
-        resultDiv.children[1].appendChild(top_layer);
-    })
-}
-
-function toggleLayer(LayerId) {
-    console.log(LayerId);
-    let result = document.getElementById('toplayer');
-    const layerElements = result.getElementsByTagName('g');
-    Array.from(layerElements).forEach(layer => {
-        if (layer.hasAttribute('id')){
-            const layerId = layer.getAttribute('id');
-            if (layerId.endsWith(LayerId)){
-                layer.removeAt
-                layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
-            }
-        }
-        
-    });
-}
 
 
 // ---------------------------------------- Function For Converting All the PCB Layers to SVG ----------------------------------------
@@ -195,8 +212,43 @@ function viewPCBStackUp() {
 
             Promise.all(filePromises).then((layers) => {
                 console.log(layers);
+                const matchArray = []
+                layers.forEach((layer) => {
+                    if (!layer.filename.endsWith('.gbrjob')) {
+                        const gerberStr = layer.gerber;
+                        const regEx = /((?<=\bIN)\w+)(.*?)(?=\s*\*%)/g;
+                        const match = gerberStr.match(regEx);
+                        if (match) {
+                            console.log('Extracted match: ', match[0]);
+                            let str = match[0];
+                            str = str.toLowerCase();
+
+                            if (str.endsWith('top') || str.endsWith('bottom')) {
+                                const words = str.split(/\s+/);
+                                str = words[1] + '_' + words[0];
+                                console.log('Modified String : ', str);
+                            } else {
+                                const words = str.split(/\s+/);
+                                str = words[0] + '_' + words[1];
+                            }
+                            matchArray.push(str);
+                        } else {
+                            matchArray.push('outline_gerber');
+                            console.log('Outline Pushed')
+                        }
+                    } else {
+                        matchArray.push('gerber_data');
+                        console.log('MetaData Pushed')
+                    }
+                })
+                console.log('matchArray: ', matchArray);
+                
                 pcbStackup(layers).then((stackup) => {
-                    resolve(stackup);
+                    result = {
+                        match : matchArray,
+                        stackup : stackup
+                    };
+                    resolve(result);
                 }).catch(reject);
             }).catch(reject);
         }else {
