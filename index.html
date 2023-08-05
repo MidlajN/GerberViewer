@@ -5,9 +5,15 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/pcb-stackup@^4.0.0/dist/pcb-stackup.min.js" onload="initializeGerberToSVG()" defer></script>
-  <script src="https://unpkg.com/pcb-stackup-core@^4.0.0/dist/pcb-stackup-core.min.js"></script> 
-  <script src="https://unpkg.com/whats-that-gerber@^4.0.0/dist/whats-that-gerber.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+  
+  <!-- <script src="https://unpkg.com/pcb-stackup@^4.0.0/dist/pcb-stackup.min.js" onload="initializeGerberToSVG()" defer></script> -->
+  <!-- <script src="https://unpkg.com/pcb-stackup-core@^4.0.0/dist/pcb-stackup-core.min.js"></script>  -->
+  <!-- <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script> -->
+  <script src="pcb_stackup.js" onload="initializeGerberToSVG()" defer></script>
+  <script src="gerber_to_svg.js" onload="initializeGerberToSVG()" defer></script>
+  
+
  
   <script src="index.js"></script>
   <style>
@@ -17,63 +23,112 @@
     .o-40 {
       opacity: 0.4;
     }
+    .rotate {
+      transform: rotate(180deg); 
+      transform-origin: center center;
+    }
+    #button{
+      display:block;
+      margin:20px auto;
+      padding:10px 30px;
+      background-color:#eee;
+      border:solid #ccc 1px;
+      cursor: pointer;
+    }
+    #overlay{	
+      position: fixed;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      height:100%;
+      display: none;
+      background: rgba(0,0,0,0.6);
+    }
+    .cv-spinner {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;  
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px #ddd solid;
+      border-top: 4px #2e93e6 solid;
+      border-radius: 50%;
+      animation: sp-anime 0.8s infinite linear;
+    }
+    @keyframes sp-anime {
+      100% { 
+        transform: rotate(360deg); 
+      }
+    }
+    .is-hide{
+      display:none;
+    }
   </style>
 </head>
 <body>
+
+
+<div id="overlay">
+  <div class="cv-spinner">
+    <span class="spinner"></span>
+  </div>
+</div>
+
+
+
+
+
+
   <h1>Gerber Viewer</h1>
   <input type="file" id="gerberFile" multiple/>
   <button id="button">View Gerber</button>
   <div class="container">
-    <div class="row p-5">
-      <div class="col">
-        <div id="svgdiv" style="width: fit-content;height: auto;"></div>
-      </div>
-      <div id="layer" class="col input-group">
-      </div>
-      <div id="result">
+      <div id="result" style="display: none;">
         <div id="mainTop" class="row">
-          <div class="col" id="toplayer">
+          <div class="col d-flex justify-content-center align-items-center" id="toplayer">
 
           </div>
-          <div id="toplayer_button" class="col">
-            <h1>Top Layers</h1>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_copper')" >Copper</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_silkscreen')" >Silk Screen</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_solderpaste')" >Solder Paste</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_soldermask')" >Solder Mask</button>
-            <br></br>
-          </div>
-          <div class="col" id="coreTopStack">
+          <div id="toplayer_button" class="col d-flex justify-content-center align-items-center">
+            <div class="m-auto">
+                <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_copper')">Copper</button><br>
+                <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_silkscreen')">Silk Screen</button><br>
+                <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_solderpaste')">Solder Paste</button><br>
+                <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_soldermask')">Solder Mask</button>
+                <br></br>
+            </div>
+        </div>
+        
+          <div class="col d-flex justify-content-center align-items-center" id="coreTopStack">
 
           </div>
         </div>
         <br><br>
         <div id="mainBottom" class="row">
-          <div class="col" id="bottomlayer">
+          <div class="col d-flex justify-content-center align-items-center" id="bottomlayer">
           
           </div>
-          <div id="buttonpart" class="col">
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_copper')" >Copper</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_silkscreen')" >Silk Screen</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_solderpaste')" >Solder Paste</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_soldermask')" >Solder Mask</button>
-            <br><br>
+          <div id="buttonpart" class="col d-flex justify-content-center align-items-center">
+            <div class="mx-auto">
+              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_copper')" >Copper</button><br>
+              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_silkscreen')" >Silk Screen</button><br>
+              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_solderpaste')" >Solder Paste</button><br>
+              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_soldermask')" >Solder Mask</button>
+              <br><br>
+            </div>
           </div>
-          <div class="col" id="coreBottomStack">
+          <div class="col rotate d-flex justify-content-center align-items-center" id="coreBottomStack">
 
           </div>
         </div>
         
         
       </div>
-      <button onclick="toggleLayer('bottom_solderpaste')">Layer 1</button>
 
     </div>
   </div>
-  
-  <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script>
-  <script>
-    
-  </script>
+
 </body>
 </html>
