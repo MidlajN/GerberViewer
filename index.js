@@ -1,3 +1,5 @@
+
+
 function initializeGerberToSVG() {
   if (document.getElementById("button") !== null) {
     document.getElementById("button").addEventListener("click", viewGerber);
@@ -8,10 +10,72 @@ function viewGerber() {
   const fileInput = document.getElementById("gerberFile");
 
   // _______________________--- Gerber To SVG Conversion ---____________________________
-  viewPCBStackUp().then((result) => {
+  viewPCBStackUp().then((stackup) => {
     let files = fileInput.files;
-    console.log(result);
-    const stackup = result.stackup;
+    let layers = stackup.layers;
+    console.log('Stackup : ', stackup);
+
+    // Initial Check
+    convertSvgToCanvas(stackup.top.svg).then((pngData) => {
+      console.log('PNG : ', pngData);
+      const imgElem = document.createElement("img");
+      imgElem.src = pngData;
+      document.getElementById('canvas').appendChild(imgElem);
+    }).catch((err) => {
+      console.log('Error : ', err);
+    })
+
+    
+
+
+    
+    const pngImage = document.getElementById('pngimage');
+    const canvas1 = document.createElement("canvas");
+
+    let svg = stackup.top.svg;
+    const dpi = 1000;
+    const width = svg.height * dpi;
+    const height = svg.width * dpi;
+    canvas1.width = width;
+    canvas1.height = height;
+    const ctx = canvas1.getContext('2d');
+    // ctx.drawImage(svg, 0, 0, width, height);
+    // console.log('Canvas : ', canvas);
+
+    // canvg(canvas, svg, {
+    //   renderCallback: function () {
+    //     const dataURL = canvas.toDataURL('image/png');
+    //     pngImage.src = dataURL;
+    //   }
+    // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // _________________--- Gerber To SVG with PCB-Stackup Library ---_________________
 
@@ -19,14 +83,34 @@ function viewGerber() {
     const bottomDiv = document.getElementById("bottomlayer");
     top_layer = stackup.top.svg;
     bottom_layer = stackup.bottom.svg;
-
     topDiv.innerHTML = top_layer;
     bottomDiv.innerHTML = bottom_layer;
+    let id = [];
+    let topFlag = false;
+    let bottomFlag = false;
+    layers.forEach((layer) => {
+      let idstring = layer.side + '_' + layer.type;
+      console.log('ID : ', idstring);
+      id.push(idstring);
+      if (layer.side === 'top') {
+        topFlag = true;
+      } else if (layer.side === 'bottom') {
+        bottomFlag = true;
+      }
+    })
+
+    if (!topFlag) {
+      document.getElementById('mainTop').style.display = "none";
+    }
+    if (!bottomFlag) {
+      document.getElementById('mainBottom').style.display = "none";
+    }
 
     // _________________--- Initial Main SVG ---_________________
 
     // ########### TOP ##########
     let topSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    topSVG.setAttribute("id", "coreTopStack");
     topSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     topSVG.setAttribute("viewBox", stackup.top.viewBox);
     topSVG.setAttribute("width", `${stackup.top.width}mm`);
@@ -77,7 +161,6 @@ function viewGerber() {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const reader = new FileReader();
-      const id = result.match[i];
 
       reader.onload = function (event) {
         const fileContent = event.target.result;
@@ -99,28 +182,32 @@ function viewGerber() {
           const defElements = svgDocument.querySelector("defs");
 
           if (defElements) {
-            defElements.setAttribute("id", `def-${id}`);
-            if (id.includes("top_")) {
+            defElements.setAttribute("id", `def-${id[i]}`);
+            if (layers[i].side === 'top') {
               topSVG.appendChild(defElements);
-            } else if (id.includes("bottom_")) {
+
+            } else if (layers[i].side === 'bottom') {
               bottomSVG.appendChild(defElements);
+
             } else {
               const topSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for top
               const bottomSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for bottom
               topSVG.appendChild(topSVGCopy);
               bottomSVG.appendChild(bottomSVGCopy);
+
             }
-          }
+          } 
 
           const gElements = svgDocument.querySelector("g");
-
           if (gElements) {
-            gElements.setAttribute("id", `g-${id}`);
-            gElements.removeAttribute("transform");
-            if (id.includes("top_")) {
+            gElements.setAttribute("id", `g-${id[i]}`);
+            gElements.removeAttribute('transform');
+            if (layers[i].side == 'top') {
               mainTopG.appendChild(gElements);
-            } else if (id.includes("bottom_")) {
+
+            } else if (layers[i].side == 'bottom') {
               mainBottomG.appendChild(gElements);
+
             } else {
               const topGCopy = gElements.cloneNode(true); // Create a copy of gElements for top
               const bottomGCopy = gElements.cloneNode(true); // Create a copy of gElements for bottom
@@ -209,44 +296,9 @@ function viewPCBStackUp() {
       Promise.all(filePromises)
         .then((layers) => {
           console.log(layers);
-          const matchArray = [];
-          layers.forEach((layer) => {
-            if (!layer.filename.endsWith(".gbrjob")) {
-              const gerberStr = layer.gerber;
-              const regEx = /((?<=\bIN)\w+)(.*?)(?=\s*\*%)/g;
-              const match = gerberStr.match(regEx);
-              if (match) {
-                console.log("Extracted match: ", match[0]);
-                let str = match[0];
-                str = str.toLowerCase();
-
-                if (str.endsWith("top") || str.endsWith("bottom")) {
-                  const words = str.split(/\s+/);
-                  str = words[1] + "_" + words[0];
-                  console.log("Modified String : ", str);
-                } else {
-                  const words = str.split(/\s+/);
-                  str = words[0] + "_" + words[1];
-                }
-                matchArray.push(str);
-              } else {
-                matchArray.push("outline_gerber");
-                console.log("Outline Pushed");
-              }
-            } else {
-              matchArray.push("gerber_data");
-              console.log("MetaData Pushed");
-            }
-          });
-          console.log("matchArray: ", matchArray);
-
           pcbStackup(layers)
             .then((stackup) => {
-              result = {
-                match: matchArray,
-                stackup: stackup,
-              };
-              resolve(result);
+              resolve(stackup);
             })
             .catch(reject);
         })

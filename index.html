@@ -10,12 +10,16 @@
   <!-- <script src="https://unpkg.com/pcb-stackup@^4.0.0/dist/pcb-stackup.min.js" onload="initializeGerberToSVG()" defer></script> -->
   <!-- <script src="https://unpkg.com/pcb-stackup-core@^4.0.0/dist/pcb-stackup-core.min.js"></script>  -->
   <!-- <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script> -->
+  
+
   <script src="pcb_stackup.js" onload="initializeGerberToSVG()" defer></script>
-  <script src="gerber_to_svg.js" onload="initializeGerberToSVG()" defer></script>
+  <script src="gerber_to_svg.js" onload="initializeGerberToSVG()"  defer></script>
+  <script  src="convert.js" onload="initializeGerberToSVG()" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
   
 
  
-  <script src="index.js"></script>
+  <script  src="index.js"></script>
   <style>
     .o-0 {
       opacity: 0;
@@ -89,7 +93,6 @@
       <div id="result" style="display: none;">
         <div id="mainTop" class="row">
           <div class="col d-flex justify-content-center align-items-center" id="toplayer">
-
           </div>
           <div id="toplayer_button" class="col d-flex justify-content-center align-items-center">
             <div class="m-auto">
@@ -99,13 +102,13 @@
                 <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_soldermask')">Solder Mask</button>
                 <br></br>
             </div>
-        </div>
+          </div>
         
           <div class="col d-flex justify-content-center align-items-center" id="coreTopStack">
-
           </div>
         </div>
-        <br><br>
+        <br>
+        <br>  
         <div id="mainBottom" class="row">
           <div class="col d-flex justify-content-center align-items-center" id="bottomlayer">
           
@@ -129,6 +132,17 @@
 
     </div>
   </div>
+<button id="canvasCon">Convert</button>
+  <div>
+    <h1>Canvas </h1>
+    <canvas id="canvaspng"></canvas>
+    <div id="canvas">
+    </div>
+  </div>
+
+  <!-- <script src="https://cdn.jsdelivr.net/npm/canvg@4.0.1/dist/index.min.js" defer></script> 
+  <script src="https://cdn.jsdelivr.net/npm/svg-to-png@4.0.0/lib/svg-to-png.min.js"></script>
+  
 
 </body>
 </html>
