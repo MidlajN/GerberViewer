@@ -27,62 +27,31 @@
 
 
 
-function convertSvgToCanvas(svgText, margin = 0, fill = null) {
-    return new Promise(function (resolve, reject) {
-      try {
-        var domUrl = window.URL || window.webkitURL || window;
-        if (!domUrl) {
-          throw new Error("(browser doesn't support this)");
-        }
-  
-        var match = svgText.match(/height="(\d+)/m);
-        var height = match && match[1] ? parseInt(match[1], 10) : 200;
-        var match = svgText.match(/width="(\d+)/m);
-        var width = match && match[1] ? parseInt(match[1], 10) : 200;
-  
-        margin = margin || 0;
-  
-        if (!svgText.match(/xmlns="/mi)) {
-          svgText = svgText.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ');
-        }
-  
-        var canvas = document.createElement("canvas");
-        canvas.width = height + margin * 2;
-        canvas.height = width + margin * 2;
-        var ctx = canvas.getContext("2d");
-  
-        var svg = new Blob([svgText], {
-          type: "image/svg+xml;charset=utf-8",
-        });
-  
-        var url = domUrl.createObjectURL(svg);
-  
-        var img = new Image();
-        img.onload = function () {
-          ctx.drawImage(this, margin, margin);
-  
-          if (fill) {
-            var styled = document.createElement("canvas");
-            styled.width = canvas.width;
-            styled.height = canvas.height;
-            var styledCtx = styled.getContext("2d");
-            styledCtx.save();
-            styledCtx.fillStyle = fill;
-            styledCtx.fillRect(0, 0, canvas.width, canvas.height);
-            styledCtx.strokeRect(0, 0, canvas.width, canvas.height);
-            styledCtx.restore();
-            styledCtx.drawImage(canvas, 0, 0);
-            canvas = styled;
-          }
-  
-          domUrl.revokeObjectURL(url);
-          resolve(canvas);
-        };
-  
-        img.src = url;
-      } catch (err) {
-        reject("failed to convert svg to canvas: " + err);
-      }
-    });
-  }
-  
+function convertSvgToPng(svgText, width, height) {
+  console.log('Function convertSvgToPng');
+  return new Promise(function (resolve, reject) {
+    var svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+    var svgUrl = URL.createObjectURL(svgBlob);
+    console.log('svgUrl', svgUrl);
+    var img = new Image();
+    img.onload = function () {
+      URL.revokeObjectURL(svgUrl);
+
+      var canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      var pngDataUrl = canvas.toDataURL('image/png');
+      resolve(pngDataUrl);
+    };
+
+    img.onerror = function (error) {
+      reject(error);
+    };
+
+    img.src = svgUrl;
+  });
+}

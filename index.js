@@ -6,76 +6,19 @@ function initializeGerberToSVG() {
   }
 }
 
+let svg_width = null
+let svg_height = null
 function viewGerber() {
   const fileInput = document.getElementById("gerberFile");
 
   // _______________________--- Gerber To SVG Conversion ---____________________________
   viewPCBStackUp().then((stackup) => {
+    svg_width = stackup.top.width;
+    svg_height = stackup.top.height;
+
     let files = fileInput.files;
     let layers = stackup.layers;
-    console.log('Stackup : ', stackup);
-
-    // Initial Check
-    convertSvgToCanvas(stackup.top.svg).then((pngData) => {
-      console.log('PNG : ', pngData);
-      const imgElem = document.createElement("img");
-      imgElem.src = pngData;
-      document.getElementById('canvas').appendChild(imgElem);
-    }).catch((err) => {
-      console.log('Error : ', err);
-    })
-
-    
-
-
-    
-    const pngImage = document.getElementById('pngimage');
-    const canvas1 = document.createElement("canvas");
-
-    let svg = stackup.top.svg;
-    const dpi = 1000;
-    const width = svg.height * dpi;
-    const height = svg.width * dpi;
-    canvas1.width = width;
-    canvas1.height = height;
-    const ctx = canvas1.getContext('2d');
-    // ctx.drawImage(svg, 0, 0, width, height);
-    // console.log('Canvas : ', canvas);
-
-    // canvg(canvas, svg, {
-    //   renderCallback: function () {
-    //     const dataURL = canvas.toDataURL('image/png');
-    //     pngImage.src = dataURL;
-    //   }
-    // });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    console.log('Stackup : ', stackup.top.svg);
 
     // _________________--- Gerber To SVG with PCB-Stackup Library ---_________________
 
@@ -110,7 +53,7 @@ function viewGerber() {
 
     // ########### TOP ##########
     let topSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    topSVG.setAttribute("id", "coreTopStack");
+    topSVG.setAttribute("id", "topLayerBW");
     topSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     topSVG.setAttribute("viewBox", stackup.top.viewBox);
     topSVG.setAttribute("width", `${stackup.top.width}mm`);
@@ -120,6 +63,7 @@ function viewGerber() {
     topSVG.setAttribute("fill-rule", "evenodd");
     document.getElementById("coreTopStack").innerHTML = "";
     document.getElementById("coreTopStack").appendChild(topSVG);
+
 
     // ########### BOTTOM ##########
     let bottomSVG = document.createElementNS(
@@ -224,6 +168,7 @@ function viewGerber() {
 
       reader.readAsArrayBuffer(file);
     }
+
     $("#overlay").fadeOut(700, function() {
       $("#result").fadeIn(700);
     });
@@ -254,18 +199,6 @@ function toggleLayer(LayerId) {
   });
 }
 
-function overrideColor(svgContent) {
-  const parser = new DOMParser();
-  const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
-  const svgElem = svgDoc.documentElement;
-  const defElem = svgElem.querySelector("defs");
-  if (defElem !== null && defElem.hasAttribute("style")) {
-    defElem.removeAttribute("style");
-    console.log("defElem removed");
-  }
-
-  return svgElem;
-}
 
 // ---------------------------------------- Function For Converting All the PCB Layers to SVG ----------------------------------------
 function viewPCBStackUp() {
@@ -310,3 +243,38 @@ function viewPCBStackUp() {
   });
 }
 
+
+
+function svg2png(svg, swidth = svg_width, sheight = svg_height) {
+  const dpi = 1000;
+
+  return new Promise((resolve, reject) => {
+    
+      const svgBlob = new Blob([svg], { type: "image/svg+xml" });
+      console.log(':: Blob created ::', svgBlob);
+      let blobURL = (window.URL || window.webkitURL || window).createObjectURL(svgBlob);
+      console.log(':: Blob URL ::', blobURL);
+      const img = new Image();
+
+      img.onload = () => {
+          console.log(':: Image loaded ::');
+          const canvas = document.createElement("canvas");
+          const scaleFactor = 100;
+          let width = swidth ;
+          let height = sheight;
+          canvas.width = width * scaleFactor;
+          canvas.height = height * scaleFactor; 
+          const ctx = canvas.getContext("2d");
+          
+          ctx.drawImage(img, 0, 0, width * scaleFactor, height * scaleFactor);
+          resolve(canvas);
+      };
+
+      // Handle errors during image loading
+      img.onerror = function (err) {
+          console.log('Error loading image:', err);
+          reject(err);
+      };
+      img.src = blobURL;
+  });
+}
