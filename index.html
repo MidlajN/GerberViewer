@@ -12,8 +12,8 @@
   <!-- <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script> -->
   
 
-  <script src="pcb_stackup.js" onload="initializeGerberToSVG()" defer></script>
-  <script src="gerber_to_svg.js" onload="initializeGerberToSVG()"  defer></script>
+  <script src="libs/gerber_to_svg.js" onload="initializeGerberToSVG()" defer></script>
+  <script src="libs/pcb_stackup.js" onload="initializeGerberToSVG()"  defer></script>
   <script  src="convert.js" onload="initializeGerberToSVG()" defer></script>
 
   <script  src="index.js"></script>
@@ -123,7 +123,9 @@
 
     </div>
   </div>
-<button id="renderButton">Convert</button>
+
+  <button id="renderButton">Convert</button>
+
   <div>
     <h1>Canvas </h1>
     <canvas id="canvaspng"></canvas>
@@ -135,6 +137,9 @@
     document.getElementById('renderButton').addEventListener('click', function(){
       svg = document.getElementById('topLayerBW')
 
+      for (const childElem of svg.children) {
+        childElem.setAttribute('fill', 'white');
+      }
       console.log('SVG :: ', svg);
       const svgString = new XMLSerializer().serializeToString(svg);
       console.log('SVG String :: ', svgString);

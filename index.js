@@ -18,7 +18,7 @@ function viewGerber() {
 
     let files = fileInput.files;
     let layers = stackup.layers;
-    console.log('Stackup : ', stackup.top.svg);
+    console.log('Stackup : ', stackup);
 
     // _________________--- Gerber To SVG with PCB-Stackup Library ---_________________
 
@@ -60,10 +60,9 @@ function viewGerber() {
     topSVG.setAttribute("height", `${stackup.top.height}mm`);
     topSVG.setAttribute("stroke-linecap", "round");
     topSVG.setAttribute("stroke-line-join", "round");
-    topSVG.setAttribute("fill-rule", "evenodd");
+    topSVG.setAttribute("fill-rule", "nonzero");
     document.getElementById("coreTopStack").innerHTML = "";
     document.getElementById("coreTopStack").appendChild(topSVG);
-
 
     // ########### BOTTOM ##########
     let bottomSVG = document.createElementNS(
@@ -99,7 +98,7 @@ function viewGerber() {
       "g"
     );
     mainBottomG.setAttribute("id", "main_bottom");
-    // mainBottomG.setAttribute("transform", gTransform);
+    mainBottomG.setAttribute("transform", gTransform);
     bottomSVG.appendChild(mainBottomG);
 
     for (let i = 0; i < files.length; i++) {
@@ -259,13 +258,15 @@ function svg2png(svg, swidth = svg_width, sheight = svg_height) {
       img.onload = () => {
           console.log(':: Image loaded ::');
           const canvas = document.createElement("canvas");
-          const scaleFactor = 100;
+          const scaleFactor = 1500 / 25.4;
           let width = swidth ;
           let height = sheight;
           canvas.width = width * scaleFactor;
           canvas.height = height * scaleFactor; 
           const ctx = canvas.getContext("2d");
           
+          ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, width * scaleFactor, height * scaleFactor);
           ctx.drawImage(img, 0, 0, width * scaleFactor, height * scaleFactor);
           resolve(canvas);
       };
