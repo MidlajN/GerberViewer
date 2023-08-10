@@ -14,9 +14,9 @@
 
   <script src="libs/gerber_to_svg.js" onload="initializeGerberToSVG()" defer></script>
   <script src="libs/pcb_stackup.js" onload="initializeGerberToSVG()"  defer></script>
-  <script  src="convert.js" onload="initializeGerberToSVG()" defer></script>
+  <script src="convert.js"></script>
 
-  <script  src="index.js"></script>
+  <script src="index.js"></script>
   <style>
     .o-0 {
       opacity: 0;
@@ -135,7 +135,7 @@
 
   <script>
     document.getElementById('renderButton').addEventListener('click', function(){
-      svg = document.getElementById('topLayerBW')
+      svg = document.getElementById('topLayerBW');
 
       for (const childElem of svg.children) {
         childElem.setAttribute('fill', 'white');
