@@ -1,23 +1,21 @@
 let svg_width = null
 let svg_height = null
-function viewGerber() {
-  const fileInput = document.getElementById("gerberFile");
+function viewGerber(fileData) {
+  const fileInput = fileData;
   const svgArray = {};
 
   // _______________________--- Gerber To SVG Conversion ---____________________________
-  viewPCBStackUp().then((stackup) => {
+  viewPCBStackUp(fileData).then((stackup) => {
     const svgParser = new DOMParser();
     svg_width = stackup.top.width;
     svg_height = stackup.top.height;
 
-    let files = fileInput.files;
+    let files = fileInput;
     let layers = stackup.layers;
     console.log('Stackup : ', stackup);
 
     // _________________--- Gerber To SVG with PCB-Stackup Library ---_________________
 
-    // const topDiv = document.getElementById("toplayer");
-    // const bottomDiv = document.getElementById("bottomlayer");
     top_layer = stackup.top.svg;
     bottom_layer = stackup.bottom.svg;
     parsedTopLayer = svgParser.parseFromString(top_layer, "image/svg+xml");
@@ -26,9 +24,7 @@ function viewGerber() {
     console.log('parsedTopLayer : ', parsedTopLayer);
     svgArray.topStack = parsedTopLayer.documentElement;
     svgArray.bottomStack = parsedBottomLayer.documentElement;
-    
-    // topDiv.innerHTML = top_layer;
-    // bottomDiv.innerHTML = bottom_layer;
+
     let id = [];
     let topFlag = false;
     let bottomFlag = false;
@@ -51,50 +47,42 @@ function viewGerber() {
     }
 
     // _________________--- Initial Main SVG ---_________________
-
-    // ########### TOP ##########
-    let topSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    topSVG.setAttribute("id", "topLayerBW");
-    topSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    topSVG.setAttribute("viewBox", stackup.top.viewBox);
-    topSVG.setAttribute("width", `${stackup.top.width}mm`);
-    topSVG.setAttribute("height", `${stackup.top.height}mm`);
-    topSVG.setAttribute("stroke-linecap", "round");
-    topSVG.setAttribute("stroke-line-join", "round");
-    topSVG.setAttribute("fill-rule", "nonzero");
-    // document.getElementById("coreTopStack").innerHTML = "";
-    // document.getElementById("coreTopStack").appendChild(topSVG);
-
-    // ########### BOTTOM ##########
-    let bottomSVG = document.createElementNS("http://www.w3.org/2000/svg","svg");
-    bottomSVG.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    bottomSVG.setAttribute("id", "bottomLayerBW");
-    bottomSVG.setAttribute("viewBox", stackup.bottom.viewBox);
-    bottomSVG.setAttribute("width", `${stackup.bottom.width}mm`);
-    bottomSVG.setAttribute("height", `${stackup.bottom.height}mm`);
-    bottomSVG.setAttribute("stroke-linecap", "round");
-    bottomSVG.setAttribute("stroke-line-join", "round");
-    bottomSVG.setAttribute("fill-rule", "evenodd");
-    // document.getElementById("coreBottomStack").innerHTML = "";
-    // document.getElementById("coreBottomStack").appendChild(bottomSVG);
-
     // _________________--- Get The transform attribute from pcbStackup ---_________________
     const svgData = stackup.top.svg;
     const trailDoc = svgParser.parseFromString(svgData, "image/svg+xml");
     const gElem = trailDoc.querySelector("g[transform]");
     let gTransform = gElem.getAttribute("transform");
 
-    // _______________--- Create Main Top <G> ---_________________
-    let mainTopG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    mainTopG.setAttribute("id", "main_top");
-    mainTopG.setAttribute("transform", gTransform);
-    topSVG.appendChild(mainTopG);
+    function createSVG(svgData, id) {
+      let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("id", id);
+      svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      svg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+      if (id === 'bottomLayerBW') {
+        svg.setAttribute('transform', 'matrix(-1,0,0,-1,0,0)');
+      } else if (id === 'topLayerBW') {
+        svg.setAttribute("transform","matrix(1,0,0,-1,0,0)");
+      }
 
-    // _______________--- Create Main Bottom <G> ---_________________
-    let mainBottomG = document.createElementNS("http://www.w3.org/2000/svg","g");
-    mainBottomG.setAttribute("id", "main_bottom");
-    mainBottomG.setAttribute("transform", gTransform);
-    bottomSVG.appendChild(mainBottomG);
+      svg.setAttribute("viewBox", svgData.viewBox);
+      svg.setAttribute("width", `${svgData.width}mm`);
+      svg.setAttribute("height", `${svgData.height}mm`);
+      svg.setAttribute("stroke-linecap", "round");
+      svg.setAttribute("stroke-line-join", "round");
+      svg.setAttribute("fill-rule", "evenodd");
+
+      let mainG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      mainG.setAttribute("id", id + '_g');
+      svg.appendChild(mainG);
+
+      return svg;
+    }
+
+    let topSVG = createSVG(stackup.top, 'topLayerBW');
+    let mainTopG = topSVG.querySelector('#topLayerBW_g');
+
+    let bottomSVG = createSVG(stackup.bottom, 'bottomLayerBW');
+    let mainBottomG = bottomSVG.querySelector('#bottomLayerBW_g');
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -162,21 +150,17 @@ function viewGerber() {
 
       reader.readAsArrayBuffer(file);
     }
-    console.log('SVG : ', topSVG);
-    console.log('SVG : ', bottomSVG);
+
     svgArray.topBW = topSVG;
     svgArray.bottomBW = bottomSVG;
-    
-    console.log('SVG ARRAY : ', svgArray);
 
     $("#overlay").fadeOut(700, function() {
       $("#result").fadeIn(700);
     });
 
-    function createAndModifySvg(svgData, svgId, gTransform) {
-      console.log('createAndModifySvg : ', svgData);
+    function createAndModifySvg(svgData) {
+     
       let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.setAttribute("id", svgId);
       for (const [key, value] of Object.entries(svgData.attributes)) {
         svg.setAttribute(key, value);
       }
@@ -200,97 +184,22 @@ function viewGerber() {
       if (existingStyle) {
         existingStyle.innerHTML = updatedStyle;
       }
+      const svgString = new XMLSerializer().serializeToString(svg);
+      let searchId = stackup.id;
+      const replacement = 'new_' + searchId;
+      const regIdEx = new RegExp(searchId, 'g');
+      const modifiedSvg = svgString.replace(regIdEx, replacement);
+      const svgDoc = svgParser.parseFromString(modifiedSvg, "image/svg+xml");
 
-      return svg;
+      return svgDoc.documentElement;
       
     }
-    svgCreated = createAndModifySvg(stackup.top, 'top', gTransform);
-    console.log('SVG Created : ', svgCreated);
-    // // _______________--- Create Temporary SVG From PCB stacup ---_________________
 
-    // let tempTopSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // for (const [key, value] of Object.entries(stackup.top.attributes)) {
-    //   tempTopSvg.setAttribute(key, value);
-    // }
-    // tempTopSvg.setAttribute('id', 'topLayerBW');
+    svgCreatedTop = createAndModifySvg(stackup.top,);
+    svgCreatedBottom = createAndModifySvg(stackup.bottom,);
 
-    // let defsTop = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    // defsTop.innerHTML = stackup.top.defs.join(' ');
-    // tempTopSvg.appendChild(defsTop);
-    // let gTop = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    // gTop.setAttribute("transform", gTransform);
-    // gTop.innerHTML = stackup.top.layer;
-    // tempTopSvg.appendChild(gTop);
-
-    // const updatedTopStyle = `.${stackup.id}_fr4 {color: #000000;!!important;}
-    // .${stackup.id}_cu {color: #ffffff;!important;}
-    // .${stackup.id}_cf {color: #ffffff;!important;}
-    // .${stackup.id}_sm {color: #000000; opacity: 0;!important;}
-    // .${stackup.id}_ss {color: #ffffff;!important;}
-    // .${stackup.id}_sp {color: #ffffff;!important;}
-    // .${stackup.id}_out {color: #ffffff;!important;}`;
-    // const existingTopStyle = defsTop.querySelector('style');
-    // if (existingTopStyle) {
-    //   existingTopStyle.innerHTML = updatedTopStyle;
-    // }
-
-    const svgTopString = new XMLSerializer().serializeToString(svgCreated);
-    console.log('svgTopString : ', svgTopString);
-    let searchTopId = stackup.id;
-    const topReplacement = 'new_' + searchTopId;
-    const regTopEx = new RegExp(searchTopId, 'g');
-    const modifiedSvgTopString = svgTopString.replace(regTopEx, topReplacement);
-    const svgTopDocument = svgParser.parseFromString(modifiedSvgTopString, "image/svg+xml");
-  
-    svgArray.topStackBW = svgTopDocument.documentElement;
-
-    document.getElementById('coreTopStack').appendChild(svgTopDocument.documentElement);
-      
-      
-    
-
-    // _______________--- Create Temporary Bottom SVG From PCB stacup ---_________________
-
-    let tempBottomSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    for (const [key, value] of Object.entries(stackup.bottom.attributes)) {
-      tempBottomSvg.setAttribute(key, value);
-    }
-    tempBottomSvg.setAttribute('id', 'topLayerBW');
-
-
-    let defsBottom = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    defsBottom.innerHTML = stackup.bottom.defs.join(' ');
-    tempBottomSvg.appendChild(defsBottom);
-    let gBottom = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    gBottom.setAttribute("transform", gTransform);
-    gBottom.innerHTML = stackup.bottom.layer;
-    tempBottomSvg.appendChild(gBottom);
-
-    const updatedBottomStyle = `.${stackup.id}_fr4 {color: #000000;!!important;}
-    .${stackup.id}_cu {color: #ffffff;!important;}
-    .${stackup.id}_cf {color: #ffffff;!important;}
-    .${stackup.id}_sm {color: #000000; opacity: 0;!important;}
-    .${stackup.id}_ss {color: #ffffff;!important;}
-    .${stackup.id}_sp {color: #ffffff;!important;}
-    .${stackup.id}_out {color: #ffffff;!important;}`;
-    const existingBottomStyle = defsBottom.querySelector('style');
-    if (existingBottomStyle) {
-      existingBottomStyle.innerHTML = updatedBottomStyle;
-    }
-
-    const svgBottomString = new XMLSerializer().serializeToString(tempBottomSvg);
-    console.log('svgBottomString : ', svgBottomString);
-    let searchBottomId = stackup.id;
-    const bottomReplacement = 'new_' + searchBottomId;
-    const regBottomEx = new RegExp(searchBottomId, 'g');
-    const modifiedSvgBottomString = svgBottomString.replace(regBottomEx, bottomReplacement);
-    const svgBottomDocument = svgParser.parseFromString(modifiedSvgBottomString, "image/svg+xml");
-    
-    // Wait for the parsing to complete
-    console.log('tempBottomSvg : ', svgBottomDocument.documentElement);
-    svgArray.bottomStackBW = svgBottomDocument.documentElement;
-    document.getElementById('coreTopStack').appendChild(svgBottomDocument.documentElement);
-    console.log('svgArray New : ', svgArray);
+    svgArray.topStackBW = svgCreatedTop;
+    svgArray.bottomStackBW = svgCreatedBottom;
 
     displaySVG(svgArray);
   });
@@ -298,14 +207,12 @@ function viewGerber() {
 }
 
 
-
 // __________________________ Function For Converting All the PCB Layers to SVG __________________________
-function viewPCBStackUp() {
+function viewPCBStackUp(files) {
   return new Promise((resolve, reject) => {
     $('#overlay').fadeIn(700);
-    const fileInput = document.getElementById("gerberFile");
-    if (fileInput.files !== null && fileInput.files.length > 0) {
-      let files = fileInput.files;
+    console.log('fileInput : ', files.length);
+    if (files !== null && files.length > 0) {
       const filePromises = Array.from(files).map((file) => {
         return new Promise((resolve) => {
           const reader = new FileReader();

@@ -11,65 +11,17 @@
   <!-- <script src="https://unpkg.com/pcb-stackup-core@^4.0.0/dist/pcb-stackup-core.min.js"></script>  -->
   <!-- <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script> -->
   
+  <link rel="stylesheet" href="style.css">
 
-  <script src="libs/gerber_to_svg.js" onload="initializeGerberToSVG()" defer></script>
-  <script src="libs/pcb_stackup.js" onload="initializeGerberToSVG()"  defer></script>
+  <script src="libs/gerber_to_svg.js" ></script>
+  <script src="libs/pcb_stackup.js" ></script>
   <script src="convert.js"></script>
 
   <script src="index.js"></script>
-  <style>
-    .o-0 {
-      opacity: 0;
-    }
-    .o-40 {
-      opacity: 0.4;
-    }
-    .rotate {
-      transform: rotate(180deg); 
-      transform-origin: center center;
-    }
-    #button{
-      display:block;
-      margin:20px auto;
-      padding:10px 30px;
-      background-color:#eee;
-      border:solid #ccc 1px;
-      cursor: pointer;
-    }
-    #overlay{	
-      position: fixed;
-      top: 0;
-      z-index: 100;
-      width: 100%;
-      height:100%;
-      display: none;
-      background: rgba(0,0,0,0.6);
-    }
-    .cv-spinner {
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;  
-    }
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px #ddd solid;
-      border-top: 4px #2e93e6 solid;
-      border-radius: 50%;
-      animation: sp-anime 0.8s infinite linear;
-    }
-    @keyframes sp-anime {
-      100% { 
-        transform: rotate(360deg); 
-      }
-    }
-    .is-hide{
-      display:none;
-    }
-  </style>
+
 </head>
 <body>
+  
 
   <div id="overlay">
     <div class="cv-spinner">
@@ -77,69 +29,149 @@
     </div>
   </div>
 
+  <section id="navbar" >
+   <div class="gerberNav shadow-sm">
+    <div class="my-auto">
+      <h >
+        <img class="logo" src="pcbLogo.png" alt="">
+        <b style="color: rgb(206, 94, 49);">Gerber</b>Viewer</h>
+     </div>
+     <div class="fablogo" >
+      <img style="width: 30px;" src="fab.png" alt="">
+     </div>
+   </div>
+   <div class="container-fluid secondNav">
+     <h>Super Fablab Kerala</h>
+   </div>
+  </section>
+
+
+
   <h1>Gerber Viewer</h1>
   <input type="file" id="gerberFile" multiple/>
   <button id="button">View Gerber</button>
   <div class="container">
-      <div id="result" style="display: none;">
-        <div id="mainTop" class="row">
-          <div class="col d-flex justify-content-center align-items-center" id="toplayer">
-          </div>
-          <div id="toplayer_button" class="col d-flex justify-content-center align-items-center">
-            <div class="m-auto">
-                <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_copper')">Copper</button><br>
-                <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_silkscreen')">Silk Screen</button><br>
-                <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_solderpaste')">Solder Paste</button><br>
-                <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_soldermask')">Solder Mask</button>
-                <br></br>
-            </div>
-          </div>
-        
-          <div class="col d-flex justify-content-center align-items-center" id="coreTopStack">
+    <div id="result" style="display: none;">
+      <div id="mainTop" class="row">
+        <div class="col d-flex justify-content-center align-items-center" id="toplayer">
+        </div>
+        <div id="toplayer_button" class="col d-flex justify-content-center align-items-center">
+          <div class="m-auto">
+              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_copper')">Copper</button><br>
+              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_silkscreen')">Silk Screen</button><br>
+              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_solderpaste')">Solder Paste</button><br>
+              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_soldermask')">Solder Mask</button>
+              <br></br>
           </div>
         </div>
-        <br>
-        <br>  
-        <div id="mainBottom" class="row">
-          <div class="col d-flex justify-content-center align-items-center" id="bottomlayer">
-          
-          </div>
-          <div id="buttonpart" class="col d-flex justify-content-center align-items-center">
-            <div class="mx-auto">
-              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_copper')" >Copper</button><br>
-              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_silkscreen')" >Silk Screen</button><br>
-              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_solderpaste')" >Solder Paste</button><br>
-              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_soldermask')" >Solder Mask</button>
-              <br><br>
-            </div>
-          </div>
-          <div class="col rotate d-flex justify-content-center align-items-center" id="coreBottomStack">
-
-          </div>
+      
+        <div class="col d-flex justify-content-center align-items-center" id="coreTopStack">
         </div>
-        
-        
       </div>
+      <br>
+      <br>  
+      <div id="mainBottom" class="row">
+        <div class="col d-flex justify-content-center align-items-center" id="bottomlayer">
+        
+        </div>
+        <div id="buttonpart" class="col d-flex justify-content-center align-items-center">
+          <div class="mx-auto">
+            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_copper')" >Copper</button><br>
+            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_silkscreen')" >Silk Screen</button><br>
+            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_solderpaste')" >Solder Paste</button><br>
+            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_soldermask')" >Solder Mask</button>
+            <br><br>
+          </div>
+        </div>
+        <div class="col d-flex justify-content-center align-items-center" id="coreBottomStack">
+        </div>
+      </div>
+    </div>
 
+    <div>
+      <h1>Canvas </h1>
+      <button id="renderButton">Convert</button>
+      <canvas id="canvaspng"></canvas>
+      <div id="canvas">
+      </div>
     </div>
   </div>
+</div>
 
-  <button id="renderButton">Convert</button>
+  
 
-  <div>
-    <h1>Canvas </h1>
-    <canvas id="canvaspng"></canvas>
-    <div id="canvas">
-    </div>
+
+
+  <div id="dropArea" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
+    <p>Drop your Gerber file here</p>
+    <input type="file" id="gerberFileInput" multiple />
   </div>
+
+  <script>
+    const dropArea = document.getElementById('dropArea');
+    const gerberFileInput = document.getElementById('gerberFileInput');
+
+    dropArea.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      dropArea.style.border = '2px dashed #ffff';
+      dropArea.style.cursor = 'pointer';
+    })
+    dropArea.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dropArea.style.border = '2px dashed #ccc';
+    })
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    })
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const files = e.dataTransfer.files;
+      dropArea.style.display = 'none';
+      initializeGerberToSVG(files);
+    })
+
+    gerberFileInput.addEventListener('change', (e) => {
+      const files = e.target.files;
+      initializeGerberToSVG(files);
+    })
+
+
+
+
+
+
+
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   <script>
     document.getElementById('renderButton').addEventListener('click', function(){
       svg = document.getElementById('topLayerBW');
 
-      for (const childElem of svg.children) {
-        childElem.setAttribute('fill', 'white');
-      }
       console.log('SVG :: ', svg);
       const svgString = new XMLSerializer().serializeToString(svg);
       console.log('SVG String :: ', svgString);
