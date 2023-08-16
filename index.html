@@ -3,8 +3,14 @@
 <head>
   <title>Gerber Viewer</title>
 
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Jquery -->
   <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
   
   <!-- <script src="https://unpkg.com/pcb-stackup@^4.0.0/dist/pcb-stackup.min.js" onload="initializeGerberToSVG()" defer></script> -->
@@ -29,6 +35,7 @@
     </div>
   </div>
 
+  <!-- Navbar -->
   <section id="navbar" >
    <div class="gerberNav shadow-sm">
     <div class="my-auto">
@@ -45,69 +52,188 @@
    </div>
   </section>
 
-
-
-  <h1>Gerber Viewer</h1>
-  <input type="file" id="gerberFile" multiple/>
-  <button id="button">View Gerber</button>
-  <div class="container">
-    <div id="result" style="display: none;">
-      <div id="mainTop" class="row">
-        <div class="col d-flex justify-content-center align-items-center" id="toplayer">
-        </div>
-        <div id="toplayer_button" class="col d-flex justify-content-center align-items-center">
-          <div class="m-auto">
-              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_copper')">Copper</button><br>
-              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_silkscreen')">Silk Screen</button><br>
-              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_solderpaste')">Solder Paste</button><br>
-              <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('top_soldermask')">Solder Mask</button>
-              <br></br>
-          </div>
-        </div>
-      
-        <div class="col d-flex justify-content-center align-items-center" id="coreTopStack">
-        </div>
-      </div>
-      <br>
-      <br>  
-      <div id="mainBottom" class="row">
-        <div class="col d-flex justify-content-center align-items-center" id="bottomlayer">
-        
-        </div>
-        <div id="buttonpart" class="col d-flex justify-content-center align-items-center">
-          <div class="mx-auto">
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_copper')" >Copper</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_silkscreen')" >Silk Screen</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_solderpaste')" >Solder Paste</button><br>
-            <button class="btn btn-primary m-2" style="width: 200px;" onclick="toggleLayer('bottom_soldermask')" >Solder Mask</button>
-            <br><br>
-          </div>
-        </div>
-        <div class="col d-flex justify-content-center align-items-center" id="coreBottomStack">
-        </div>
+  <!-- Drag and Drop -->
+  <section id="dropArea" style="height: 100vh;background-color: #fbfbfc;">
+    <div class=" d-flex justify-content-center align-items-center" style="height: 100%;">
+      <div  class="shadow" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
+        <p>Drop your Gerber file here</p>
+        <input type="file" id="gerberFileInput" multiple />
       </div>
     </div>
+  </section>
 
-    <div>
-      <h1>Canvas </h1>
-      <button id="renderButton">Convert</button>
-      <canvas id="canvaspng"></canvas>
-      <div id="canvas">
+
+
+  <section id="result" class="py-5 px-4" style="background-color: #fbfbfc;height: 100vh;">
+
+    <div style="height: 100%;display: flex;justify-content: space-between;">
+      <div>
+        <ol>
+          <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h4>
+          <li>
+            <p class="toggleName">Copper</p>
+            <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+          </li>
+          <li>
+            <p class="toggleName">Solder Mask</p>
+            <button class="toggleButton" style="background-color: #193d6b;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+          </li>
+          <li>
+            <p class="toggleName">Solder Paste</p>
+            <button class="toggleButton" style="background-color: #b9a323;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+          </li>
+          <li>
+            <p class="toggleName">Silk Screen</p>
+            <button class="toggleButton" style="background-color: #348f9b;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+          </li>
+
+          <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Bottom</h4>
+          <li>
+            <p class="toggleName">Copper</p>
+            <button class="toggleButton" style="background-color: #206b19;" onclick="toggleLayer('top_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+          </li>
+          <li>
+            <p class="toggleName">Solder Mask</p>
+            <button class="toggleButton" style="background-color: #193d6b;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+          </li>
+          <li>
+            <p class="toggleName">Solder Paste</p>
+            <button class="toggleButton" style="background-color: #b9a323;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+          </li>
+          <li>
+            <p class="toggleName">Silk Screen</p>
+            <button class="toggleButton" style="background-color: #348f9b;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+          </li>
+        </ol>
       </div>
-    </div>
-  </div>
-</div>
 
+      <div style="width: 100%;">
+        <div class="container-fluid py-3">
+          <div class="text-center">
+            <button id="top" class="button-side active" role="button"><span class="text">Top</span></button>
+            <button id="bottom" class="button-side" role="button"><span class="text">Bottom</span></button>
+          </div>
+        </div>
+
+        <div>
+          <div class="content">
+            <div id="mainTop" class="container-fluid shadow-sm" style="display: flex;justify-content: space-around;">
+              <div class="text-center" id="toplayer" >
+                <img src="fab.png" alt="">
+              </div>
+              <div>
+                <div class="text-center" id="coreTopStack">
+                  <img src="fab.png" alt="">
+                </div>
+                <div id="topInvert" class="text-center" style="display: none;">
+                  <img src="fab.png" style="mix-blend-mode: color-burn;" alt="">
+                </div>
+                <button class="invertButton" data-side="topside">invert</button>
+              </div>
+            </div>
+    
+            <div id="mainBottom"class="container-fluid shadow-sm" style="display: none;">
+              <div class="text-center" id="bottomlayer">
+                <img src="fab.png" alt="">
+              </div>
+              <div>
+                <div class="text-center" id="coreBottomStack">
+                  <img src="fab.png" alt="">
+                </div>
+                <div id="bottomInvert" class="text-center" style="display: none;">
+                  <img src="fab.png" style="mix-blend-mode: color-burn;" alt="">
+                </div>
+                <button class="invertButton" data-side="bottomside">invert</button>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    
   
 
 
 
-  <div id="dropArea" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
-    <p>Drop your Gerber file here</p>
-    <input type="file" id="gerberFileInput" multiple />
-  </div>
+      <div>
+      <div>
+        <h1>Canvas </h1>
+        <button id="renderButton">Convert</button>
+        <canvas id="canvaspng"></canvas>
+        <div id="canvas">
+        </div>
+      </div>
+
+
+  </section>
+
 
   <script>
+    $(document).ready(function(){
+      $("#top").click(function(){
+        $('#bottom').removeClass('active');
+        $('#top').addClass('active');
+        $("#mainBottom").fadeOut('slow', function(){
+          $("#mainTop").fadeIn();
+        });
+      })
+      $("#bottom").click(function(){
+        $('#top').removeClass('active');
+        $('#bottom').addClass('active');
+        $("#mainTop").fadeOut('slow', function(){
+          $("#mainBottom").fadeIn();
+        });
+      })
+      $('.invertButton').click(function(){
+        if ($(this).data('side') == 'topside') {
+          if ($('#coreTopStack').css('display') === 'none') {
+            $('#topInvert').fadeOut('slow', function(){
+              $('#coreTopStack').fadeIn('slow');
+            })
+          }
+          else {
+            $('#coreTopStack').fadeOut('slow', function(){
+              $('#topInvert').fadeIn('slow');
+            })
+          }
+        } else {
+          if ($('#coreBottomStack').css('display') === 'none') {
+            $('#bottomInvert').fadeOut('slow', function(){
+              $('#coreBottomStack').fadeIn('slow');
+            })
+          } else {
+            $('#coreBottomStack').fadeOut('slow', function(){
+              $('#bottomInvert').fadeIn('slow');
+            })
+          }
+        }
+      })
+    })
+
+
+
+    const toggleButtons = document.querySelectorAll('.toggleButton');
+
+    toggleButtons.forEach(button => {
+      const icon = button.querySelector('i');
+      let color = button.style.backgroundColor;
+      button.addEventListener('click', () => {
+        
+        if (icon.classList.contains('fa-eye')) {
+          button.style.backgroundColor = 'rgb(61 63 60)';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        } else {
+          button.style.backgroundColor = color;
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
+      });
+    });
+
+
     const dropArea = document.getElementById('dropArea');
     const gerberFileInput = document.getElementById('gerberFileInput');
 
@@ -126,12 +252,13 @@
     dropArea.addEventListener('drop', (e) => {
       e.preventDefault();
       const files = e.dataTransfer.files;
-      dropArea.style.display = 'none';
+      $(dropArea).fadeOut(1000);
       initializeGerberToSVG(files);
     })
 
     gerberFileInput.addEventListener('change', (e) => {
       const files = e.target.files;
+      dropArea.style.display = 'none';
       initializeGerberToSVG(files);
     })
 
@@ -167,7 +294,7 @@
 
 
 
-
+<!-- 
   <script>
     document.getElementById('renderButton').addEventListener('click', function(){
       svg = document.getElementById('topLayerBW');
@@ -194,7 +321,7 @@
     });
 
     })
-  </script>
+  </script> -->
 
 </body>
 </html>

@@ -210,7 +210,6 @@ function viewGerber(fileData) {
 // __________________________ Function For Converting All the PCB Layers to SVG __________________________
 function viewPCBStackUp(files) {
   return new Promise((resolve, reject) => {
-    $('#overlay').fadeIn(700);
     console.log('fileInput : ', files.length);
     if (files !== null && files.length > 0) {
       const filePromises = Array.from(files).map((file) => {
@@ -297,7 +296,7 @@ function displaySVG(svgArray) {
 
   document.getElementById('coreTopStack').appendChild(topStackBW);
   document.getElementById('coreBottomStack').appendChild(bottomStackBW);
-  document.getElementById('coreTopStack').appendChild(topBW);
-  document.getElementById('coreBottomStack').appendChild(bottomBW);
+  document.getElementById('topInvert').appendChild(topBW);
+  document.getElementById('bottomInvert').appendChild(bottomBW);
 }
 

@@ -2,6 +2,7 @@
 
 function initializeGerberToSVG(files) {
   console.log('files : ', files);
+  $('#overlay').fadeIn(700);
   viewGerber(files)
   // if (document.getElementById("button") !== null) {
   //   document.getElementById("button").addEventListener("click", viewGerber);

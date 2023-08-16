@@ -30,61 +30,153 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#button{
-    display:block;
-    margin:20px auto;
-    padding:10px 30px;
-    background-color:#eee;
-    border:solid #ccc 1px;
-    cursor: pointer;
+#overlay{	
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  height:100%;
+  display: none;
+  background: rgba(0,0,0,0.6);
+}
+.cv-spinner {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px #ddd solid;
+  border-top: 4px #2e93e6 solid;
+  border-radius: 50%;
+  animation: sp-anime 0.8s infinite linear;
+}
+@keyframes sp-anime {
+  100% { 
+    transform: rotate(360deg); 
   }
-  #overlay{	
-    position: fixed;
-    top: 0;
-    z-index: 100;
-    width: 100%;
-    height:100%;
-    display: none;
-    background: rgba(0,0,0,0.6);
-  }
-  .cv-spinner {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;  
-  }
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px #ddd solid;
-    border-top: 4px #2e93e6 solid;
-    border-radius: 50%;
-    animation: sp-anime 0.8s infinite linear;
-  }
-  @keyframes sp-anime {
-    100% { 
-      transform: rotate(360deg); 
-    }
-  }
-  .is-hide{
-    display:none;
-  }
+}
+.is-hide{
+  display:none;
+}
+
+
+
+
+
+/* CSS */
+.button-side {
+  appearance: none;
+  background-color: #FFFFFF;
+  border-width: 0;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Clarkson,Helvetica,sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.15rem;
+  line-height: 1em;
+  margin: 0;
+  opacity: 1;
+  outline: 0;
+  padding: 0.5em 1.2em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  text-rendering: geometricprecision;
+  text-transform: uppercase;
+  transition: opacity 300ms cubic-bezier(.694, 0, 0.335, 1),background-color 100ms cubic-bezier(.694, 0, 0.335, 1),color 100ms cubic-bezier(.694, 0, 0.335, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.button-side:before {
+  animation: opacityFallbackOut .5s step-end forwards;
+  backface-visibility: hidden;
+  background-color: #EBEBEB;
+  clip-path: polygon(-1% 0, 0 0, -25% 100%, -1% 100%);
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: translateZ(0);
+  transition: clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1), -webkit-clip-path .5s cubic-bezier(.165, 0.84, 0.44, 1);
+  width: 100%;
+}
+
+.button-side:hover:before {
+  animation: opacityFallbackIn 0s step-start forwards;
+  clip-path: polygon(0 0, 101% 0, 101% 101%, 0 101%);
+}
+
+.button-side:after {
+  background-color: #FFFFFF;
+}
+
+.button-side span {
+  z-index: 1;
+  position: relative;
+}
+
+
+ol {
+  list-style-type: none;
+  margin: 10px 0;
+  padding: 10px;
+  overflow: hidden;
+  width: fit-content;
+}
+li {
+  min-width: 200px;
+  display: flex;
+  background-color: #ffffff;
+  margin-top: 12px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 3px 10px, rgba(0, 0, 0, 0.22) 0px 0px 0px;
+  border-radius: 10px;
+}
+
+.toggleName {
+  margin-right: auto;
+  padding: 9px;
+  margin-bottom: 0%;
+  font-weight:500;
+}
+
+.toggleButton {
+  border: 0;
+  width: 40px;
+  text-align: center;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: background-color 500ms, border-radius 500ms, transform 500ms; /* Added transition properties here */
+}
+
+.toggleButton:hover {
+  background-color: #cacaca;
+  color: #b3b3b3;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  transform: scale(0.9);
+}
+
+
+/* Add the normal state without hover */
+.toggleButton:not(:hover) {
+  transform: scale(1);
+}
+
+.active {
+  color:green;
+}
+#mainBottom {
+  display: flex;
+  justify-content: space-around;
+}
