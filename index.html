@@ -52,14 +52,101 @@
    </div>
   </section>
 
+
+
   <!-- Drag and Drop -->
   <section id="dropArea" style="height: 100vh;background-color: #fbfbfc;">
-    <div class=" d-flex justify-content-center align-items-center" style="height: 100%;">
-      <div  class="shadow" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
-        <p>Drop your Gerber file here</p>
-        <input type="file" id="gerberFileInput" multiple />
+    
+    <div class="shadow-lg mx-3 my-4 layerNav row" >
+      <div class="col-md-9" style="padding: 0 !important;">
+        <!-- Navbar -->
+        <div class="navbar-animmenu" id="navbar-animmenu">
+          <ul class="show-dropdown main-navbar">
+              <div class="hori-selector"><div class="left"></div><div class="right"></div></div>
+              <li class="active">
+                  <a><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+              </li>
+              <li>
+                  <a id="addNewButton"><i class="far fa-plus-square"></i>Add New</a>
+              </li>  
+          </ul>
+        </div>
+
+        <!-- Layout -->
+        <div class="layerNav container-fluid" style="height: 85vh;background-color: #f0f0f0;" >  
+          <div class="row">
+            <div class="col-lg-3 col-md-12 col-sm-12">
+              <ol>
+                <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h4>
+                <li class="litoggle">
+                  <p class="toggleName">Copper</p>
+                  <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+                <li class="litoggle">
+                  <p class="toggleName">Solder Mask</p>
+                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('top_solder_mask')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+                <li class="litoggle">
+                  <p class="toggleName">Solder Paste</p>
+                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solder_paste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+                <li class="litoggle">
+                  <p class="toggleName">Silk Screen</p>
+                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+      
+                <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Bottom</h4>
+                <li class="litoggle">
+                  <p class="toggleName">Copper</p>
+                  <button class="toggleButton" style="background-color: #206b19;" onclick="toggleLayer('bottom_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+                <li class="litoggle">
+                  <p class="toggleName">Solder Mask</p>
+                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_solder_mask')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+                <li class="litoggle">
+                  <p class="toggleName">Solder Paste</p>
+                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('bottom_solder_paste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+                <li class="litoggle">
+                  <p class="toggleName">Silk Screen</p>
+                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+
+                <h4> &nbsp;</h4>
+                <li class="litoggle">
+                  <p class="toggleName">Outline</p>
+                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
+              </ol>
+            </div>
+
+            <div class="col-lg-9 col-md-12 col-sm-12" style="background-color: #f0f0f0;height: 78vh;">
+              <div class="mt-4 me-3" style="background-color: #ffffff;height:-webkit-fill-available;">
+                <div class=" d-flex justify-content-center align-items-center" style="height: 100%;">
+                  <div  class="shadow" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
+                    <p>Drop your Gerber file here</p>
+                    <input type="file" id="gerberFileInput" multiple />
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3" style="padding-right: 0 !important;padding-left: 2px;">
+        <div class="navbar-animmenu2">
+          
+        </div>
+        sdfdffs
       </div>
     </div>
+    
+      
+    </div>
+    
   </section>
 
 
@@ -67,45 +154,7 @@
   <section id="result" class="py-5 px-4" style="background-color: #fbfbfc;height: 100vh;">
 
     <div style="height: 100%;display: flex;justify-content: space-between;">
-      <div>
-        <ol>
-          <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h4>
-          <li>
-            <p class="toggleName">Copper</p>
-            <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-          </li>
-          <li>
-            <p class="toggleName">Solder Mask</p>
-            <button class="toggleButton" style="background-color: #193d6b;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-          </li>
-          <li>
-            <p class="toggleName">Solder Paste</p>
-            <button class="toggleButton" style="background-color: #b9a323;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-          </li>
-          <li>
-            <p class="toggleName">Silk Screen</p>
-            <button class="toggleButton" style="background-color: #348f9b;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-          </li>
-
-          <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Bottom</h4>
-          <li>
-            <p class="toggleName">Copper</p>
-            <button class="toggleButton" style="background-color: #206b19;" onclick="toggleLayer('top_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-          </li>
-          <li>
-            <p class="toggleName">Solder Mask</p>
-            <button class="toggleButton" style="background-color: #193d6b;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-          </li>
-          <li>
-            <p class="toggleName">Solder Paste</p>
-            <button class="toggleButton" style="background-color: #b9a323;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-          </li>
-          <li>
-            <p class="toggleName">Silk Screen</p>
-            <button class="toggleButton" style="background-color: #348f9b;"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-          </li>
-        </ol>
-      </div>
+      
 
       <div style="width: 100%;">
         <div class="container-fluid py-3">
@@ -171,6 +220,69 @@
 
 
   <script>
+
+
+
+
+
+
+    // ---------horizontal-navbar-menu-----------
+		var tabsNewAnim = $('#navbar-animmenu');
+		var selectorNewAnim = $('#navbar-animmenu').find('li').length;
+		var selectorNewAnim = $(".tabs").find(".selector");
+		var activeItemNewAnim = tabsNewAnim.find('.active');
+		var activeWidthNewAnimWidth = activeItemNewAnim.innerWidth();
+		var itemPosNewAnimLeft = activeItemNewAnim.position();
+		$(".hori-selector").css({
+			"left":itemPosNewAnimLeft.left + "px",
+			"width": activeWidthNewAnimWidth + "px"
+		});
+		$("#navbar-animmenu").on("click","li",function(e){
+			$('#navbar-animmenu ul li').removeClass("active");
+			$(this).addClass('active');
+			var activeWidthNewAnimWidth = $(this).innerWidth();
+			var itemPosNewAnimLeft = $(this).position();
+			$(".hori-selector").css({
+				"left":itemPosNewAnimLeft.left + "px",
+				"width": activeWidthNewAnimWidth + "px"
+			});
+		});
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const addNewButton = document.getElementById('addNewButton');
+    addNewButton.addEventListener('click', function() {
+        // Create a new list item
+        const newItem = document.createElement('li');
+        const newLink = document.createElement('a');
+        newLink.innerHTML = '<i class="far fa-file"></i>New Item';
+        newItem.appendChild(newLink);
+        
+        // Insert the new item before the "Add New" button
+        const navbarList = document.querySelector('.show-dropdown.main-navbar');
+        navbarList.insertBefore(newItem, addNewButton.parentElement);
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     $(document).ready(function(){
       $("#top").click(function(){
         $('#bottom').removeClass('active');
@@ -222,11 +334,13 @@
       button.addEventListener('click', () => {
         
         if (icon.classList.contains('fa-eye')) {
-          button.style.backgroundColor = 'rgb(61 63 60)';
+          button.style.backgroundColor = 'white';
+          icon.style.color = 'black';
           icon.classList.remove('fa-eye');
           icon.classList.add('fa-eye-slash');
         } else {
           button.style.backgroundColor = color;
+          icon.style.color = 'white';
           icon.classList.remove('fa-eye-slash');
           icon.classList.add('fa-eye');
         }
