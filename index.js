@@ -47,35 +47,53 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // ---------------- Create New Task in Navbar ----------------
   function createNewItem() {
     const newItem = document.createElement('li');
     const newLink = document.createElement('a');
     const secondLink = document.createElement('a');
+    const name = document.createElement('a');
+  
+    name.setAttribute('contenteditable', 'false');
+    name.classList.add('editableName');
     secondLink.style.paddingLeft = '0px';
-    newItem.style.minWidth = '130px';
+    newItem.style.width = '130px';
     newItem.style.maxWidth = '130px';
-    secondLink.setAttribute('onclick', 'removeItem(this.parentElement)');
-    newLink.innerHTML = '<i class="far fa-file"></i>New Item ';
+    
+    // Set the click event handler for the second link to remove the item
+    secondLink.onclick = function() {
+      removeItem(this.parentElement);
+    };
+    
+    // Set the double click event handler for the new item to make it editable
+    newItem.ondblclick = function() {
+      makeEditable(this);
+    };
+
+    newLink.style.maxWidth = '30px';
+    newLink.innerHTML = '<i class="far fa-file"></i>';
+    name.innerHTML = 'New Layer';
     secondLink.innerHTML = '<i class="fa-solid fa-circle-xmark fa-sm" style="position:relative; right:-8px"></i>';
+    
     newItem.appendChild(newLink);
+    newItem.appendChild(name);
     newItem.appendChild(secondLink);
-
-    $('#navbar-animmenu ul li').removeClass("active");
-
+  
+    $('#navbar-animmenu ul li').removeClass('active');
+  
     const navbarList = document.querySelector('#navbar-animmenu ul');
     navbarList.appendChild(newItem);
-
-    $(newItem).addClass('active');
-
-    const activeWidthNewAnimWidth = $(newItem).innerWidth();
-    const itemPosNewAnimLeft = $(newItem).position();
-    $(".hori-selector").css({
-        "left": itemPosNewAnimLeft.left + "px",
-        "width": activeWidthNewAnimWidth + "px"
+  
+    newItem.classList.add('active');
+  
+    const activeWidth = $(newItem).innerWidth();
+    const itemPosLeft = $(newItem).position();
+    $('.hori-selector').css({
+      left: itemPosLeft.left + 'px',
+      width: activeWidth + 'px'
     });
   }
 });
-
 
 
 // ------------------- Remove The Task from TaskBar -------------------
@@ -120,6 +138,29 @@ function removeItem(parent) {
   addNewButton.setAttribute('data-sds', index - 1);
 }
 
+// ----------------------- Make The Task Name Editable ------------------------
+function makeEditable(element) {
+  const contentElement = element.querySelector('a[contenteditable]');
+  contentElement.setAttribute('contenteditable', 'true');
+  contentElement.focus();
+  
+  // Add event listener for blur (when user clicks outside the element)
+  contentElement.addEventListener('blur', function() {
+      contentElement.setAttribute('contenteditable', 'false');
+  });
+
+  // Add event listener for Enter key
+  contentElement.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+          event.preventDefault(); // Prevent newline from being added
+          contentElement.blur(); // Trigger blur event to make content uneditable
+      }
+  });
+}
+
+
+
+
 
 
 function toggleLayer(LayerId, index) {
@@ -150,30 +191,3 @@ function toggleLayer(LayerId, index) {
 }
 
 
-
-
-function makeEditable(liElement) {
-  // Create an input element and set its value to the text content of the li element
-  var inputElement = document.createElement("input");
-  inputElement.value = liElement.textContent;
-
-  // Replace the li element's content with the input element
-  liElement.innerHTML = "";
-  liElement.appendChild(inputElement);
-
-  // Focus on the input element and select its content
-  inputElement.focus();
-  inputElement.select();
-
-  // When the input element loses focus, revert back to the li element with the updated value
-  inputElement.addEventListener("blur", function() {
-      liElement.textContent = inputElement.value;
-  });
-  
-  // When the Enter key is pressed, update the li element and remove the input element
-  inputElement.addEventListener("keyup", function(event) {
-      if (event.key === "Enter") {
-          liElement.textContent = inputElement.value;
-      }
-  });
-}

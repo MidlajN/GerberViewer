@@ -62,6 +62,9 @@
   display:none;
 }
 
+[contenteditable="true"]:focus {
+  outline: none;
+}
 
 
 /* CSS */
@@ -243,8 +246,19 @@ ol {
 	list-style-type: none;
 	float: left;
   display: -webkit-inline-box;
-  
+  padding-right: 10px;
+  min-width: 120px;
+  max-width: 120px;
 }
+
+.editableName {
+  min-width: 70px;
+  max-width: 70px;
+  padding: 0 !important;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 
 #navbar-animmenu ul li a{
 	color: rgba(255, 255, 255, 0.753);
