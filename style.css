@@ -202,6 +202,16 @@ ol {
   border-top-right-radius: 10px;
 }
 
+#addNewButton {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.753);
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  width: fit-content;
+}
+
 .navbar-animmenu {
 	background: #5161ce;
 	float: left;
@@ -223,16 +233,18 @@ ol {
 #navbar-animmenu ul{
 	padding: 0px;
 	margin-left: 10px;
+  cursor: pointer;
   
 }
 
 #navbar-animmenu ul li a i{
-	margin-right: 10px;
+	margin-right: 12px;
 }
 
 #navbar-animmenu li {
 	list-style-type: none;
 	float: left;
+  display: -webkit-inline-box;
 }
 
 #navbar-animmenu ul li a{
@@ -241,7 +253,8 @@ ol {
     font-size: 15px;
     line-height: 40px;
     display: block;
-    padding: 0px 20px;
+    padding-left: 12px;
+    padding-right: 5px;
     transition-duration:0.6s;
 	transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
     position: relative;
@@ -254,7 +267,7 @@ ol {
 }
 
 
-#navbar-animmenu a:not(:only-child):after {
+/* #navbar-animmenu a:not(:only-child):after {
 	content: "\f105";
 	position: absolute;
 	right: 20px;
@@ -266,7 +279,7 @@ ol {
 	vertical-align: middle;
 	font-weight: 900;
 	transition: 0.5s;
-}
+} */
 
 #navbar-animmenu .active>a:not(:only-child):after {
 	transform: rotate(90deg);

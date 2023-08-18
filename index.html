@@ -55,21 +55,25 @@
 
 
   <!-- Drag and Drop -->
-  <section id="dropArea" style="height: 100vh;background-color: #fbfbfc;">
+  <section style="height: 100vh;background-color: #fbfbfc;">
     
     <div class="shadow-lg mx-3 my-4 layerNav row" >
       <div class="col-md-9" style="padding: 0 !important;">
         <!-- Navbar -->
         <div class="navbar-animmenu" id="navbar-animmenu">
           <ul class="show-dropdown main-navbar">
-              <div class="hori-selector"><div class="left"></div><div class="right"></div></div>
-              <li class="active">
-                  <a><i class="fas fa-tachometer-alt"></i>Dashboard</a>
-              </li>
-              <li>
-                  <a id="addNewButton"><i class="far fa-plus-square"></i>Add New</a>
-              </li>  
+              <div class="hori-selector">
+                <div class="left"></div>
+                <div class="right"></div>
+              </div>
+              <li ondblclick="makeEditable(this)" style="padding-right: 10px;" class="active">
+                  <a>
+                    <i class="fa-solid fa-file"></i>All Layers
+                    
+                  </a>
+              </li> 
           </ul>
+          <a id="addNewButton" data-sds=1 style="margin-top: -5px;"><i class="fa-solid fa-square-plus"></i></a>
         </div>
 
         <!-- Layout -->
@@ -80,19 +84,19 @@
                 <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h4>
                 <li class="litoggle">
                   <p class="toggleName">Copper</p>
-                  <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper', 0)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Solder Mask</p>
-                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('top_solder_mask')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('top_soldermask', 1)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Solder Paste</p>
-                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solder_paste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solder_paste', 2)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Silk Screen</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silk_screen', 3)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
       
                 <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Bottom</h4>
@@ -102,7 +106,7 @@
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Solder Mask</p>
-                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_solder_mask')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_solder_mask')" ><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Solder Paste</p>
@@ -118,19 +122,64 @@
                   <p class="toggleName">Outline</p>
                   <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
+                <li class="litoggle">
+                  <p class="toggleName"> Drill</p>
+                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
               </ol>
             </div>
 
             <div class="col-lg-9 col-md-12 col-sm-12" style="background-color: #f0f0f0;height: 78vh;">
-              <div class="mt-4 me-3" style="background-color: #ffffff;height:-webkit-fill-available;">
+              <div id="dropArea"  class="mt-4 me-3" style="background-color: #ffffff;height:-webkit-fill-available;">
                 <div class=" d-flex justify-content-center align-items-center" style="height: 100%;">
                   <div  class="shadow" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
                     <p>Drop your Gerber file here</p>
                     <input type="file" id="gerberFileInput" multiple />
                   </div>
                 </div>
+              </div> 
+              <div id="result" style="display: none;">
+                <div class="container-fluid py-3">
+                  <div class="text-center">
+                    <button id="top" class="button-side active" role="button"><span class="text">Top</span></button>
+                    <button id="bottom" class="button-side" role="button"><span class="text">Bottom</span></button>
+                  </div>
+                </div>
+        
+                <div>
+                  <div class="content">
+                    <div id="mainTop" class="container-fluid shadow-sm" style="display: flex;justify-content: space-around;">
+                      <div class="text-center" id="toplayer" >
+                        <img src="fab.png" alt="">
+                      </div>
+                      <div>
+                        <div class="text-center" id="coreTopStack">
+                          <img src="fab.png" alt="">
+                        </div>
+                        <div id="topInvert" class="text-center" style="display: none;">
+                          <img src="fab.png" style="mix-blend-mode: color-burn;" alt="">
+                        </div>
+                        <button class="invertButton" data-side="topside">invert</button>
+                      </div>
+                    </div>
+            
+                    <div id="mainBottom"class="container-fluid shadow-sm" style="display: none;">
+                      <div class="text-center" id="bottomlayer">
+                        <img src="fab.png" alt="">
+                      </div>
+                      <div>
+                        <div class="text-center" id="coreBottomStack">
+                          <img src="fab.png" alt="">
+                        </div>
+                        <div id="bottomInvert" class="text-center" style="display: none;">
+                          <img src="fab.png" style="mix-blend-mode: color-burn;" alt="">
+                        </div>
+                        <button class="invertButton" data-side="bottomside">invert</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              
             </div>
             
           </div>
@@ -138,7 +187,7 @@
       </div>
       <div class="col-md-3" style="padding-right: 0 !important;padding-left: 2px;">
         <div class="navbar-animmenu2">
-          
+
         </div>
         sdfdffs
       </div>
@@ -151,53 +200,13 @@
 
 
 
-  <section id="result" class="py-5 px-4" style="background-color: #fbfbfc;height: 100vh;">
+  <section  class="py-5 px-4" style="background-color: #fbfbfc;height: 100vh;">
 
     <div style="height: 100%;display: flex;justify-content: space-between;">
       
 
       <div style="width: 100%;">
-        <div class="container-fluid py-3">
-          <div class="text-center">
-            <button id="top" class="button-side active" role="button"><span class="text">Top</span></button>
-            <button id="bottom" class="button-side" role="button"><span class="text">Bottom</span></button>
-          </div>
-        </div>
-
-        <div>
-          <div class="content">
-            <div id="mainTop" class="container-fluid shadow-sm" style="display: flex;justify-content: space-around;">
-              <div class="text-center" id="toplayer" >
-                <img src="fab.png" alt="">
-              </div>
-              <div>
-                <div class="text-center" id="coreTopStack">
-                  <img src="fab.png" alt="">
-                </div>
-                <div id="topInvert" class="text-center" style="display: none;">
-                  <img src="fab.png" style="mix-blend-mode: color-burn;" alt="">
-                </div>
-                <button class="invertButton" data-side="topside">invert</button>
-              </div>
-            </div>
-    
-            <div id="mainBottom"class="container-fluid shadow-sm" style="display: none;">
-              <div class="text-center" id="bottomlayer">
-                <img src="fab.png" alt="">
-              </div>
-              <div>
-                <div class="text-center" id="coreBottomStack">
-                  <img src="fab.png" alt="">
-                </div>
-                <div id="bottomInvert" class="text-center" style="display: none;">
-                  <img src="fab.png" style="mix-blend-mode: color-burn;" alt="">
-                </div>
-                <button class="invertButton" data-side="bottomside">invert</button>
-              </div>
-              
-            </div>
-          </div>
-        </div>
+        
       </div>
 
     </div>
@@ -218,55 +227,8 @@
 
   </section>
 
-
   <script>
-
-
-
-
-
-
-    // ---------horizontal-navbar-menu-----------
-		var tabsNewAnim = $('#navbar-animmenu');
-		var selectorNewAnim = $('#navbar-animmenu').find('li').length;
-		var selectorNewAnim = $(".tabs").find(".selector");
-		var activeItemNewAnim = tabsNewAnim.find('.active');
-		var activeWidthNewAnimWidth = activeItemNewAnim.innerWidth();
-		var itemPosNewAnimLeft = activeItemNewAnim.position();
-		$(".hori-selector").css({
-			"left":itemPosNewAnimLeft.left + "px",
-			"width": activeWidthNewAnimWidth + "px"
-		});
-		$("#navbar-animmenu").on("click","li",function(e){
-			$('#navbar-animmenu ul li').removeClass("active");
-			$(this).addClass('active');
-			var activeWidthNewAnimWidth = $(this).innerWidth();
-			var itemPosNewAnimLeft = $(this).position();
-			$(".hori-selector").css({
-				"left":itemPosNewAnimLeft.left + "px",
-				"width": activeWidthNewAnimWidth + "px"
-			});
-		});
-
-
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-    const addNewButton = document.getElementById('addNewButton');
-    addNewButton.addEventListener('click', function() {
-        // Create a new list item
-        const newItem = document.createElement('li');
-        const newLink = document.createElement('a');
-        newLink.innerHTML = '<i class="far fa-file"></i>New Item';
-        newItem.appendChild(newLink);
-        
-        // Insert the new item before the "Add New" button
-        const navbarList = document.querySelector('.show-dropdown.main-navbar');
-        navbarList.insertBefore(newItem, addNewButton.parentElement);
-    });
-});
-
-
+    
 
 
 
