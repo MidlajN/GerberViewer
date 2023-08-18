@@ -52,7 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const newLink = document.createElement('a');
     const secondLink = document.createElement('a');
     secondLink.style.paddingLeft = '0px';
-    secondLink.setAttribute('onclick', 'removeItem(this)');
+    newItem.style.minWidth = '130px';
+    newItem.style.maxWidth = '130px';
+    secondLink.setAttribute('onclick', 'removeItem(this.parentElement)');
     newLink.innerHTML = '<i class="far fa-file"></i>New Item ';
     secondLink.innerHTML = '<i class="fa-solid fa-circle-xmark fa-sm" style="position:relative; right:-8px"></i>';
     newItem.appendChild(newLink);
@@ -75,24 +77,55 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function removeItem(item) {
-  console.log('item : ', item);
-  let addNewButton = document.getElementById('addNewButton');
-  let index = addNewButton.getAttribute('data-sds');
-  index = parseInt(index);
-  if (index === 10) {
-    console.log('index : ', index);
-    addNewButton.style.display = '';
+
+// ------------------- Remove The Task from TaskBar -------------------
+function removeItem(parent) {
+  const addNewButton = document.getElementById('addNewButton');
+  const index = parseInt(addNewButton.getAttribute('data-sds'));
+
+  const isActive = $(parent).hasClass("active");
+  let parentWidth = $(parent).innerWidth();
+  const horiSelectorPositon = $(".hori-selector").position();
+  let newHoriPosition = horiSelectorPositon.left - parentWidth;
+
+  if (newHoriPosition <= 0) {
+    newHoriPosition = 10;
+    parentWidth -= 10;
   }
-  addNewButton.setAttribute('data-sds', index - 1);
-  $(item.parentElement).remove();
+
+  const siblings = $(parent).siblings();
+  const parentIndex = $(parent).index();
+  const activeIndex = siblings.index(siblings.filter('.active'));
+
+  // Check if the parent element is active or the active element is after the parent element
+  if (isActive || activeIndex >= parentIndex) {
+    $('.hori-selector').css({
+      "left": newHoriPosition + "px",
+      "width": parentWidth + "px",
+    });
+
+    if (isActive) {
+      $(parent).prev().addClass("active");
+    }
+    $(parent).remove();
+    addNewButton.setAttribute('data-sds', index - 1);
+  } else {
+    $(parent).remove();
+  }
   
+  if (index === 10) {
+      addNewButton.style.display = '';
+  }
+
+  addNewButton.setAttribute('data-sds', index - 1);
 }
+
+
 
 function toggleLayer(LayerId, index) {
   console.log('LayerId : ', index);
-  let stackTop = document.getElementById("mainTop");
-  let stackBottom = document.getElementById("mainBottom");
+  const stackTop = document.getElementById("mainTop");
+  const stackBottom = document.getElementById("mainBottom");
   const topLayerElem = stackTop.getElementsByTagName("g");
   const bottomLayerElem = stackBottom.getElementsByTagName("g");
 
@@ -115,6 +148,8 @@ function toggleLayer(LayerId, index) {
     }
   });
 }
+
+
 
 
 function makeEditable(liElement) {
