@@ -292,11 +292,14 @@ function displaySVG(svgArray) {
   const { topStack, bottomStack, topStackBW, bottomStackBW, topBW, bottomBW } = svgArray;
 
   document.getElementById('toplayer').appendChild(topStack);
+  document.getElementById('topInvert').appendChild(topBW);
+
   document.getElementById('bottomlayer').appendChild(bottomStack);
+  document.getElementById('bottomInvert').appendChild(bottomBW);
 
   document.getElementById('coreTopStack').appendChild(topStackBW);
   document.getElementById('coreBottomStack').appendChild(bottomStackBW);
-  document.getElementById('topInvert').appendChild(topBW);
-  document.getElementById('bottomInvert').appendChild(bottomBW);
+  
+  
 }
 

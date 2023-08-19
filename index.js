@@ -159,28 +159,27 @@ function makeEditable(element) {
 }
 
 
-
-
-
-
+// ----------------------- Toggle Layer ------------------------
 function toggleLayer(LayerId, index) {
   console.log('LayerId : ', index);
-  const stackTop = document.getElementById("mainTop");
-  const stackBottom = document.getElementById("mainBottom");
-  const topLayerElem = stackTop.getElementsByTagName("g");
-  const bottomLayerElem = stackBottom.getElementsByTagName("g");
+  const mainPCB = document.getElementById("mainPCB");
+  const bwPCB = document.getElementById("bwPCB");
+  const bwPCBInvert = document.getElementById("bwPCBInvert");
 
-  Array.from(topLayerElem).forEach((layer) => {
+  const mainPCBLayers = mainPCB.getElementsByTagName("g");
+  const bwPCBLayers = bwPCB.getElementsByTagName("g");
+  const bwPCBInvertLayers = bwPCBInvert.getElementsByTagName("g");
+
+  Array.from(mainPCBLayers).forEach((layer) => {
     if (layer.hasAttribute("id")) {
       const layerId = layer.getAttribute("id");
       if (layerId.endsWith(LayerId)) {
         layer.style.display = layer.style.display === "none" ? "block" : "none";
-        layerStatus[index] = index;
         
       }
     }
   });
-  Array.from(bottomLayerElem).forEach((layer) => {
+  Array.from(bwPCBLayers).forEach((layer) => {
     if (layer.hasAttribute("id")) {
       const layerId = layer.getAttribute("id");
       if (layerId.endsWith(LayerId)) {
@@ -188,6 +187,14 @@ function toggleLayer(LayerId, index) {
       }
     }
   });
+  Array.from(bwPCBInvertLayers).forEach((layer) => {
+    if (layer.hasAttribute("id")) {
+      const layerId = layer.getAttribute("id");
+      if (layerId.endsWith(LayerId)) {
+        layer.style.display = layer.style.display === "none" ? "block" : "none";
+      }
+    }
+  })
 }
 
 

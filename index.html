@@ -28,13 +28,6 @@
 </head>
 <body>
   
-
-  <div id="overlay">
-    <div class="cv-spinner">
-      <span class="spinner"></span>
-    </div>
-  </div>
-
   <!-- Navbar -->
   <section id="navbar" >
    <div class="gerberNav shadow-sm">
@@ -70,16 +63,13 @@
               <a>
                   <i class="fa-solid fa-file"></i> <a contenteditable="false" class="editableName">All Layers</a>
               </a>
-          </li>
-          
-            
-                       
+            </li>            
           </ul>
           <a id="addNewButton" data-sds=1 style="margin-top: -5px;"><i class="fa-solid fa-square-plus"></i></a>
         </div>
 
         <!-- Layout -->
-        <div class="layerNav container-fluid" style="height: 85vh;background-color: #f0f0f0;" >  
+        <div class="layerNav container-fluid" style="background-color: #f0f0f0;" >  
           <div class="row">
             <div class="col-lg-3 col-md-12 col-sm-12">
               <ol>
@@ -94,11 +84,11 @@
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Solder Paste</p>
-                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solder_paste', 2)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solderpaste', 2)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Silk Screen</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silk_screen', 3)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silkscreen', 3)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
       
                 <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Bottom</h4>
@@ -108,15 +98,15 @@
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Solder Mask</p>
-                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_solder_mask')" ><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_soldermask')" ><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Solder Paste</p>
-                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('bottom_solder_paste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('bottom_solderpaste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
                 <li class="litoggle">
                   <p class="toggleName">Silk Screen</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silkscreen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
 
                 <h4> &nbsp;</h4>
@@ -131,8 +121,17 @@
               </ol>
             </div>
 
-            <div class="col-lg-9 col-md-12 col-sm-12" style="background-color: #f0f0f0;height: 78vh;">
-              <div id="dropArea"  class="mt-4 me-3" style="background-color: #ffffff;height:-webkit-fill-available;">
+            <div class="col-lg-9 col-md-12 col-sm-12 " style="background-color: #f0f0f0;height: 80vh;padding: 30px;">
+              
+
+              <div id="dropArea" class="shadow"  style="background-color: #f3f3f3;height:-webkit-fill-available;position: relative;">
+                <div id="overlay">
+                  <div class="cv-spinner">
+                    <span class="spinner"></span>
+                  </div>
+                </div>
+                
+
                 <div class=" d-flex justify-content-center align-items-center" style="height: 100%;">
                   <div  class="shadow" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
                     <p>Drop your Gerber file here</p>
@@ -140,45 +139,48 @@
                   </div>
                 </div>
               </div> 
-              <div id="result" style="display: none;">
+
+              <div id="result" class="shadow" style="display: none;height: 90%;">
+                <div class="content " style="padding: 20px;height: -webkit-fill-available;overflow: hidden;">
+
+                  <div id="mainPCB" class="container-fluid " style="height: -webkit-fill-available;">
+                    <div id="toplayer" class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;" >
+                    </div>
+                    
+                    <div id="bottomlayer" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">  
+                    </div>
+                  </div>
+
+                  <div id="bwPCB" class="container-fluid " style="height: -webkit-fill-available;display: none;">
+                    <div class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
+                      <div id="coreTopStack"  >
+                      </div> 
+                    </div>
+                   
+                    <div style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
+                      <div id="coreBottomStack" class="text-center" style="display: block;" >
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="bwPCBInvert" class="container-fluid " style="height: -webkit-fill-available;display: none;">
+                    <div class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
+                      <div id="topInvert" class="text-center" class="container-fluid ">
+                      </div>
+                    </div>
+                    <div style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
+                      <div id="bottomInvert" class="text-center">
+                      </div>
+                    </div>
+                    
+                  </div>
+
+                </div>
                 <div class="container-fluid py-3">
-                  <div class="text-center">
+                  <div id="container" class="text-center">
                     <button id="top" class="button-side active" role="button"><span class="text">Top</span></button>
                     <button id="bottom" class="button-side" role="button"><span class="text">Bottom</span></button>
-                  </div>
-                </div>
-        
-                <div>
-                  <div class="content">
-                    <div id="mainTop" class="container-fluid shadow-sm" style="display: flex;justify-content: space-around;">
-                      <div class="text-center" id="toplayer" >
-                        <img src="fab.png" alt="">
-                      </div>
-                      <div>
-                        <div class="text-center" id="coreTopStack">
-                          <img src="fab.png" alt="">
-                        </div>
-                        <div id="topInvert" class="text-center" style="display: none;">
-                          <img src="fab.png" style="mix-blend-mode: color-burn;" alt="">
-                        </div>
-                        <button class="invertButton" data-side="topside">invert</button>
-                      </div>
-                    </div>
-            
-                    <div id="mainBottom"class="container-fluid shadow-sm" style="display: none;">
-                      <div class="text-center" id="bottomlayer">
-                        <img src="fab.png" alt="">
-                      </div>
-                      <div>
-                        <div class="text-center" id="coreBottomStack">
-                          <img src="fab.png" alt="">
-                        </div>
-                        <div id="bottomInvert" class="text-center" style="display: none;">
-                          <img src="fab.png" style="mix-blend-mode: color-burn;" alt="">
-                        </div>
-                        <button class="invertButton" data-side="bottomside">invert</button>
-                      </div>
-                    </div>
+                    <button id="invert" class="button-side" role="button"><span class="text">Invert</span></button>
                   </div>
                 </div>
               </div>
@@ -187,11 +189,12 @@
           </div>
         </div>
       </div>
+
+      <!-- Right Side -->
       <div class="col-md-3" style="padding-right: 0 !important;padding-left: 2px;">
         <div class="navbar-animmenu2">
-
         </div>
-        sdfdffs
+        <h1>dfgf</h1>
       </div>
     </div>
     
@@ -214,9 +217,6 @@
     </div>
     
   
-
-
-
       <div>
       <div>
         <h1>Canvas </h1>
@@ -230,66 +230,35 @@
   </section>
 
   <script>
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     $(document).ready(function(){
-      $("#top").click(function(){
+      $('#container').on('click', '#top', function(){
         $('#bottom').removeClass('active');
+        $('#invert').removeClass('active');
         $('#top').addClass('active');
-        $("#mainBottom").fadeOut('slow', function(){
-          $("#mainTop").fadeIn();
+        $("#bwPCB, #bwPCBInvert").fadeOut(function(){
+          $("#mainPCB").fadeIn();
         });
-      })
-      $("#bottom").click(function(){
+      });
+    
+      $('#container').on('click', '#bottom', function(){
         $('#top').removeClass('active');
+        $('#invert').removeClass('active');
         $('#bottom').addClass('active');
-        $("#mainTop").fadeOut('slow', function(){
-          $("#mainBottom").fadeIn();
+        $("#mainPCB, #bwPCBInvert").fadeOut(function(){
+          $("#bwPCB").fadeIn();
         });
-      })
-      $('.invertButton').click(function(){
-        if ($(this).data('side') == 'topside') {
-          if ($('#coreTopStack').css('display') === 'none') {
-            $('#topInvert').fadeOut('slow', function(){
-              $('#coreTopStack').fadeIn('slow');
-            })
-          }
-          else {
-            $('#coreTopStack').fadeOut('slow', function(){
-              $('#topInvert').fadeIn('slow');
-            })
-          }
-        } else {
-          if ($('#coreBottomStack').css('display') === 'none') {
-            $('#bottomInvert').fadeOut('slow', function(){
-              $('#coreBottomStack').fadeIn('slow');
-            })
-          } else {
-            $('#coreBottomStack').fadeOut('slow', function(){
-              $('#bottomInvert').fadeIn('slow');
-            })
-          }
-        }
-      })
-    })
-
-
-
+      });
+    
+      $('#container').on('click', '#invert', function(){
+        $('#top').removeClass('active');
+        $('#bottom').removeClass('active');
+        $('#invert').addClass('active');
+        $('#mainPCB, #bwPCB').fadeOut(function(){
+          $('#bwPCBInvert').fadeIn();
+        });
+      });
+    });
+    
     const toggleButtons = document.querySelectorAll('.toggleButton');
 
     toggleButtons.forEach(button => {
@@ -339,38 +308,7 @@
       dropArea.style.display = 'none';
       initializeGerberToSVG(files);
     })
-
-
-
-
-
-
-
   </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <!-- 
   <script>
