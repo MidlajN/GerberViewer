@@ -71,9 +71,12 @@
         <!-- Layout -->
         <div class="layerNav container-fluid" style="background-color: #f0f0f0;" >  
           <div class="row">
-            <div class="col-lg-3 col-md-12 col-sm-12">
+            <div class="col-lg-3 col-md-12 col-sm-12 py-3">
               <ol>
-                <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h4>
+                <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">
+                  <button id="toplayersbtn" class="button-side active" role="button"><span class="text">Top</span></button>
+                    <button id="bottomlayersbtn" class="button-side" role="button"><span class="text">Bottom</span></button>
+                </h4>
                 <li class="litoggle">
                   <p class="toggleName">Copper</p>
                   <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper', 0)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
@@ -140,41 +143,37 @@
                 </div>
               </div> 
 
-              <div id="result" class="shadow" style="display: none;height: 90%;">
-                <div class="content" style="padding: 20px;height: 100%;overflow: hidden;">
+              <div id="result" class="shadow" style="display: none;height: 90%;;">
+                <div id="fullLayersParent" style="display: none;height: 100%;position: relative;">
+                  <div class="layerStyle" > 
+                    <div id="fullLayers">
 
-                  <div id="bwPCB" class="container-fluid " style="height: 100%;display: none;">
-                    <div id="coreTopStack" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;" >
-                    </div> 
-                 
-                    <div id="coreBottomStack" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
                     </div>
-                    
                   </div>
-
-                  <div id="mainPCB" class="container-fluid " style="height: 100%;display: block;">
-                    <div id="toplayer" class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;" >
-                    </div>
-                    
-                    <div id="bottomlayer" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">  
-                    </div>
-                    
+                </div>
+                <div id="toplayers" style="display: block;height: 100%;position: relative;">
+                  <div id="coreTopStack" class="layerStyle" style="visibility: hidden;"  >
+                  </div> 
+                  <div id="toplayer" class="layerStyle" style="visibility: visible;" >
                   </div>
-                  
-                  <div id="bwPCBInvert" class="container-fluid " style="height: 100%;display: none;">
-                      <div id="topInvert" class="container-fluid " style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
-                      </div>
-
-                      <div id="bottomInvert" class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
-                      </div>  
+                  <div id="topInvert" class="layerStyle" style="visibility: hidden;">
                   </div>
+                </div>
 
+                <div id="bottomlayers" style="display: none;height: 100%;position: relative;">
+                  <div id="coreBottomStack" class="layerStyle" style="visibility: visible;">
+                  </div>
+                  <div id="bottomlayer" class="layerStyle" style="visibility: hidden;">  
+                  </div>
+                  <div id="bottomInvert" class="layerStyle" style="visibility: hidden;">
+                  </div>  
                 </div>
                 <div class="container-fluid py-3">
                   <div id="container" class="text-center">
-                    <button id="top" class="button-side active" role="button"><span class="text">Top</span></button>
-                    <button id="bottom" class="button-side" role="button"><span class="text">Bottom</span></button>
+                    <button id="original" class="button-side active" role="button"><span class="text">Original</span></button>
+                    <button id="bw" class="button-side" role="button"><span class="text">B/W</span></button>
                     <button id="invert" class="button-side" role="button"><span class="text">Invert</span></button>
+                    <button id="allLayers" class="button-side" role="button"><span class="text">All Layers</span></button>
                   </div>
                 </div>
               </div>
@@ -226,35 +225,99 @@
   </section>
 
   <script>
-    $(document).ready(function(){
-      $('#container').on('click', '#top', function(){
-        $('#bottom').removeClass('active');
-        $('#invert').removeClass('active');
-        $('#top').addClass('active');
-        $("#bwPCB, #bwPCBInvert").fadeOut(function(){
-          $("#mainPCB").fadeIn();
-        });
+    $(document).ready(function() {
+      $('#toplayersbtn').on('click', function() {
+        $('#bottomlayersbtn').removeClass('active');
+        $('#toplayersbtn').addClass('active');
+        $('#bottomlayers').css('display', 'none');
+        $('#toplayers').css('display', 'block');
       });
-    
-      $('#container').on('click', '#bottom', function(){
-        $('#top').removeClass('active');
-        $('#invert').removeClass('active');
-        $('#bottom').addClass('active');
-        $("#mainPCB, #bwPCBInvert").fadeOut(function(){
-          $("#bwPCB").fadeIn();
-        });
+
+      $('#bottomlayersbtn').on('click', function() {
+        $('#toplayersbtn').removeClass('active');
+        $('#bottomlayersbtn').addClass('active');
+        $('#toplayers').css('display', 'none');
+        $('#bottomlayers').css('display', 'block');
       });
-    
-      $('#container').on('click', '#invert', function(){
-        $('#top').removeClass('active');
-        $('#bottom').removeClass('active');
-        $('#invert').addClass('active');
-        $('#mainPCB, #bwPCB').fadeOut(function(){
-          $('#bwPCBInvert').fadeIn();
-        });
+      $('#allLayers').on('click', function() {
+        $('#toplayersbtn').removeClass('active');
+        $('#bottomlayersbtn').removeClass('active');
+        $('#allLayers').addClass('active');
+        $("#toplayers,#bottomlayers").css('display', 'none');
+        $("#fullLayersParent").css('display', 'block');
       });
+
+
+      $('#container').on('click', '#original', function() {
+        $('#container').removeClass('active');
+        $('#original').addClass('active');
+        $('#toplayer,#bottomlayer').css('visibility', 'visible');
+        $('#coreTopStack,#coreBottomStack').css('visibility', 'hidden');
+        $('#topInvert, #bottomInvert').css('visibility', 'hidden');
+      })
+      $('#container').on('click', '#bw', function() {
+        $('#container').removeClass('active');
+        $('#bw').addClass('active');$(document).ready(function() {
+          $('#toplayersbtn').on('click', function() {
+            $('#bottomlayersbtn').removeClass('active');
+            $('#toplayersbtn').addClass('active');
+            $('#bottomlayers').hide();
+            $('#toplayers').show();
+          });
+        
+          $('#bottomlayersbtn').on('click', function() {
+            $('#toplayersbtn').removeClass('active');
+            $('#bottomlayersbtn').addClass('active');
+            $('#toplayers').hide();
+            $('#bottomlayers').show();
+          });
+        
+          $('#allLayers').on('click', function() {
+            $('#toplayersbtn').removeClass('active');
+            $('#bottomlayersbtn').removeClass('active');
+            $('#allLayers').addClass('active');
+            $("#toplayers,#bottomlayers").hide();
+            $("#fullLayersParent").show();
+          });
+        
+          $('#container').on('click', '#original', function() {
+            $('#container').removeClass('active');
+            $('#original').addClass('active');
+            $('#toplayer,#bottomlayer').css('visibility', 'visible');
+            $('#coreTopStack,#coreBottomStack').css('visibility', 'hidden');
+            $('#topInvert, #bottomInvert').css('visibility', 'hidden');
+          });
+        
+          $('#container').on('click', '#bw', function() {
+            $('#container').removeClass('active');
+            $('#bw').addClass('active');
+            $('#toplayer, #bottomlayer').css('visibility', 'hidden');
+            $('#coreTopStack, #coreBottomStack').css('visibility', 'visible');
+            $('#topInvert, #bottomInvert').css('visibility', 'hidden');
+          });
+        
+          $('#container').on('click', '#invert', function() {
+            $('#container').removeClass('active');
+            $('#invert, #invert').addClass('active');
+            $('#toplayer, #bottomlayer').css('visibility', 'hidden');
+            $('#coreTopStack, #coreBottomStack').css('visibility', 'hidden');
+            $('#topInvert, #bottomInvert').css('visibility', 'visible');
+          });
+        });
+        
+        $('#toplayer, #bottomlayer').css('visibility', 'hidden');
+        $('#coreTopStack, #coreBottomStack').css('visibility', 'visible');
+        $('#topInvert, #bottomInvert').css('visibility', 'hidden');
+      })
+      $('#container').on('click', '#invert', function() {
+        $('#container').removeClass('active');
+        $('#invert, #invert').addClass('active');
+        $('#toplayer, #bottomlayer').css('visibility', 'hidden');
+        $('#coreTopStack, #coreBottomStack').css('visibility', 'hidden');
+        $('#topInvert, #bottomInvert').css('visibility', 'visible');
+      })
     });
-    
+
     const toggleButtons = document.querySelectorAll('.toggleButton');
 
     toggleButtons.forEach(button => {

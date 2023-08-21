@@ -62,7 +62,7 @@ function viewGerber(fileData) {
         svg.setAttribute('transform', 'matrix(-1,0,0,-1,0,0)');
       } else if (id === 'topLayerBW') {
         svg.setAttribute("transform","matrix(1,0,0,-1,0,0)");
-      }
+      } 
 
       svg.setAttribute("viewBox", svgData.viewBox);
       svg.setAttribute("width", `${svgData.width}mm`);
@@ -83,6 +83,10 @@ function viewGerber(fileData) {
 
     let bottomSVG = createSVG(stackup.bottom, 'bottomLayerBW');
     let mainBottomG = bottomSVG.querySelector('#bottomLayerBW_g');
+
+    let fullSvg = createSVG(stackup.bottom, 'fullLayers');
+    let fullSvgG = fullSvg.querySelector('#fullLayers_g');
+    fullSvgG.setAttribute('transform', gTransform);
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -106,8 +110,10 @@ function viewGerber(fileData) {
           const svgDocument = svgParser.parseFromString(data, "image/svg+xml");
 
           const defElements = svgDocument.querySelector("defs");
-
+          
           if (defElements) {
+            const layerClone = defElements.cloneNode(true);
+            fullSvg.appendChild(layerClone);
             defElements.setAttribute("id", `def-${id[i]}`);
             if (layers[i].side === 'top') {
               topSVG.appendChild(defElements);
@@ -128,6 +134,41 @@ function viewGerber(fileData) {
           if (gElements) {
             gElements.setAttribute("id", `g-${id[i]}`);
             gElements.removeAttribute('transform');
+            const gElemClone = gElements.cloneNode(true);
+
+            switch (id[i]) {
+              case 'top_copper':
+                gElemClone.setAttribute('style', 'fill: green; opacity: 0.5;');
+                break;
+              case 'bottom_copper':
+                gElemClone.setAttribute('style', 'fill: red; opacity: 0.5;');
+                break;
+              case 'all_outline':
+                gElemClone.setAttribute('style', 'fill: green; opacity: 0.5;');
+                break;
+              case 'top_silkscreen':
+                gElemClone.setAttribute('style', 'fill: red; opacity: 0.5;');
+                break;
+              case 'bottom_silkscreen':
+                gElemClone.setAttribute('style', 'fill: blue; opacity: 0.5;');
+                break;
+              case 'bottom_soldermask':
+                gElemClone.setAttribute('style', 'fill: yellow; opacity: 0.5;');
+                break;
+              case 'bottom_solderpaste':
+                gElemClone.setAttribute('style', 'fill: orange; opacity: 0.5;');
+                break;
+              case 'top_solderpaste':
+                gElemClone.setAttribute('style', 'fill: purple; opacity: 0.5;');
+                break;
+              case 'top_soldermask':
+                gElemClone.setAttribute('style', 'fill: pink; opacity: 0.5;');
+                break;
+            }
+          
+            
+            
+            fullSvgG.appendChild(gElemClone);
             if (layers[i].side == 'top') {
               mainTopG.appendChild(gElements);
 
@@ -151,6 +192,8 @@ function viewGerber(fileData) {
       reader.readAsArrayBuffer(file);
     }
 
+    document.getElementById('fullLayers').appendChild(fullSvg);
+
     svgArray.topBW = topSVG;
     svgArray.bottomBW = bottomSVG;
 
@@ -173,13 +216,13 @@ function viewGerber(fileData) {
       svg.appendChild(g);
 
       const updatedStyle = `
-      .${stackup.id}_fr4  {color:  #000000;!!important;}
-      .${stackup.id}_cu {color: #ffffff;!important;}
-      .${stackup.id}_cf {color: #ffffff;!important;}
-      .${stackup.id}_sm {color: #000000; opacity: 0;!important;}
-      .${stackup.id}_ss {color: #ffffff;!important;}
-      .${stackup.id}_sp {color: #ffffff;!important;}
-      .${stackup.id}_out {color: #ffffff;!important;}`;
+      .${stackup.id}_fr4 {color: #000000 !important;}
+      .${stackup.id}_cu {color: #ffffff !important;}
+      .${stackup.id}_cf {color: #ffffff !important;}
+      .${stackup.id}_sm {color: #000000; opacity: 0 !important;}
+      .${stackup.id}_ss {color: #ffffff !important;}
+      .${stackup.id}_sp {color: #ffffff !important;}
+      .${stackup.id}_out {color: #ffffff !important;}`;
       const existingStyle = defs.querySelector('style');
       if (existingStyle) {
         existingStyle.innerHTML = updatedStyle;
@@ -194,13 +237,12 @@ function viewGerber(fileData) {
       return svgDoc.documentElement;
       
     }
-
-    svgCreatedTop = createAndModifySvg(stackup.top,);
     svgCreatedBottom = createAndModifySvg(stackup.bottom,);
+    svgCreatedTop = createAndModifySvg(stackup.top,);
+    
 
     svgArray.topStackBW = svgCreatedTop;
     svgArray.bottomStackBW = svgCreatedBottom;
-
 
     displaySVG(svgArray);
   });
@@ -294,13 +336,14 @@ function displaySVG(svgArray) {
 
   document.getElementById('toplayer').appendChild(topStack);
   document.getElementById('topInvert').appendChild(topBW);
-  document.getElementById('coreTopStack').appendChild(topStackBW);
-  document.getElementById('coreBottomStack').appendChild(bottomStackBW);
-  
+
   document.getElementById('bottomlayer').appendChild(bottomStack);
   document.getElementById('bottomInvert').appendChild(bottomBW);
 
-
+  document.getElementById('coreTopStack').appendChild(topStackBW);
+  document.getElementById('coreBottomStack').appendChild(bottomStackBW);
+  
   
 }
+
 
