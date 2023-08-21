@@ -39,12 +39,12 @@ function viewGerber(fileData) {
       }
     })
 
-    if (!topFlag) {
-      document.getElementById('mainTop').style.display = "none";
-    }
-    if (!bottomFlag) {
-      document.getElementById('mainBottom').style.display = "none";
-    }
+    // if (!topFlag) {
+    //   document.getElementById('mainTop').style.display = "none";
+    // }
+    // if (!bottomFlag) {
+    //   document.getElementById('mainBottom').style.display = "none";
+    // }
 
     // _________________--- Initial Main SVG ---_________________
     // _________________--- Get The transform attribute from pcbStackup ---_________________
@@ -173,7 +173,7 @@ function viewGerber(fileData) {
       svg.appendChild(g);
 
       const updatedStyle = `
-      .${stackup.id}_fr4 {color: #000000;!!important;}
+      .${stackup.id}_fr4  {color:  #000000;!!important;}
       .${stackup.id}_cu {color: #ffffff;!important;}
       .${stackup.id}_cf {color: #ffffff;!important;}
       .${stackup.id}_sm {color: #000000; opacity: 0;!important;}
@@ -200,6 +200,7 @@ function viewGerber(fileData) {
 
     svgArray.topStackBW = svgCreatedTop;
     svgArray.bottomStackBW = svgCreatedBottom;
+
 
     displaySVG(svgArray);
   });
@@ -293,13 +294,13 @@ function displaySVG(svgArray) {
 
   document.getElementById('toplayer').appendChild(topStack);
   document.getElementById('topInvert').appendChild(topBW);
-
-  document.getElementById('bottomlayer').appendChild(bottomStack);
-  document.getElementById('bottomInvert').appendChild(bottomBW);
-
   document.getElementById('coreTopStack').appendChild(topStackBW);
   document.getElementById('coreBottomStack').appendChild(bottomStackBW);
   
+  document.getElementById('bottomlayer').appendChild(bottomStack);
+  document.getElementById('bottomInvert').appendChild(bottomBW);
+
+
   
 }
 

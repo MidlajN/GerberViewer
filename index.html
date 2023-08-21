@@ -141,38 +141,32 @@
               </div> 
 
               <div id="result" class="shadow" style="display: none;height: 90%;">
-                <div class="content " style="padding: 20px;height: -webkit-fill-available;overflow: hidden;">
+                <div class="content" style="padding: 20px;height: 100%;overflow: hidden;">
 
-                  <div id="mainPCB" class="container-fluid " style="height: -webkit-fill-available;">
+                  <div id="bwPCB" class="container-fluid " style="height: 100%;display: none;">
+                    <div id="coreTopStack" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;" >
+                    </div> 
+                 
+                    <div id="coreBottomStack" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
+                    </div>
+                    
+                  </div>
+
+                  <div id="mainPCB" class="container-fluid " style="height: 100%;display: block;">
                     <div id="toplayer" class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;" >
                     </div>
                     
                     <div id="bottomlayer" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">  
                     </div>
-                  </div>
-
-                  <div id="bwPCB" class="container-fluid " style="height: -webkit-fill-available;display: none;">
-                    <div class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
-                      <div id="coreTopStack"  >
-                      </div> 
-                    </div>
-                   
-                    <div style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
-                      <div id="coreBottomStack" class="text-center" style="display: block;" >
-                      </div>
-                    </div>
+                    
                   </div>
                   
-                  <div id="bwPCBInvert" class="container-fluid " style="height: -webkit-fill-available;display: none;">
-                    <div class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
-                      <div id="topInvert" class="text-center" class="container-fluid ">
+                  <div id="bwPCBInvert" class="container-fluid " style="height: 100%;display: none;">
+                      <div id="topInvert" class="container-fluid " style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
                       </div>
-                    </div>
-                    <div style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
-                      <div id="bottomInvert" class="text-center">
-                      </div>
-                    </div>
-                    
+
+                      <div id="bottomInvert" class="text-center" style="padding: 20px;height: 50%;display: flex;justify-content: center;align-items: center;">
+                      </div>  
                   </div>
 
                 </div>
@@ -194,7 +188,9 @@
       <div class="col-md-3" style="padding-right: 0 !important;padding-left: 2px;">
         <div class="navbar-animmenu2">
         </div>
-        <h1>dfgf</h1>
+        <div id="coreBottomStack">
+
+        </div>
       </div>
     </div>
     
