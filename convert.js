@@ -39,13 +39,6 @@ function viewGerber(fileData) {
       }
     })
 
-    // if (!topFlag) {
-    //   document.getElementById('mainTop').style.display = "none";
-    // }
-    // if (!bottomFlag) {
-    //   document.getElementById('mainBottom').style.display = "none";
-    // }
-
     // _________________--- Initial Main SVG ---_________________
     // _________________--- Get The transform attribute from pcbStackup ---_________________
     const svgData = stackup.top.svg;
@@ -55,34 +48,16 @@ function viewGerber(fileData) {
 
     function createSVG(svgData, id) {
       let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      for (const [key, value] of Object.entries(svgData.attributes)) {
+        svg.setAttribute(key, value);
+      }
       svg.setAttribute("id", id);
-      svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-      svg.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-      if (id === 'bottomLayerBW') {
-        svg.setAttribute('transform', 'matrix(-1,0,0,-1,0,0)');
-      } else if (id === 'topLayerBW') {
-        svg.setAttribute("transform","matrix(1,0,0,-1,0,0)");
-      } 
-
-      svg.setAttribute("viewBox", svgData.viewBox);
-      svg.setAttribute("width", `${svgData.width}mm`);
-      svg.setAttribute("height", `${svgData.height}mm`);
-      svg.setAttribute("stroke-linecap", "round");
-      svg.setAttribute("stroke-line-join", "round");
-      svg.setAttribute("fill-rule", "evenodd");
-
       let mainG = document.createElementNS("http://www.w3.org/2000/svg", "g");
       mainG.setAttribute("id", id + '_g');
       svg.appendChild(mainG);
 
       return svg;
     }
-
-    // let topSVG = createSVG(stackup.top, 'topLayerBW');
-    // let mainTopG = topSVG.querySelector('#topLayerBW_g');
-
-    // let bottomSVG = createSVG(stackup.bottom, 'bottomLayerBW');
-    // let mainBottomG = bottomSVG.querySelector('#bottomLayerBW_g');
 
     let fullSvg = createSVG(stackup.bottom, 'fullLayers');
     let fullSvgG = fullSvg.querySelector('#fullLayers_g');
@@ -105,30 +80,13 @@ function viewGerber(fileData) {
 
         gerberToSvgStream.on("end", () => {
           // 'data' now contains the full SVG output
-
-          // const parser = new DOMParser();
           const svgDocument = svgParser.parseFromString(data, "image/svg+xml");
 
           const defElements = svgDocument.querySelector("defs");
           
           if (defElements) {
             defElements.setAttribute("id", `def-${id[i]}`);
-            // const layerClone = defElements.cloneNode(true);
             fullSvg.appendChild(defElements);
-            
-            // if (layers[i].side === 'top') {
-            //   topSVG.appendChild(defElements);
-
-            // } else if (layers[i].side === 'bottom') {
-            //   bottomSVG.appendChild(defElements);
-
-            // } else {
-            //   const topSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for top
-            //   const bottomSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for bottom
-            //   topSVG.appendChild(topSVGCopy);
-            //   bottomSVG.appendChild(bottomSVGCopy);
-
-            // }
           } 
 
           const gElements = svgDocument.querySelector("g");
@@ -168,18 +126,6 @@ function viewGerber(fileData) {
             }
             
             fullSvgG.appendChild(gElemClone);
-            // if (layers[i].side == 'top') {
-            //   mainTopG.appendChild(gElements);
-
-            // } else if (layers[i].side == 'bottom') {
-            //   mainBottomG.appendChild(gElements);
-
-            // } else {
-            //   const topGCopy = gElements.cloneNode(true); // Create a copy of gElements for top
-            //   const bottomGCopy = gElements.cloneNode(true); // Create a copy of gElements for bottom
-            //   mainTopG.appendChild(topGCopy);
-            //   mainBottomG.appendChild(bottomGCopy);
-            // }
           }
         });
       };
@@ -192,57 +138,11 @@ function viewGerber(fileData) {
     }
 
     svgArray.fullSvg = fullSvg;
-    // svgArray.topBW = topSVG;
-    // svgArray.bottomBW = bottomSVG;
 
     $("#overlay").fadeOut(700, function() {
       $('#dropArea').css('display', 'none');
       $("#result").fadeIn(700);
     });
-
-    // function createAndModifySvg(svgData) {
-     
-    //   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    //   for (const [key, value] of Object.entries(svgData.attributes)) {
-    //     svg.setAttribute(key, value);
-    //   }
-    //   let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    //   defs.innerHTML = svgData.defs.join(' ');
-    //   svg.appendChild(defs);
-    //   let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    //   g.setAttribute("transform", gTransform);
-    //   g.innerHTML = svgData.layer;
-    //   svg.appendChild(g);
-
-    //   const updatedStyle = `
-    //   .${stackup.id}_fr4 {color: #000000 !important;}
-    //   .${stackup.id}_cu {color: #ffffff !important;}
-    //   .${stackup.id}_cf {color: #ffffff !important;}
-    //   .${stackup.id}_sm {color: #000000; opacity: 0 !important;}
-    //   .${stackup.id}_ss {color: #ffffff !important;}
-    //   .${stackup.id}_sp {color: #ffffff !important;}
-    //   .${stackup.id}_out {color: #ffffff !important;}`;
-    //   const existingStyle = defs.querySelector('style');
-    //   if (existingStyle) {
-    //     existingStyle.innerHTML = updatedStyle;
-    //   }
-    //   const svgString = new XMLSerializer().serializeToString(svg);
-    //   let searchId = stackup.id;
-    //   const replacement = 'new_' + searchId;
-    //   const regIdEx = new RegExp(searchId, 'g');
-    //   const modifiedSvg = svgString.replace(regIdEx, replacement);
-    //   const svgDoc = svgParser.parseFromString(modifiedSvg, "image/svg+xml");
-
-    //   return svgDoc.documentElement;
-      
-    // }
-    // svgCreatedBottom = createAndModifySvg(stackup.bottom,);
-    // svgCreatedTop = createAndModifySvg(stackup.top,);
-    
-
-    // svgArray.topStackBW = svgCreatedTop;
-    // svgArray.bottomStackBW = svgCreatedBottom;
-
     displaySVG(svgArray);
   });
   
@@ -331,21 +231,38 @@ function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 
 // ___________________________ Function To Display SVGs ____________________________
 function displaySVG(svgArray) {
-  const { topStack, bottomStack,topBW, bottomBW, fullSvg } = svgArray;
+  const { topStack, bottomStack,fullSvg } = svgArray;
 
   document.getElementById('toplayer').appendChild(topStack);
-  // document.getElementById('topInvert').appendChild(topBW);
-
   document.getElementById('bottomlayer').appendChild(bottomStack);
-  // document.getElementById('bottomInvert').appendChild(bottomBW);
-
-  document.getElementById('fullLayers').appendChild(fullSvg);
-
-
-  // document.getElementById('coreTopStack').appendChild(topStackBW);
-  // document.getElementById('coreBottomStack').appendChild(bottomStackBW);
-  
+  document.getElementById('fullLayers').appendChild(fullSvg); 
   
 }
 
 
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('renderButton').addEventListener('click', function(){
+      svgParent = document.getElementById('toplayer');
+      svg = svgParent.querySelector('svg');
+      console.log('SVG :: ', svg);
+      const svgString = new XMLSerializer().serializeToString(svg);
+      console.log('SVG String :: ', svgString);
+      svg2png(svgString).then((canvas) => {
+        console.log('PNG : ', canvas);
+        document.getElementById('canvas').appendChild(canvas);
+  
+        // Convert canvas to Blob
+        canvas.toBlob((pngBlob) => {
+            // Create a download link for the PNG Blob
+            const downloadLink = document.createElement('a');
+            downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
+  
+            downloadLink.download = 'converted-image.png'; // Set the desired filename
+            downloadLink.textContent = 'Download PNG';
+            document.getElementById('canvas').appendChild(downloadLink);
+          }, "image/png");
+      }).catch((err) => {
+          console.log('Error : ', err);
+      });
+    })
+  })

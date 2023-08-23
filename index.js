@@ -2,15 +2,17 @@
 
 function initializeGerberToSVG(files) {
   console.log('files : ', files);
-  $('#overlay').fadeIn();
-  
-  viewGerber(files)
-  // if (document.getElementById("button") !== null) {
-  //   document.getElementById("button").addEventListener("click", viewGerber);
-  // }
+  $('#overlay').fadeIn(function() {
+    viewGerber(files)
+  });
 }
 
+
+// __________________________ NavBar Creation & Manipulation ________________________
+
 document.addEventListener('DOMContentLoaded', function() {
+
+  // ----------- Navbar Animation -----------
   var tabsNewAnim = $('#navbar-animmenu');
   var activeItemNewAnim = tabsNewAnim.find('.active');
   var activeWidthNewAnimWidth = activeItemNewAnim.innerWidth();
@@ -47,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
       button.style.display = 'none';
     }
   });
+
 
   // ---------------- Create New Task in Navbar ----------------
   function createNewItem() {
@@ -137,7 +140,9 @@ function removeItem(parent) {
   }
 
   addNewButton.setAttribute('data-sds', index - 1);
+  // 
 }
+
 
 // ----------------------- Make The Task Name Editable ------------------------
 function makeEditable(element) {
@@ -159,7 +164,96 @@ function makeEditable(element) {
   });
 }
 
-// ----------------------- Toggle Layer ------------------------
+// ____________________________________ End Of NavBar _______________________________________
+
+
+
+// _________________________------ Toggle Buttons & Zoom Layer Section ------________________________
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ##### Zoom The Layer Using Mouse Wheel #####
+  const zoomContainer = document.getElementById('result');
+  const zoomedContent = document.getElementById('zoomContainer');
+  let zoomLevel = 1;
+  const maxZoomLevel = 4
+
+  zoomContainer.addEventListener('wheel', (event) => {
+    event.preventDefault();
+
+    const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1; // Adjust the zoom speed
+
+    const rect = zoomedContent.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    const offsetX = (mouseX / rect.width) * 100;
+    const offsetY = (mouseY / rect.height) * 100;
+
+    const newZoomLevel = zoomLevel * zoomFactor;
+    zoomLevel = Math.max(1, Math.min(maxZoomLevel, newZoomLevel)); // Ensure zoom doesn't go below 100%
+
+    zoomedContent.style.transformOrigin = `${offsetX}% ${offsetY}%`;
+    zoomedContent.style.transform = `scale(${zoomLevel})`;
+  });
+
+
+  // ##### Toggle Button on Each Layer of the PCB #####
+  const toggleButtons = document.querySelectorAll('.toggleButton');
+
+  toggleButtons.forEach(button => {
+    const icon = button.querySelector('i');
+    let color = button.style.backgroundColor;
+    button.addEventListener('click', () => {
+      
+      if (icon.classList.contains('fa-eye')) {
+        button.style.backgroundColor = 'white';
+        icon.style.color = 'black';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        button.style.backgroundColor = color;
+        icon.style.color = 'white';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  });
+
+
+  // ##### Toggle Button Section For the Top and Bottom #####
+  $('#container').on('click', '#allLayers', function() {
+    $('#toplayersbtn, #bottomlayersbtn').removeClass('active');
+    $('#allLayers').addClass('active');
+    $('#toplayerlist, #bottomlayerlist').addClass('layerVisible').removeClass('layerHidden');
+    $('#toplayers, #bottomlayers').fadeOut(function(){
+      $('#fullLayersParent').fadeIn();
+    });
+  });
+
+  $('#container').on('click', '#toplayersbtn', function() {
+    $('#allLayers, #bottomlayersbtn').removeClass('active');
+    $('#toplayersbtn').addClass('active');
+    $('#bottomlayerlist').removeClass('layerVisible').addClass('layerHidden');
+    $('#toplayerlist').removeClass('layerHidden').addClass('layerVisible');
+    $('#bottomlayers, #fullLayersParent').fadeOut(function(){
+      $('#toplayers').fadeIn();
+    });
+  });
+
+  $('#container').on('click', '#bottomlayersbtn', function() {
+    $('#allLayers, #toplayersbtn').removeClass('active');
+    $('#toplayerlist').removeClass('layerVisible').addClass('layerHidden');
+    $('#bottomlayerlist').removeClass('layerHidden').addClass('layerVisible');
+    $('#bottomlayersbtn').addClass('active');
+    $('#toplayers, #fullLayersParent').fadeOut(function(){
+      $('#bottomlayers').fadeIn();
+    });
+  });
+
+});
+
+// ##### Toggle Each Layer Of the  PCB #####
 function toggleLayer(LayerId, index) {
   console.log('LayerId : ', LayerId);
   const top = document.getElementById("toplayers");
@@ -196,5 +290,7 @@ function toggleLayer(LayerId, index) {
     }
   })
 }
+
+// __________________________________ End Of Toggle Buttons & Zoom Layer Section __________________________________
 
 
