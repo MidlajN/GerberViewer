@@ -21,9 +21,13 @@ function viewGerber(fileData) {
     parsedTopLayer = svgParser.parseFromString(top_layer, "image/svg+xml");
     parsedBottomLayer = svgParser.parseFromString(bottom_layer, "image/svg+xml");
 
-    console.log('parsedTopLayer : ', parsedTopLayer);
-    svgArray.topStack = parsedTopLayer.documentElement;
-    svgArray.bottomStack = parsedBottomLayer.documentElement;
+    const topStack = parsedTopLayer.documentElement;
+    const bottomStack = parsedBottomLayer.documentElement;
+    topStack.setAttribute("data-stackid", `${stackup.id}`);
+    bottomStack.setAttribute("data-stackid", `${stackup.id}`);
+
+    svgArray.topStackSvg = topStack;
+    svgArray.bottomStackSvg = bottomStack;
 
     let id = [];
     let topFlag = false;
@@ -59,8 +63,8 @@ function viewGerber(fileData) {
       return svg;
     }
 
-    let fullSvg = createSVG(stackup.bottom, 'fullLayers');
-    let fullSvgG = fullSvg.querySelector('#fullLayers_g');
+    let fullSvg = createSVG(stackup.bottom, 'stackedSvg');
+    let fullSvgG = fullSvg.querySelector('#stackedSvg_g');
     fullSvgG.setAttribute('transform', gTransform);
 
     for (let i = 0; i < files.length; i++) {
@@ -231,38 +235,39 @@ function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 
 // ___________________________ Function To Display SVGs ____________________________
 function displaySVG(svgArray) {
-  const { topStack, bottomStack,fullSvg } = svgArray;
-
-  document.getElementById('toplayer').appendChild(topStack);
-  document.getElementById('bottomlayer').appendChild(bottomStack);
+  const { topStackSvg, bottomStackSvg,fullSvg } = svgArray;
+  topStackSvg.setAttribute('id', 'topstacklayer');
+  bottomStackSvg.setAttribute('id', 'bottomstacklayer');
+  document.getElementById('toplayer').appendChild(topStackSvg);
+  document.getElementById('bottomlayer').appendChild(bottomStackSvg);
   document.getElementById('fullLayers').appendChild(fullSvg); 
   
 }
 
 
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('renderButton').addEventListener('click', function(){
-      svgParent = document.getElementById('toplayer');
-      svg = svgParent.querySelector('svg');
-      console.log('SVG :: ', svg);
-      const svgString = new XMLSerializer().serializeToString(svg);
-      console.log('SVG String :: ', svgString);
-      svg2png(svgString).then((canvas) => {
-        console.log('PNG : ', canvas);
-        document.getElementById('canvas').appendChild(canvas);
-  
-        // Convert canvas to Blob
-        canvas.toBlob((pngBlob) => {
-            // Create a download link for the PNG Blob
-            const downloadLink = document.createElement('a');
-            downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
-  
-            downloadLink.download = 'converted-image.png'; // Set the desired filename
-            downloadLink.textContent = 'Download PNG';
-            document.getElementById('canvas').appendChild(downloadLink);
-          }, "image/png");
-      }).catch((err) => {
-          console.log('Error : ', err);
-      });
-    })
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById('renderButton').addEventListener('click', function(){
+    svgParent = document.getElementById('toplayer');
+    svg = svgParent.querySelector('svg');
+    console.log('SVG :: ', svg);
+    const svgString = new XMLSerializer().serializeToString(svg);
+    console.log('SVG String :: ', svgString);
+    svg2png(svgString).then((canvas) => {
+      console.log('PNG : ', canvas);
+      document.getElementById('canvas').appendChild(canvas);
+
+      // Convert canvas to Blob
+      canvas.toBlob((pngBlob) => {
+          // Create a download link for the PNG Blob
+          const downloadLink = document.createElement('a');
+          downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
+
+          downloadLink.download = 'converted-image.png'; // Set the desired filename
+          downloadLink.textContent = 'Download PNG';
+          document.getElementById('canvas').appendChild(downloadLink);
+        }, "image/png");
+    }).catch((err) => {
+        console.log('Error : ', err);
+    });
   })
+})

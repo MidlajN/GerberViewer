@@ -229,7 +229,124 @@
 
   </section>
 
-  <script>  
+  <script> 
+    let original = document.getElementById('original');
+    let bw = document.getElementById('bw');
+    let bwInvert = document.getElementById('invert');
+
+    bw.addEventListener('click', () => {
+      let svgTop = document.getElementById('topstacklayer');
+      let svgBottom = document.getElementById('bottomstacklayer'); 
+      let svgTopStyle = svgTop.querySelector('style');
+      let svgBottomStyle = svgBottom.querySelector('style');
+      const stackid = svgTop.getAttribute('data-stackid')
+
+      if (svgTopStyle && svgBottomStyle) {
+        const svgStyleContent = `
+        .${stackid}_fr4 {color: #000000  !important;}
+        .${stackid}_cu {color: #ffffff !important;}
+        .${stackid}_cf {color: #ffffff !important;}
+        .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+        .${stackid}_ss {color: #ffffff !important;}
+        .${stackid}_sp {color: #ffffff !important;}
+        .${stackid}_out {color: #000000 !important;}
+        `
+        svgTopStyle.textContent = svgStyleContent;
+        svgBottomStyle.textContent = svgStyleContent;
+      }
+      const toplayer = document.getElementById('toplayer');
+      // toplayer.innerHTML = '';
+      const bottomlayer = document.getElementById('bottomlayer');
+      // bottomlayer.innerHTML = '';
+
+      // const svgTopClone = svgTop.cloneNode(true);
+      // const svgBottomClone = svgBottom.cloneNode(true);
+      
+      // toplayer.appendChild(svgTopClone);
+      // bottomlayer.appendChild(svgBottomClone);
+      
+    })
+
+    bwInvert.addEventListener('click', () => {
+      let svgTop = document.getElementById('topstacklayer');
+      let svgBottom = document.getElementById('bottomstacklayer'); 
+      let svgTopStyle = svgTop.querySelector('style');
+      let svgBottomStyle = svgBottom.querySelector('style');
+      const stackid = svgTop.getAttribute('data-stackid')
+
+      if (svgTopStyle && svgBottomStyle) {
+        const svgStyleContent = `
+        .${stackid}_fr4 {color: #ffffff  !important;}
+        .${stackid}_cu {color: #000000 !important;}
+        .${stackid}_cf {color: #000000 !important;}
+        .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+        .${stackid}_ss {color: #000000 !important;}
+        .${stackid}_sp {color: #000000 !important;}
+        .${stackid}_out {color: #ffffff !important;}
+        `
+        svgTopStyle.textContent = svgStyleContent;
+        svgBottomStyle.textContent = svgStyleContent;
+      }
+      const toplayer = document.getElementById('toplayer');
+      // toplayer.innerHTML = '';
+      const bottomlayer = document.getElementById('bottomlayer');
+      // bottomlayer.innerHTML = '';
+
+      // const svgTopClone = svgTop.cloneNode(true);
+      // const svgBottomClone = svgBottom.cloneNode(true);
+      
+      // toplayer.appendChild(svgTopClone);
+      // bottomlayer.appendChild(svgBottomClone);
+      
+    })
+
+    original.addEventListener('click', () => {
+      let svgTop = document.getElementById('topstacklayer');
+      let svgBottom = document.getElementById('bottomstacklayer'); 
+      let svgTopStyle = svgTop.querySelector('style');
+      let svgBottomStyle = svgBottom.querySelector('style');
+      const stackid = svgTop.getAttribute('data-stackid')
+
+      if (svgTopStyle && svgBottomStyle) {
+        const svgStyleContent = `
+        .${stackid}_fr4 {color: #666666  !important;}
+        .${stackid}_cu {color: #cccccc !important;}
+        .${stackid}_cf {color: #cc9933 !important;}
+        .${stackid}_sm {color: #004200 !important; opacity: 0.75 !important;}
+        .${stackid}_ss {color: #ffffff !important;}
+        .${stackid}_sp {color: #999999 !important;}
+        .${stackid}_out {color: #000000 !important;}
+        `
+        svgTopStyle.textContent = svgStyleContent;
+        svgBottomStyle.textContent = svgStyleContent;
+      }
+      const toplayer = document.getElementById('toplayer');
+      // toplayer.innerHTML = '';
+      const bottomlayer = document.getElementById('bottomlayer');
+      // bottomlayer.innerHTML = '';
+
+      // const svgTopClone = svgTop.cloneNode(true);
+      // const svgBottomClone = svgBottom.cloneNode(true);
+      
+      // toplayer.appendChild(svgTopClone);
+      // bottomlayer.appendChild(svgBottomClone);
+      
+    })
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     document.addEventListener('DOMContentLoaded', () => {
       const dropArea = document.getElementById('dropArea');
       const gerberFileInput = document.getElementById('gerberFileInput');
@@ -271,6 +388,5 @@
       });
     } 
   </script>
-
 </body>
 </html>
