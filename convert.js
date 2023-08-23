@@ -78,11 +78,11 @@ function viewGerber(fileData) {
       return svg;
     }
 
-    let topSVG = createSVG(stackup.top, 'topLayerBW');
-    let mainTopG = topSVG.querySelector('#topLayerBW_g');
+    // let topSVG = createSVG(stackup.top, 'topLayerBW');
+    // let mainTopG = topSVG.querySelector('#topLayerBW_g');
 
-    let bottomSVG = createSVG(stackup.bottom, 'bottomLayerBW');
-    let mainBottomG = bottomSVG.querySelector('#bottomLayerBW_g');
+    // let bottomSVG = createSVG(stackup.bottom, 'bottomLayerBW');
+    // let mainBottomG = bottomSVG.querySelector('#bottomLayerBW_g');
 
     let fullSvg = createSVG(stackup.bottom, 'fullLayers');
     let fullSvgG = fullSvg.querySelector('#fullLayers_g');
@@ -112,22 +112,23 @@ function viewGerber(fileData) {
           const defElements = svgDocument.querySelector("defs");
           
           if (defElements) {
-            const layerClone = defElements.cloneNode(true);
-            fullSvg.appendChild(layerClone);
             defElements.setAttribute("id", `def-${id[i]}`);
-            if (layers[i].side === 'top') {
-              topSVG.appendChild(defElements);
+            // const layerClone = defElements.cloneNode(true);
+            fullSvg.appendChild(defElements);
+            
+            // if (layers[i].side === 'top') {
+            //   topSVG.appendChild(defElements);
 
-            } else if (layers[i].side === 'bottom') {
-              bottomSVG.appendChild(defElements);
+            // } else if (layers[i].side === 'bottom') {
+            //   bottomSVG.appendChild(defElements);
 
-            } else {
-              const topSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for top
-              const bottomSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for bottom
-              topSVG.appendChild(topSVGCopy);
-              bottomSVG.appendChild(bottomSVGCopy);
+            // } else {
+            //   const topSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for top
+            //   const bottomSVGCopy = defElements.cloneNode(true); // Create a copy of defElements for bottom
+            //   topSVG.appendChild(topSVGCopy);
+            //   bottomSVG.appendChild(bottomSVGCopy);
 
-            }
+            // }
           } 
 
           const gElements = svgDocument.querySelector("g");
@@ -138,49 +139,47 @@ function viewGerber(fileData) {
 
             switch (id[i]) {
               case 'top_copper':
-                gElemClone.setAttribute('style', 'fill: green; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: crimson; opacity: 0.3;');
                 break;
               case 'bottom_copper':
-                gElemClone.setAttribute('style', 'fill: red; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: #008208; opacity: 0.3;');
                 break;
               case 'all_outline':
-                gElemClone.setAttribute('style', 'fill: green; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: green; opacity: 0.5;');
                 break;
               case 'top_silkscreen':
-                gElemClone.setAttribute('style', 'fill: red; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: red; opacity: 0.5;');
                 break;
               case 'bottom_silkscreen':
-                gElemClone.setAttribute('style', 'fill: blue; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: blue; opacity: 0.5;');
                 break;
               case 'bottom_soldermask':
-                gElemClone.setAttribute('style', 'fill: yellow; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: #757500; opacity: 0.5;');
                 break;
               case 'bottom_solderpaste':
-                gElemClone.setAttribute('style', 'fill: orange; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: orange; opacity: 0.5;');
                 break;
               case 'top_solderpaste':
-                gElemClone.setAttribute('style', 'fill: purple; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: #c362c3; opacity: 0.5;');
                 break;
               case 'top_soldermask':
-                gElemClone.setAttribute('style', 'fill: pink; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: #af4e5f; opacity: 0.5;');
                 break;
             }
-          
-            
             
             fullSvgG.appendChild(gElemClone);
-            if (layers[i].side == 'top') {
-              mainTopG.appendChild(gElements);
+            // if (layers[i].side == 'top') {
+            //   mainTopG.appendChild(gElements);
 
-            } else if (layers[i].side == 'bottom') {
-              mainBottomG.appendChild(gElements);
+            // } else if (layers[i].side == 'bottom') {
+            //   mainBottomG.appendChild(gElements);
 
-            } else {
-              const topGCopy = gElements.cloneNode(true); // Create a copy of gElements for top
-              const bottomGCopy = gElements.cloneNode(true); // Create a copy of gElements for bottom
-              mainTopG.appendChild(topGCopy);
-              mainBottomG.appendChild(bottomGCopy);
-            }
+            // } else {
+            //   const topGCopy = gElements.cloneNode(true); // Create a copy of gElements for top
+            //   const bottomGCopy = gElements.cloneNode(true); // Create a copy of gElements for bottom
+            //   mainTopG.appendChild(topGCopy);
+            //   mainBottomG.appendChild(bottomGCopy);
+            // }
           }
         });
       };
@@ -192,57 +191,57 @@ function viewGerber(fileData) {
       reader.readAsArrayBuffer(file);
     }
 
-    document.getElementById('fullLayers').appendChild(fullSvg);
-
-    svgArray.topBW = topSVG;
-    svgArray.bottomBW = bottomSVG;
+    svgArray.fullSvg = fullSvg;
+    // svgArray.topBW = topSVG;
+    // svgArray.bottomBW = bottomSVG;
 
     $("#overlay").fadeOut(700, function() {
+      $('#dropArea').css('display', 'none');
       $("#result").fadeIn(700);
     });
 
-    function createAndModifySvg(svgData) {
+    // function createAndModifySvg(svgData) {
      
-      let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      for (const [key, value] of Object.entries(svgData.attributes)) {
-        svg.setAttribute(key, value);
-      }
-      let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-      defs.innerHTML = svgData.defs.join(' ');
-      svg.appendChild(defs);
-      let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      g.setAttribute("transform", gTransform);
-      g.innerHTML = svgData.layer;
-      svg.appendChild(g);
+    //   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    //   for (const [key, value] of Object.entries(svgData.attributes)) {
+    //     svg.setAttribute(key, value);
+    //   }
+    //   let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    //   defs.innerHTML = svgData.defs.join(' ');
+    //   svg.appendChild(defs);
+    //   let g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    //   g.setAttribute("transform", gTransform);
+    //   g.innerHTML = svgData.layer;
+    //   svg.appendChild(g);
 
-      const updatedStyle = `
-      .${stackup.id}_fr4 {color: #000000 !important;}
-      .${stackup.id}_cu {color: #ffffff !important;}
-      .${stackup.id}_cf {color: #ffffff !important;}
-      .${stackup.id}_sm {color: #000000; opacity: 0 !important;}
-      .${stackup.id}_ss {color: #ffffff !important;}
-      .${stackup.id}_sp {color: #ffffff !important;}
-      .${stackup.id}_out {color: #ffffff !important;}`;
-      const existingStyle = defs.querySelector('style');
-      if (existingStyle) {
-        existingStyle.innerHTML = updatedStyle;
-      }
-      const svgString = new XMLSerializer().serializeToString(svg);
-      let searchId = stackup.id;
-      const replacement = 'new_' + searchId;
-      const regIdEx = new RegExp(searchId, 'g');
-      const modifiedSvg = svgString.replace(regIdEx, replacement);
-      const svgDoc = svgParser.parseFromString(modifiedSvg, "image/svg+xml");
+    //   const updatedStyle = `
+    //   .${stackup.id}_fr4 {color: #000000 !important;}
+    //   .${stackup.id}_cu {color: #ffffff !important;}
+    //   .${stackup.id}_cf {color: #ffffff !important;}
+    //   .${stackup.id}_sm {color: #000000; opacity: 0 !important;}
+    //   .${stackup.id}_ss {color: #ffffff !important;}
+    //   .${stackup.id}_sp {color: #ffffff !important;}
+    //   .${stackup.id}_out {color: #ffffff !important;}`;
+    //   const existingStyle = defs.querySelector('style');
+    //   if (existingStyle) {
+    //     existingStyle.innerHTML = updatedStyle;
+    //   }
+    //   const svgString = new XMLSerializer().serializeToString(svg);
+    //   let searchId = stackup.id;
+    //   const replacement = 'new_' + searchId;
+    //   const regIdEx = new RegExp(searchId, 'g');
+    //   const modifiedSvg = svgString.replace(regIdEx, replacement);
+    //   const svgDoc = svgParser.parseFromString(modifiedSvg, "image/svg+xml");
 
-      return svgDoc.documentElement;
+    //   return svgDoc.documentElement;
       
-    }
-    svgCreatedBottom = createAndModifySvg(stackup.bottom,);
-    svgCreatedTop = createAndModifySvg(stackup.top,);
+    // }
+    // svgCreatedBottom = createAndModifySvg(stackup.bottom,);
+    // svgCreatedTop = createAndModifySvg(stackup.top,);
     
 
-    svgArray.topStackBW = svgCreatedTop;
-    svgArray.bottomStackBW = svgCreatedBottom;
+    // svgArray.topStackBW = svgCreatedTop;
+    // svgArray.bottomStackBW = svgCreatedBottom;
 
     displaySVG(svgArray);
   });
@@ -332,16 +331,19 @@ function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 
 // ___________________________ Function To Display SVGs ____________________________
 function displaySVG(svgArray) {
-  const { topStack, bottomStack, topStackBW, bottomStackBW, topBW, bottomBW } = svgArray;
+  const { topStack, bottomStack,topBW, bottomBW, fullSvg } = svgArray;
 
   document.getElementById('toplayer').appendChild(topStack);
-  document.getElementById('topInvert').appendChild(topBW);
+  // document.getElementById('topInvert').appendChild(topBW);
 
   document.getElementById('bottomlayer').appendChild(bottomStack);
-  document.getElementById('bottomInvert').appendChild(bottomBW);
+  // document.getElementById('bottomInvert').appendChild(bottomBW);
 
-  document.getElementById('coreTopStack').appendChild(topStackBW);
-  document.getElementById('coreBottomStack').appendChild(bottomStackBW);
+  document.getElementById('fullLayers').appendChild(fullSvg);
+
+
+  // document.getElementById('coreTopStack').appendChild(topStackBW);
+  // document.getElementById('coreBottomStack').appendChild(bottomStackBW);
   
   
 }

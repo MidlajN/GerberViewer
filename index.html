@@ -71,51 +71,62 @@
         <!-- Layout -->
         <div class="layerNav container-fluid" style="background-color: #f0f0f0;" >  
           <div class="row">
-            <div class="col-lg-3 col-md-12 col-sm-12 py-3">
-              <ol>
-                <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">
-                  <button id="toplayersbtn" class="button-side active" role="button"><span class="text">Top</span></button>
-                    <button id="bottomlayersbtn" class="button-side" role="button"><span class="text">Bottom</span></button>
-                </h4>
-                <li class="litoggle">
-                  <p class="toggleName">Copper</p>
-                  <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper', 0)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <li class="litoggle">
-                  <p class="toggleName">Solder Mask</p>
-                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('top_soldermask', 1)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <li class="litoggle">
-                  <p class="toggleName">Solder Paste</p>
-                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solderpaste', 2)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <li class="litoggle">
-                  <p class="toggleName">Silk Screen</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silkscreen', 3)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-      
-                <h4 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Bottom</h4>
-                <li class="litoggle">
-                  <p class="toggleName">Copper</p>
-                  <button class="toggleButton" style="background-color: #206b19;" onclick="toggleLayer('bottom_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <li class="litoggle">
-                  <p class="toggleName">Solder Mask</p>
-                  <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_soldermask')" ><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <li class="litoggle">
-                  <p class="toggleName">Solder Paste</p>
-                  <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('bottom_solderpaste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <li class="litoggle">
-                  <p class="toggleName">Silk Screen</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silkscreen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
+            <div id="layerSelectors" class="col-lg-3 col-md-12 col-sm-12" style="padding: 30px;" aria-disabled="true">
+              <div id="container" class="container-fluid d-flex justify-content-between">
+                <button id="allLayers" class="button-side active" style="padding-inline: 10px;" role="button"><span class="text">Layers</span></button>
+                <button id="toplayersbtn" class="button-side " style="padding-inline: 10px;" role="button"><span class="text">Top</span></button>
+                <button id="bottomlayersbtn" class="button-side" style="padding-inline: 10px;" role="button"><span class="text">Bottom</span></button>
+              </div>
 
-                <h4> &nbsp;</h4>
+              <div id="toplayerlist" class="layerVisible">
+                <ol>
+                  <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Top</h5> 
+                  <li class="litoggle">
+                    <p class="toggleName">Copper</p>
+                    <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper', 0)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  </li>
+                  <li class="litoggle">
+                    <p class="toggleName">Solder Mask</p>
+                    <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('top_soldermask', 1)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  </li>
+                  <li class="litoggle">
+                    <p class="toggleName">Solder Paste</p>
+                    <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solderpaste', 2)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  </li>
+                  <li class="litoggle">
+                    <p class="toggleName">Silk Screen</p>
+                    <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silkscreen', 3)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  </li>
+                </ol>
+              </div>
+              
+              <div id="bottomlayerlist" class="layerVisible">
+                <ol>
+                  <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Bottom</h5>
+                  <li class="litoggle">
+                    <p class="toggleName">Copper</p>
+                    <button class="toggleButton" style="background-color: #206b19;" onclick="toggleLayer('bottom_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  </li>
+                  <li class="litoggle">
+                    <p class="toggleName">Solder Mask</p>
+                    <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_soldermask')" ><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  </li>
+                  <li class="litoggle">
+                    <p class="toggleName">Solder Paste</p>
+                    <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('bottom_solderpaste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  </li>
+                  <li class="litoggle">
+                    <p class="toggleName">Silk Screen</p>
+                    <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silkscreen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  </li>
+                </ol>
+              </div>
+              
+
+              <ol>
                 <li class="litoggle">
                   <p class="toggleName">Outline</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('all_outline')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
                 <li class="litoggle">
                   <p class="toggleName"> Drill</p>
@@ -143,40 +154,48 @@
                 </div>
               </div> 
 
-              <div id="result" class="shadow" style="display: none;height: 90%;;">
-                <div id="fullLayersParent" style="display: none;height: 100%;position: relative;">
-                  <div class="layerStyle" > 
-                    <div id="fullLayers">
+              <div id="result" class="shadow" style="display: none;height: 90%;">
+                <div  style="display: block;height: 100%;position: relative;overflow: hidden;">
+                  <div id="zoomContainer" style="display: block;position: relative;height: 100%;overflow: hidden;">
+                    <div  id="fullLayersParent" style="display: block;height: 100%;position: relative;">
+                      <div class="layerStyle"  > 
 
+                          <div id="fullLayers" >
+
+                        </div>
+                        
+                      </div>
+                    </div>
+    
+                    <div id="toplayers" style="display: none;height: 100%;position: relative;">
+                      <div id="coreTopStack" class="layerStyle" style="visibility: hidden;"  >
+                      </div> 
+                      <div id="toplayer" class="layerStyle" style="visibility: visible;" >
+                      </div>
+                      <div id="topInvert" class="layerStyle" style="visibility: hidden;">
+                      </div>
+                    </div>
+    
+                    <div id="bottomlayers" style="display: none;height: 100%;position: relative;">
+                      <div id="coreBottomStack" class="layerStyle" style="visibility: hidden;">
+                      </div>
+                      <div id="bottomlayer" class="layerStyle" style="visibility: visible;">  
+                      </div>
+                      <div id="bottomInvert" class="layerStyle" style="visibility: hidden;">
+                      </div>  
                     </div>
                   </div>
                 </div>
-                <div id="toplayers" style="display: block;height: 100%;position: relative;">
-                  <div id="coreTopStack" class="layerStyle" style="visibility: hidden;"  >
-                  </div> 
-                  <div id="toplayer" class="layerStyle" style="visibility: visible;" >
-                  </div>
-                  <div id="topInvert" class="layerStyle" style="visibility: hidden;">
-                  </div>
-                </div>
 
-                <div id="bottomlayers" style="display: none;height: 100%;position: relative;">
-                  <div id="coreBottomStack" class="layerStyle" style="visibility: visible;">
-                  </div>
-                  <div id="bottomlayer" class="layerStyle" style="visibility: hidden;">  
-                  </div>
-                  <div id="bottomInvert" class="layerStyle" style="visibility: hidden;">
-                  </div>  
-                </div>
-                <div class="container-fluid py-3">
-                  <div id="container" class="text-center">
-                    <button id="original" class="button-side active" role="button"><span class="text">Original</span></button>
-                    <button id="bw" class="button-side" role="button"><span class="text">B/W</span></button>
-                    <button id="invert" class="button-side" role="button"><span class="text">Invert</span></button>
-                    <button id="allLayers" class="button-side" role="button"><span class="text">All Layers</span></button>
+                <div class="container-fluid py-3 text-center">
+                    <div id="buttonContainer">
+                      <button id="original" class="button-side" role="button"><span class="text">Original</span></button>
+                      <button id="bw" class="button-side" role="button"><span class="text">B/W</span></button>
+                      <button id="invert" class="button-side" role="button"><span class="text">Invert</span></button> 
                   </div>
                 </div>
               </div>
+              
             </div>
             
           </div>
@@ -197,7 +216,6 @@
     </div>
     
   </section>
-
 
 
   <section  class="py-5 px-4" style="background-color: #fbfbfc;height: 100vh;">
@@ -225,98 +243,6 @@
   </section>
 
   <script>
-    $(document).ready(function() {
-      $('#toplayersbtn').on('click', function() {
-        $('#bottomlayersbtn').removeClass('active');
-        $('#toplayersbtn').addClass('active');
-        $('#bottomlayers').css('display', 'none');
-        $('#toplayers').css('display', 'block');
-      });
-
-      $('#bottomlayersbtn').on('click', function() {
-        $('#toplayersbtn').removeClass('active');
-        $('#bottomlayersbtn').addClass('active');
-        $('#toplayers').css('display', 'none');
-        $('#bottomlayers').css('display', 'block');
-      });
-      $('#allLayers').on('click', function() {
-        $('#toplayersbtn').removeClass('active');
-        $('#bottomlayersbtn').removeClass('active');
-        $('#allLayers').addClass('active');
-        $("#toplayers,#bottomlayers").css('display', 'none');
-        $("#fullLayersParent").css('display', 'block');
-      });
-
-
-      $('#container').on('click', '#original', function() {
-        $('#container').removeClass('active');
-        $('#original').addClass('active');
-        $('#toplayer,#bottomlayer').css('visibility', 'visible');
-        $('#coreTopStack,#coreBottomStack').css('visibility', 'hidden');
-        $('#topInvert, #bottomInvert').css('visibility', 'hidden');
-      })
-      $('#container').on('click', '#bw', function() {
-        $('#container').removeClass('active');
-        $('#bw').addClass('active');$(document).ready(function() {
-          $('#toplayersbtn').on('click', function() {
-            $('#bottomlayersbtn').removeClass('active');
-            $('#toplayersbtn').addClass('active');
-            $('#bottomlayers').hide();
-            $('#toplayers').show();
-          });
-        
-          $('#bottomlayersbtn').on('click', function() {
-            $('#toplayersbtn').removeClass('active');
-            $('#bottomlayersbtn').addClass('active');
-            $('#toplayers').hide();
-            $('#bottomlayers').show();
-          });
-        
-          $('#allLayers').on('click', function() {
-            $('#toplayersbtn').removeClass('active');
-            $('#bottomlayersbtn').removeClass('active');
-            $('#allLayers').addClass('active');
-            $("#toplayers,#bottomlayers").hide();
-            $("#fullLayersParent").show();
-          });
-        
-          $('#container').on('click', '#original', function() {
-            $('#container').removeClass('active');
-            $('#original').addClass('active');
-            $('#toplayer,#bottomlayer').css('visibility', 'visible');
-            $('#coreTopStack,#coreBottomStack').css('visibility', 'hidden');
-            $('#topInvert, #bottomInvert').css('visibility', 'hidden');
-          });
-        
-          $('#container').on('click', '#bw', function() {
-            $('#container').removeClass('active');
-            $('#bw').addClass('active');
-            $('#toplayer, #bottomlayer').css('visibility', 'hidden');
-            $('#coreTopStack, #coreBottomStack').css('visibility', 'visible');
-            $('#topInvert, #bottomInvert').css('visibility', 'hidden');
-          });
-        
-          $('#container').on('click', '#invert', function() {
-            $('#container').removeClass('active');
-            $('#invert, #invert').addClass('active');
-            $('#toplayer, #bottomlayer').css('visibility', 'hidden');
-            $('#coreTopStack, #coreBottomStack').css('visibility', 'hidden');
-            $('#topInvert, #bottomInvert').css('visibility', 'visible');
-          });
-        });
-        
-        $('#toplayer, #bottomlayer').css('visibility', 'hidden');
-        $('#coreTopStack, #coreBottomStack').css('visibility', 'visible');
-        $('#topInvert, #bottomInvert').css('visibility', 'hidden');
-      })
-      $('#container').on('click', '#invert', function() {
-        $('#container').removeClass('active');
-        $('#invert, #invert').addClass('active');
-        $('#toplayer, #bottomlayer').css('visibility', 'hidden');
-        $('#coreTopStack, #coreBottomStack').css('visibility', 'hidden');
-        $('#topInvert, #bottomInvert').css('visibility', 'visible');
-      })
-    });
 
     const toggleButtons = document.querySelectorAll('.toggleButton');
 
@@ -340,6 +266,75 @@
     });
 
 
+    $('#container').on('click', '#allLayers', function() {
+      $('#toplayersbtn, #bottomlayersbtn').removeClass('active');
+      $('#allLayers').addClass('active');
+      $('#toplayerlist, #bottomlayerlist').addClass('layerVisible').removeClass('layerHidden');
+      $('#toplayers, #bottomlayers').fadeOut(function(){
+        $('#fullLayersParent').fadeIn();
+      });
+    });
+
+    $('#container').on('click', '#toplayersbtn', function() {
+      $('#allLayers, #bottomlayersbtn').removeClass('active');
+      $('#toplayersbtn').addClass('active');
+      $('#bottomlayerlist').removeClass('layerVisible').addClass('layerHidden');
+      $('#toplayerlist').removeClass('layerHidden').addClass('layerVisible');
+      $('#bottomlayers, #fullLayersParent').fadeOut(function(){
+        $('#toplayers').fadeIn();
+      });
+    });
+
+    $('#container').on('click', '#bottomlayersbtn', function() {
+      $('#allLayers, #toplayersbtn').removeClass('active');
+      $('#toplayerlist').removeClass('layerVisible').addClass('layerHidden');
+      $('#bottomlayerlist').removeClass('layerHidden').addClass('layerVisible');
+      $('#bottomlayersbtn').addClass('active');
+      $('#toplayers, #fullLayersParent').fadeOut(function(){
+        $('#bottomlayers').fadeIn();
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const zoomContainer = document.getElementById('result');
+      const zoomedContent = document.getElementById('zoomContainer');
+      let zoomLevel = 1;
+      const maxZoomLevel = 4
+
+      zoomContainer.addEventListener('wheel', (event) => {
+        event.preventDefault();
+
+        const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1; // Adjust the zoom speed
+
+        const rect = zoomedContent.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        const offsetX = (mouseX / rect.width) * 100;
+        const offsetY = (mouseY / rect.height) * 100;
+
+        const newZoomLevel = zoomLevel * zoomFactor;
+        zoomLevel = Math.max(1, Math.min(maxZoomLevel, newZoomLevel)); // Ensure zoom doesn't go below 100%
+
+        zoomedContent.style.transformOrigin = `${offsetX}% ${offsetY}%`;
+        zoomedContent.style.transform = `scale(${zoomLevel})`;
+      });
+
+      // Call the function when you want to toggle the button states
+      toggleButtonState();
+    });
+
+    const parentDiv = document.getElementById('layerSelectors');
+
+    // Function to toggle the disabled state of all buttons within the parent div
+    function toggleButtonState() {
+      const buttons = parentDiv.querySelectorAll('button'); // Select all buttons within the parent div
+      buttons.forEach(button => {
+        button.disabled = !button.disabled; // Toggle the disabled state of each button
+      });
+    }
+    
+
     const dropArea = document.getElementById('dropArea');
     const gerberFileInput = document.getElementById('gerberFileInput');
 
@@ -358,13 +353,13 @@
     dropArea.addEventListener('drop', (e) => {
       e.preventDefault();
       const files = e.dataTransfer.files;
-      $(dropArea).fadeOut(1000);
+      toggleButtonState();
       initializeGerberToSVG(files);
     })
 
     gerberFileInput.addEventListener('change', (e) => {
       const files = e.target.files;
-      dropArea.style.display = 'none';
+      toggleButtonState();
       initializeGerberToSVG(files);
     })
   </script>

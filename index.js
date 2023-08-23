@@ -2,7 +2,8 @@
 
 function initializeGerberToSVG(files) {
   console.log('files : ', files);
-  $('#overlay').fadeIn(700);
+  $('#overlay').fadeIn();
+  
   viewGerber(files)
   // if (document.getElementById("button") !== null) {
   //   document.getElementById("button").addEventListener("click", viewGerber);
@@ -160,10 +161,12 @@ function makeEditable(element) {
 
 // ----------------------- Toggle Layer ------------------------
 function toggleLayer(LayerId, index) {
-  console.log('LayerId : ', index);
+  console.log('LayerId : ', LayerId);
   const top = document.getElementById("toplayers");
   const bottom = document.getElementById("bottomlayers");
+  const allLayers = document.getElementById("fullLayers");
 
+  const Layers = allLayers.getElementsByTagName("g");
   const topLayers = top.getElementsByTagName("g");
   const bottomLayers = bottom.getElementsByTagName("g");
 
@@ -184,6 +187,14 @@ function toggleLayer(LayerId, index) {
       }
     }
   });
+  Array.from(Layers).forEach((layer) => {
+    if (layer.hasAttribute("id")) {
+      const layerId = layer.getAttribute("id");
+      if (layerId.endsWith(LayerId)) {
+        layer.style.display = layer.style.display === "none" ? "block" : "none";
+      }
+    }
+  })
 }
 
 
