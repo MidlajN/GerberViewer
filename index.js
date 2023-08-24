@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ##### Toggle Button Section For the Top and Bottom #####
   $('#container').on('click', '#allLayers', function() {
+    $('#buttonContainer').slideUp();
     $('#toplayersbtn, #bottomlayersbtn').removeClass('active');
     $('#allLayers').addClass('active');
     $('#toplayerlist, #bottomlayerlist').addClass('layerVisible').removeClass('layerHidden');
@@ -232,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('#container').on('click', '#toplayersbtn', function() {
+    $('#buttonContainer').slideDown();
     $('#allLayers, #bottomlayersbtn').removeClass('active');
     $('#toplayersbtn').addClass('active');
     $('#bottomlayerlist').removeClass('layerVisible').addClass('layerHidden');
@@ -242,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   $('#container').on('click', '#bottomlayersbtn', function() {
+    $('#buttonContainer').slideDown();
     $('#allLayers, #toplayersbtn').removeClass('active');
     $('#toplayerlist').removeClass('layerVisible').addClass('layerHidden');
     $('#bottomlayerlist').removeClass('layerHidden').addClass('layerVisible');

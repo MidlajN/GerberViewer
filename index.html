@@ -29,7 +29,7 @@
 <body>
   
   <!-- Navbar -->
-  <section id="navbar" >
+  <section id="navbar" style="height: 8vh;">
    <div class="gerberNav shadow-sm">
     <div class="my-auto">
       <h >
@@ -48,9 +48,9 @@
 
 
   <!-- Drag and Drop -->
-  <section style="height: 100vh;background-color: #fbfbfc;">
+  <section style="background-color: #fbfbfc;">
     
-    <div class="shadow-lg mx-3 my-4 layerNav row" >
+    <div class="shadow-lg mx-4 mt-3 layerNav row" style="height: 87vh;">
       <div class="col-md-9" style="padding: 0 !important;">
         <!-- Navbar -->
         <div class="navbar-animmenu" id="navbar-animmenu">
@@ -73,9 +73,9 @@
           <div class="row">
             <div id="layerSelectors" class="col-lg-3 col-md-12 col-sm-12" style="padding: 30px;" aria-disabled="true">
               <div id="container" class="container-fluid d-flex justify-content-between">
-                <button id="allLayers" class="button-side active" style="padding-inline: 10px;" role="button"><span class="text">Layers</span></button>
-                <button id="toplayersbtn" class="button-side " style="padding-inline: 10px;" role="button"><span class="text">Top</span></button>
-                <button id="bottomlayersbtn" class="button-side" style="padding-inline: 10px;" role="button"><span class="text">Bottom</span></button>
+                <button id="allLayers" class="button-side active" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Layers</span></button>
+                <button id="toplayersbtn" class="button-side " style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Top</span></button>
+                <button id="bottomlayersbtn" class="button-side" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
               </div>
 
               <div id="toplayerlist" class="layerVisible">
@@ -133,19 +133,22 @@
                   <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silk_screen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
               </ol>
+
+              <div style="display: flex;justify-content: end;padding:10px;">
+                <button class="noselect" id="renderButton"><span class='text'>PNG</span><span class="icon">Export <i class="fa-solid fa-file-image" style="color: #ffffff;padding-right: 12px;padding-left: 5px;"></i></span>&nbsp;</button>
+              </div>
             </div>
 
             <div class="col-lg-9 col-md-12 col-sm-12 " style="background-color: #f0f0f0;height: 80vh;padding: 30px;">
               
 
-              <div id="dropArea" class="shadow"  style="background-color: #f3f3f3;height:-webkit-fill-available;position: relative;">
+              <div id="dropArea" class="shadow"  style="background-color: #f3f3f3;height:90%;position: relative;">
                 <div id="overlay">
                   <div class="cv-spinner">
                     <span class="spinner"></span>
                   </div>
                 </div>
                 
-
                 <div class=" d-flex justify-content-center align-items-center" style="height: 100%;">
                   <div  class="shadow" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
                     <p>Drop your Gerber file here</p>
@@ -163,7 +166,7 @@
                     </div>
     
                     <div id="toplayers" style="display: none;height: 100%;position: relative;">
-                      <div id="toplayer" class="layerStyle" style="visibility: visible;" >
+                      <div id="toplayer" class="layerStyle contentSvg" style="visibility: visible;" >
                       </div>
                     </div>
     
@@ -175,10 +178,10 @@
                 </div>
 
                 <div class="container-fluid py-3 text-center">
-                    <div id="buttonContainer">
-                      <button id="original" class="button-side" role="button"><span class="text">Original</span></button>
-                      <button id="bw" class="button-side" role="button"><span class="text">B/W</span></button>
-                      <button id="invert" class="button-side" role="button"><span class="text">Invert</span></button> 
+                    <div id="buttonContainer" style="display: none;">
+                      <button id="original" class="button-side colorButton active" role="button"><span class="text">Original</span></button>
+                      <button id="bw" class="button-side colorButton" role="button"><span class="text">B/W</span></button>
+                      <button id="invert" class="button-side colorButton" role="button"><span class="text">Invert</span></button> 
                   </div>
                 </div>
               </div>
@@ -190,11 +193,12 @@
       </div>
 
       <!-- Right Side -->
-      <div class="col-md-3" style="padding-right: 0 !important;padding-left: 2px;">
-        <div class="navbar-animmenu2">
+      <div class="col-md-3" style="padding-right: 0 !important;padding-left: 2px;height:100%;overflow: hidden;">
+        <div class="navbar-animmenu2 sticky-top">
         </div>
-        <div id="coreBottomStack">
-
+        <div class="pngContainer">
+          <div id="canvas">
+          </div>
         </div>
       </div>
     </div>
@@ -203,38 +207,15 @@
     </div>
     
   </section>
-
-
-  <section  class="py-5 px-4" style="background-color: #fbfbfc;height: 100vh;">
-
-    <div style="height: 100%;display: flex;justify-content: space-between;">
-      
-
-      <div style="width: 100%;">
-        
-      </div>
-
-    </div>
-    
-  
-      <div>
-      <div>
-        <h1>Canvas </h1>
-        <button id="renderButton">Convert</button>
-        <canvas id="canvaspng"></canvas>
-        <div id="canvas">
-        </div>
-      </div>
-
-
-  </section>
-
   <script> 
+
     let original = document.getElementById('original');
     let bw = document.getElementById('bw');
     let bwInvert = document.getElementById('invert');
 
     bw.addEventListener('click', () => {
+      $('.colorButton').removeClass('active');
+      bw.classList.add('active');
       let svgTop = document.getElementById('topstacklayer');
       let svgBottom = document.getElementById('bottomstacklayer'); 
       let svgTopStyle = svgTop.querySelector('style');
@@ -268,6 +249,8 @@
     })
 
     bwInvert.addEventListener('click', () => {
+      $('.colorButton').removeClass('active');
+      bwInvert.classList.add('active');
       let svgTop = document.getElementById('topstacklayer');
       let svgBottom = document.getElementById('bottomstacklayer'); 
       let svgTopStyle = svgTop.querySelector('style');
@@ -301,6 +284,8 @@
     })
 
     original.addEventListener('click', () => {
+      $('.colorButton').removeClass('active');
+      original.classList.add('active');
       let svgTop = document.getElementById('topstacklayer');
       let svgBottom = document.getElementById('bottomstacklayer'); 
       let svgTopStyle = svgTop.querySelector('style');

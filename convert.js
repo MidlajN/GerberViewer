@@ -142,11 +142,12 @@ function viewGerber(fileData) {
     }
 
     svgArray.fullSvg = fullSvg;
-
-    $("#overlay").fadeOut(700, function() {
-      $('#dropArea').css('display', 'none');
+    $('#dropArea').css('display', 'none');
+    $('#overlay').fadeOut(function() {
       $("#result").fadeIn(700);
-    });
+    })
+    
+
     displaySVG(svgArray);
   });
   
@@ -197,7 +198,6 @@ function viewPCBStackUp(files) {
 
 // ____________________________ Function To Convert The SVG To PNG ____________________________
 function svg2png(svg, swidth = svg_width, sheight = svg_height) {
-  const dpi = 1000;
 
   return new Promise((resolve, reject) => {
     
@@ -254,8 +254,9 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('SVG String :: ', svgString);
     svg2png(svgString).then((canvas) => {
       console.log('PNG : ', canvas);
+      
+      canvas.setAttribute('style', 'width: 100%; height: 100%;');
       document.getElementById('canvas').appendChild(canvas);
-
       // Convert canvas to Blob
       canvas.toBlob((pngBlob) => {
           // Create a download link for the PNG Blob
