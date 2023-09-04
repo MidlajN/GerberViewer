@@ -327,6 +327,62 @@ ol {
     left: -25px;
 }
 
+.navbarRight {
+  display: flex;
+  height: inherit;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  color: rgba(255, 255, 255);
+  transition: 0.5s;
+}
+
+.navRightBtn {
+  display: flex;
+  align-items: center;
+  border: none;
+  background-color: transparent;
+  transition: 0.5s;
+  padding-inline: 8px ;
+  padding-block: 4px;
+  overflow: hidden;
+
+}
+
+.navRightBtn:hover {
+  cursor: pointer;
+  background-color: rgb(255, 255, 255, 0.3);
+  border-radius: 5px;
+  color: rgba(255, 255, 255, 1);
+
+}
+
+.hover-content {
+  cursor: pointer;
+  display: flex;
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+  border-radius: 5px;
+}
+
+.hover-content .text-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: x-small;
+  font-weight: bold;
+  color: white;
+  white-space: nowrap;
+  width: 0; /* Start with 0 width to hide the text box */
+  overflow: hidden;
+  transition: width 0.5s ease-in-out;
+}
+
+
+.hover-content:hover .text-box {
+  width: 50px; /* Show the text box on hover by increasing its width */
+}
+
 
 /* ---------------------------- Each Layer Div -------------------------------- */
 .layerStyle {
@@ -427,7 +483,7 @@ ol {
 
 .noselect:hover {
 	background: #1f0c0c;
-  transform: skew(10deg) scale(1.1);
+  transform: scale(1.1);
   margin-right: 10px;
 }
 
@@ -452,5 +508,50 @@ ol {
 /* PNG Container */
 .pngContainer {
   width: 100%;
-  overflow: scroll;
+  height: inherit;
+  overflow: auto;
+}
+
+.pngContainer::-webkit-scrollbar {
+  display: none;
+}
+
+/* PNG Div OF Each Image */
+.pngCard {
+  margin: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  transition: 0.3s;
+}
+
+.pngCard:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.pngAnchorDiv {
+  overflow: hidden;
+  padding-bottom: 5px;
+  padding-inline: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pngButton {
+  appearance: none;
+  border: none;
+  border-radius: 9px;
+  width: fit-content;
+  padding-inline: 10px;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  transition: transform 500ms ease-in-out, background-color 500ms ease-in-out, color 500ms ease-in-out;
+}
+
+.pngButton:hover {
+  background-color: #ffffff;
+  color: #2a83b6;
+  transform: scale(1.1);
 }

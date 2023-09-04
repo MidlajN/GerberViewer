@@ -12,6 +12,8 @@
 
   <!-- Jquery -->
   <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
   <!-- <script src="https://unpkg.com/pcb-stackup@^4.0.0/dist/pcb-stackup.min.js" onload="initializeGerberToSVG()" defer></script> -->
   <!-- <script src="https://unpkg.com/pcb-stackup-core@^4.0.0/dist/pcb-stackup-core.min.js"></script>  -->
@@ -193,19 +195,25 @@
       </div>
 
       <!-- Right Side -->
-      <div class="col-md-3" style="padding-right: 0 !important;padding-left: 2px;height:100%;overflow: hidden;">
+      <div class="col-md-3" style="padding-right: 0 !important; padding-left: 2px; height: 100%; overflow: hidden;">
         <div class="navbar-animmenu2 sticky-top">
-        </div>
-        <div class="pngContainer">
-          <div id="canvas">
+          <!-- Content of navbar-animmenu2 -->
+          <div class="navbarRight ">
+            <button class="navRightBtn hover-content" onclick="zipImages()">
+              <i class="fa-solid fa-file-arrow-down" style="color: #ffffff;"></i>
+              <div class="text-box">
+                Zip File
+              </div>
+            </button>
           </div>
         </div>
-      </div>
-    </div>
-    
-      
-    </div>
-    
+        <div class="pngContainer">
+          <div id="canvas" style="padding: 15px;margin-bottom: 34px;">
+            <!-- Content of canvas -->
+          </div>
+        </div>
+      </div> 
+    </div>  
   </section>
   <script> 
 
@@ -217,9 +225,14 @@
       $('.colorButton').removeClass('active');
       bw.classList.add('active');
       let svgTop = document.getElementById('topstacklayer');
-      let svgBottom = document.getElementById('bottomstacklayer'); 
+      let svgBottom = document.getElementById('bottomstacklayer');
+
       let svgTopStyle = svgTop.querySelector('style');
       let svgBottomStyle = svgBottom.querySelector('style');
+
+      svgTop.setAttribute('data-name', 'top_layers_bw');
+      svgBottom.setAttribute('data-name', 'bottom_layers_bw');
+
       const stackid = svgTop.getAttribute('data-stackid')
 
       if (svgTopStyle && svgBottomStyle) {
@@ -253,8 +266,13 @@
       bwInvert.classList.add('active');
       let svgTop = document.getElementById('topstacklayer');
       let svgBottom = document.getElementById('bottomstacklayer'); 
+
       let svgTopStyle = svgTop.querySelector('style');
       let svgBottomStyle = svgBottom.querySelector('style');
+
+      svgTop.setAttribute('data-name', 'top_layers_bw_invert');
+      svgBottom.setAttribute('data-name', 'bottom_layers_bw_invert');
+
       const stackid = svgTop.getAttribute('data-stackid')
 
       if (svgTopStyle && svgBottomStyle) {

@@ -24,7 +24,9 @@ function viewGerber(fileData) {
     const topStack = parsedTopLayer.documentElement;
     const bottomStack = parsedBottomLayer.documentElement;
     topStack.setAttribute("data-stackid", `${stackup.id}`);
+    topStack.setAttribute('data-name', 'top_layers_original')
     bottomStack.setAttribute("data-stackid", `${stackup.id}`);
+    bottomStack.setAttribute('data-name', 'bottom_layers_original')
 
     svgArray.topStackSvg = topStack;
     svgArray.bottomStackSvg = bottomStack;
@@ -213,13 +215,13 @@ function svg2png(svg, swidth = svg_width, sheight = svg_height) {
           const scaleFactor = 1500 / 25.4;
           let width = swidth ;
           let height = sheight;
-          canvas.width = width * scaleFactor;
-          canvas.height = height * scaleFactor; 
+          canvas.width = width * scaleFactor + 10;
+          canvas.height = height * scaleFactor + 10; 
           const ctx = canvas.getContext("2d");
           
           ctx.fillStyle = "white";
-          ctx.fillRect(0, 0, width * scaleFactor, height * scaleFactor);
-          ctx.drawImage(img, 0, 0, width * scaleFactor, height * scaleFactor);
+          ctx.fillRect(0, 0, width * scaleFactor + 10, height * scaleFactor + 10);
+          ctx.drawImage(img, 5, 5, width * scaleFactor , height * scaleFactor );
           resolve(canvas);
       };
 
@@ -249,26 +251,71 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('renderButton').addEventListener('click', function(){
     svgParent = document.getElementById('toplayer');
     svg = svgParent.querySelector('svg');
-    console.log('SVG :: ', svg);
+    svgname = svg.getAttribute('data-name')
+    pngDiv = document.createElement('div');
+    pngDiv.classList.add('pngCard');
     const svgString = new XMLSerializer().serializeToString(svg);
-    console.log('SVG String :: ', svgString);
     svg2png(svgString).then((canvas) => {
-      console.log('PNG : ', canvas);
-      
       canvas.setAttribute('style', 'width: 100%; height: 100%;');
-      document.getElementById('canvas').appendChild(canvas);
+      canvas.setAttribute('data-name', svgname);
+      pngDiv.appendChild(document.createElement('div').appendChild(canvas));
       // Convert canvas to Blob
       canvas.toBlob((pngBlob) => {
           // Create a download link for the PNG Blob
           const downloadLink = document.createElement('a');
           downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
 
-          downloadLink.download = 'converted-image.png'; // Set the desired filename
-          downloadLink.textContent = 'Download PNG';
-          document.getElementById('canvas').appendChild(downloadLink);
+          downloadLink.download = svgname + '_1500dpi.png'; 
+          downloadLink.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
+
+          pngAnchor = document.createElement('div');
+          pngAnchor.classList.add('pngAnchorDiv');
+          pngAnchor.innerHTML = `<p style="font-size:10px;margin:0;">${svgname}_1500dpi.png</p>`;
+          pngAnchor.appendChild(downloadLink);
+          pngDiv.appendChild(pngAnchor);
         }, "image/png");
+        document.getElementById('canvas').appendChild(pngDiv);
     }).catch((err) => {
         console.log('Error : ', err);
     });
   })
 })
+
+
+// __________________________ Zip All The Images _________________________
+function zipImages() {
+  const zip = new JSZip();
+
+  const canvas = document.getElementById('canvas');
+  const canvasElements = canvas.querySelectorAll('canvas');
+
+  function canvasToBlob (canvas, callback) {
+    canvas.toBlob(callback, 'image/png');
+  }
+
+  // wait for all canvas to Blob conversion
+  Promise.all(
+    Array.from(canvasElements).map((canvas, index) => {
+      return new Promise((resolve) => {
+        canvasToBlob(canvas, (blob) => {
+          zip.file(canvas.getAttribute('data-name') + index + '_1500dpi.png', blob);
+          resolve();
+        });
+      })
+    })
+  ).then(() => {
+    // Generate The Zip Asynchronously
+    zip.generateAsync({ type: "blob" }).then((content) => {
+
+      const blobUrl = URL.createObjectURL(content);
+      // create a Blob URL for the Zip Content
+      const downloadLink = document.createElement("a");
+      downloadLink.href = blobUrl;
+      downloadLink.download = "pcbImages.zip";  
+      downloadLink.click();
+
+      // Clean up the Blob URL
+      window.URL.revokeObjectURL(blobUrl);
+    });
+  });
+}
