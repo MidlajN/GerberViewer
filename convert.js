@@ -275,6 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
           pngDiv.appendChild(pngAnchor);
         }, "image/png");
         document.getElementById('canvas').appendChild(pngDiv);
+        document.getElementById('zipBtn').style.display = 'flex';
     }).catch((err) => {
         console.log('Error : ', err);
     });
@@ -292,7 +293,7 @@ function zipImages() {
   function canvasToBlob (canvas, callback) {
     canvas.toBlob(callback, 'image/png');
   }
-
+  
   // wait for all canvas to Blob conversion
   Promise.all(
     Array.from(canvasElements).map((canvas, index) => {

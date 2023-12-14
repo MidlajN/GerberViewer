@@ -21,11 +21,11 @@
   
   <link rel="stylesheet" href="style.css">
 
-  <script src="libs/gerber_to_svg.js" ></script>
-  <script src="libs/pcb_stackup.js" ></script>
+  <script src="/libs/gerber_to_svg.js" ></script>
+  <script src="/libs/pcb_stackup.js" ></script>
   <script src="convert.js"></script>
 
-  <script src="index.js"></script>
+  <script src="main.js"></script>
 
 </head>
 <body>
@@ -198,7 +198,7 @@
       <div class="col-md-3" style="padding-right: 0 !important; padding-left: 2px; height: 100%; overflow: hidden;">
         <div class="navbar-animmenu2 sticky-top">
           <!-- Content of navbar-animmenu2 -->
-          <div class="navbarRight ">
+          <div id="zipBtn" class="navbarRight " style="display: none;">
             <button class="navRightBtn hover-content" onclick="zipImages()">
               <i class="fa-solid fa-file-arrow-down" style="color: #ffffff;"></i>
               <div class="text-box">
