@@ -1,3 +1,167 @@
+import { viewGerber } from "./convert.js";
+
+
+
+let original = document.getElementById('original');
+let bw = document.getElementById('bw');
+let bwInvert = document.getElementById('invert');
+
+bw.addEventListener('click', () => {
+  $('.colorButton').removeClass('active');
+  bw.classList.add('active');
+  let svgTop = document.getElementById('topstacklayer');
+  let svgBottom = document.getElementById('bottomstacklayer');
+
+  let svgTopStyle = svgTop.querySelector('style');
+  let svgBottomStyle = svgBottom.querySelector('style');
+
+  svgTop.setAttribute('data-name', 'top_layers_bw');
+  svgBottom.setAttribute('data-name', 'bottom_layers_bw');
+
+  const stackid = svgTop.getAttribute('data-stackid')
+
+  if (svgTopStyle && svgBottomStyle) {
+    const svgStyleContent = `
+    .${stackid}_fr4 {color: #000000  !important;}
+    .${stackid}_cu {color: #ffffff !important;}
+    .${stackid}_cf {color: #ffffff !important;}
+    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+    .${stackid}_ss {color: #ffffff !important;}
+    .${stackid}_sp {color: #ffffff !important;}
+    .${stackid}_out {color: #000000 !important;}
+    `
+    svgTopStyle.textContent = svgStyleContent;
+    svgBottomStyle.textContent = svgStyleContent;
+  }
+  const toplayer = document.getElementById('toplayer');
+  // toplayer.innerHTML = '';
+  const bottomlayer = document.getElementById('bottomlayer');
+  // bottomlayer.innerHTML = '';
+
+  // const svgTopClone = svgTop.cloneNode(true);
+  // const svgBottomClone = svgBottom.cloneNode(true);
+  
+  // toplayer.appendChild(svgTopClone);
+  // bottomlayer.appendChild(svgBottomClone);
+  
+})
+
+bwInvert.addEventListener('click', () => {
+  $('.colorButton').removeClass('active');
+  bwInvert.classList.add('active');
+  let svgTop = document.getElementById('topstacklayer');
+  let svgBottom = document.getElementById('bottomstacklayer'); 
+
+  let svgTopStyle = svgTop.querySelector('style');
+  let svgBottomStyle = svgBottom.querySelector('style');
+
+  svgTop.setAttribute('data-name', 'top_layers_bw_invert');
+  svgBottom.setAttribute('data-name', 'bottom_layers_bw_invert');
+
+  const stackid = svgTop.getAttribute('data-stackid')
+
+  if (svgTopStyle && svgBottomStyle) {
+    const svgStyleContent = `
+    .${stackid}_fr4 {color: #ffffff  !important;}
+    .${stackid}_cu {color: #000000 !important;}
+    .${stackid}_cf {color: #000000 !important;}
+    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+    .${stackid}_ss {color: #000000 !important;}
+    .${stackid}_sp {color: #000000 !important;}
+    .${stackid}_out {color: #ffffff !important;}
+    `
+    svgTopStyle.textContent = svgStyleContent;
+    svgBottomStyle.textContent = svgStyleContent;
+  }
+  const toplayer = document.getElementById('toplayer');
+  // toplayer.innerHTML = '';
+  const bottomlayer = document.getElementById('bottomlayer');
+  // bottomlayer.innerHTML = '';
+
+  // const svgTopClone = svgTop.cloneNode(true);
+  // const svgBottomClone = svgBottom.cloneNode(true);
+  
+  // toplayer.appendChild(svgTopClone);
+  // bottomlayer.appendChild(svgBottomClone);
+  
+})
+
+original.addEventListener('click', () => {
+  $('.colorButton').removeClass('active');
+  original.classList.add('active');
+  let svgTop = document.getElementById('topstacklayer');
+  let svgBottom = document.getElementById('bottomstacklayer'); 
+  let svgTopStyle = svgTop.querySelector('style');
+  let svgBottomStyle = svgBottom.querySelector('style');
+  const stackid = svgTop.getAttribute('data-stackid')
+
+  if (svgTopStyle && svgBottomStyle) {
+    const svgStyleContent = `
+    .${stackid}_fr4 {color: #666666  !important;}
+    .${stackid}_cu {color: #cccccc !important;}
+    .${stackid}_cf {color: #cc9933 !important;}
+    .${stackid}_sm {color: #004200 !important; opacity: 0.75 !important;}
+    .${stackid}_ss {color: #ffffff !important;}
+    .${stackid}_sp {color: #999999 !important;}
+    .${stackid}_out {color: #000000 !important;}
+    `
+    svgTopStyle.textContent = svgStyleContent;
+    svgBottomStyle.textContent = svgStyleContent;
+  }
+  const toplayer = document.getElementById('toplayer');
+  // toplayer.innerHTML = '';
+  const bottomlayer = document.getElementById('bottomlayer');
+  // bottomlayer.innerHTML = '';
+
+  // const svgTopClone = svgTop.cloneNode(true);
+  // const svgBottomClone = svgBottom.cloneNode(true);
+  
+  // toplayer.appendChild(svgTopClone);
+  // bottomlayer.appendChild(svgBottomClone);
+  
+})
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const dropArea = document.getElementById('dropArea');
+  const gerberFileInput = document.getElementById('gerberFileInput');
+
+  dropArea.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    dropArea.style.border = '2px dashed #ffff';
+    dropArea.style.cursor = 'pointer';
+  })
+  dropArea.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dropArea.style.border = '2px dashed #ccc';
+  })
+  dropArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  })
+  dropArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    toggleButtonState();
+    initializeGerberToSVG(files);
+  })
+
+  gerberFileInput.addEventListener('change', (e) => {
+    const files = e.target.files;
+    toggleButtonState();
+    initializeGerberToSVG(files);
+  })
+    
+    toggleButtonState(); // Call the toggleButtonState function
+});
+
+const parentDiv = document.getElementById('layerSelectors');
+// Function to toggle the disabled state of all buttons within the parent div
+function toggleButtonState() {
+  const buttons = parentDiv.querySelectorAll('button'); // Select all buttons within the parent div
+  buttons.forEach(button => {
+    button.disabled = !button.disabled; // Toggle the disabled state of each button
+  });
+} 
 
 
 function initializeGerberToSVG(files) {
@@ -257,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ##### Toggle Each Layer Of the  PCB #####
-function toggleLayer(LayerId, index) {
+export function toggleLayer(LayerId, index) {
   console.log('LayerId : ', LayerId);
   const top = document.getElementById("toplayers");
   const bottom = document.getElementById("bottomlayers");
@@ -293,6 +457,7 @@ function toggleLayer(LayerId, index) {
     }
   })
 }
+window.toggleLayer = toggleLayer; // Make it available in the global scope
 
 // __________________________________ End Of Toggle Buttons & Zoom Layer Section __________________________________
 

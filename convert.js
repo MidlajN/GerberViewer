@@ -1,6 +1,6 @@
 let svg_width = null
 let svg_height = null
-function viewGerber(fileData) {
+export function viewGerber(fileData) {
   const fileInput = fileData;
   const svgArray = {};
 
@@ -16,10 +16,10 @@ function viewGerber(fileData) {
 
     // _________________--- Gerber To SVG with PCB-Stackup Library ---_________________
 
-    top_layer = stackup.top.svg;
-    bottom_layer = stackup.bottom.svg;
-    parsedTopLayer = svgParser.parseFromString(top_layer, "image/svg+xml");
-    parsedBottomLayer = svgParser.parseFromString(bottom_layer, "image/svg+xml");
+    const top_layer = stackup.top.svg;
+    const bottom_layer = stackup.bottom.svg;
+    const parsedTopLayer = svgParser.parseFromString(top_layer, "image/svg+xml");
+    const parsedBottomLayer = svgParser.parseFromString(bottom_layer, "image/svg+xml");
 
     const topStack = parsedTopLayer.documentElement;
     const bottomStack = parsedBottomLayer.documentElement;
@@ -249,10 +249,10 @@ function displaySVG(svgArray) {
 
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('renderButton').addEventListener('click', function(){
-    svgParent = document.getElementById('toplayer');
-    svg = svgParent.querySelector('svg');
-    svgname = svg.getAttribute('data-name')
-    pngDiv = document.createElement('div');
+    const svgParent = document.getElementById('toplayer');
+    const svg = svgParent.querySelector('svg');
+    const svgname = svg.getAttribute('data-name')
+    const pngDiv = document.createElement('div');
     pngDiv.classList.add('pngCard');
     const svgString = new XMLSerializer().serializeToString(svg);
     svg2png(svgString).then((canvas) => {
@@ -268,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
           downloadLink.download = svgname + '_1500dpi.png'; 
           downloadLink.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
 
-          pngAnchor = document.createElement('div');
+          const pngAnchor = document.createElement('div');
           pngAnchor.classList.add('pngAnchorDiv');
           pngAnchor.innerHTML = `<p style="font-size:10px;margin:0;">${svgname}_1500dpi.png</p>`;
           pngAnchor.appendChild(downloadLink);
@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // __________________________ Zip All The Images _________________________
-function zipImages() {
+export function zipImages() {
   const zip = new JSZip();
 
   const canvas = document.getElementById('canvas');
@@ -320,3 +320,4 @@ function zipImages() {
     });
   });
 }
+window.zipImages = zipImages;
