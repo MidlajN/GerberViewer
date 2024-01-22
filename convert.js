@@ -199,7 +199,7 @@ function viewPCBStackUp(files) {
 
 
 // ____________________________ Function To Convert The SVG To PNG ____________________________
-function svg2png(svg, swidth = svg_width, sheight = svg_height) {
+export function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 
   return new Promise((resolve, reject) => {
     
@@ -247,40 +247,7 @@ function displaySVG(svgArray) {
 }
 
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById('renderButton').addEventListener('click', function(){
-    const svgParent = document.getElementById('toplayer');
-    const svg = svgParent.querySelector('svg');
-    const svgname = svg.getAttribute('data-name')
-    const pngDiv = document.createElement('div');
-    pngDiv.classList.add('pngCard');
-    const svgString = new XMLSerializer().serializeToString(svg);
-    svg2png(svgString).then((canvas) => {
-      canvas.setAttribute('style', 'width: 100%; height: 100%;');
-      canvas.setAttribute('data-name', svgname);
-      pngDiv.appendChild(document.createElement('div').appendChild(canvas));
-      // Convert canvas to Blob
-      canvas.toBlob((pngBlob) => {
-          // Create a download link for the PNG Blob
-          const downloadLink = document.createElement('a');
-          downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
 
-          downloadLink.download = svgname + '_1500dpi.png'; 
-          downloadLink.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
-
-          const pngAnchor = document.createElement('div');
-          pngAnchor.classList.add('pngAnchorDiv');
-          pngAnchor.innerHTML = `<p style="font-size:10px;margin:0;">${svgname}_1500dpi.png</p>`;
-          pngAnchor.appendChild(downloadLink);
-          pngDiv.appendChild(pngAnchor);
-        }, "image/png");
-        document.getElementById('canvas').appendChild(pngDiv);
-        document.getElementById('zipBtn').style.display = 'flex';
-    }).catch((err) => {
-        console.log('Error : ', err);
-    });
-  })
-})
 
 
 // __________________________ Zip All The Images _________________________

@@ -1,6 +1,4 @@
-import { viewGerber } from "./convert.js";
-
-
+import { viewGerber, svg2png } from "./convert.js";
 
 let original = document.getElementById('original');
 let bw = document.getElementById('bw');
@@ -33,9 +31,9 @@ bw.addEventListener('click', () => {
     svgTopStyle.textContent = svgStyleContent;
     svgBottomStyle.textContent = svgStyleContent;
   }
-  const toplayer = document.getElementById('toplayer');
+  // const toplayer = document.getElementById('toplayer');
   // toplayer.innerHTML = '';
-  const bottomlayer = document.getElementById('bottomlayer');
+  // const bottomlayer = document.getElementById('bottomlayer');
   // bottomlayer.innerHTML = '';
 
   // const svgTopClone = svgTop.cloneNode(true);
@@ -73,9 +71,9 @@ bwInvert.addEventListener('click', () => {
     svgTopStyle.textContent = svgStyleContent;
     svgBottomStyle.textContent = svgStyleContent;
   }
-  const toplayer = document.getElementById('toplayer');
+  // const toplayer = document.getElementById('toplayer');
   // toplayer.innerHTML = '';
-  const bottomlayer = document.getElementById('bottomlayer');
+  // const bottomlayer = document.getElementById('bottomlayer');
   // bottomlayer.innerHTML = '';
 
   // const svgTopClone = svgTop.cloneNode(true);
@@ -125,6 +123,41 @@ original.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const dropArea = document.getElementById('dropArea');
   const gerberFileInput = document.getElementById('gerberFileInput');
+  const renderBtn = document.getElementById('renderButton');
+
+  renderBtn.addEventListener('click', function(){
+    const layerId = renderBtn.getAttribute('data-layer')
+    const svgParent = document.getElementById(layerId);
+    const svg = svgParent.querySelector('svg');
+    const svgname = svg.getAttribute('data-name')
+    const pngDiv = document.createElement('div');
+    pngDiv.classList.add('pngCard');
+    const svgString = new XMLSerializer().serializeToString(svg);
+    svg2png(svgString).then((canvas) => {
+      canvas.setAttribute('style', 'width: 100%; height: 100%;');
+      canvas.setAttribute('data-name', svgname);
+      pngDiv.appendChild(document.createElement('div').appendChild(canvas));
+      // Convert canvas to Blob
+      canvas.toBlob((pngBlob) => {
+          // Create a download link for the PNG Blob
+          const downloadLink = document.createElement('a');
+          downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
+
+          downloadLink.download = svgname + '_1500dpi.png'; 
+          downloadLink.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
+
+          const pngAnchor = document.createElement('div');
+          pngAnchor.classList.add('pngAnchorDiv');
+          pngAnchor.innerHTML = `<p style="font-size:10px;margin:0;">${svgname}_1500dpi.png</p>`;
+          pngAnchor.appendChild(downloadLink);
+          pngDiv.appendChild(pngAnchor);
+        }, "image/png");
+        document.getElementById('canvas').appendChild(pngDiv);
+        document.getElementById('zipBtn').style.display = 'flex';
+    }).catch((err) => {
+        console.log('Error : ', err);
+    });
+  })
 
   dropArea.addEventListener('dragenter', (e) => {
     e.preventDefault();
@@ -466,4 +499,38 @@ window.toggleLayer = toggleLayer; // Make it available in the global scope
 // __________________________________ End Of Toggle Buttons & Zoom Layer Section __________________________________
 
 
-// 
+// // 
+// document.addEventListener("DOMContentLoaded", () => {
+//   document.getElementById('renderButton').addEventListener('click', function(){
+//     const svgParent = document.getElementById('toplayer');
+//     const svg = svgParent.querySelector('svg');
+//     const svgname = svg.getAttribute('data-name')
+//     const pngDiv = document.createElement('div');
+//     pngDiv.classList.add('pngCard');
+//     const svgString = new XMLSerializer().serializeToString(svg);
+//     svg2png(svgString).then((canvas) => {
+//       canvas.setAttribute('style', 'width: 100%; height: 100%;');
+//       canvas.setAttribute('data-name', svgname);
+//       pngDiv.appendChild(document.createElement('div').appendChild(canvas));
+//       // Convert canvas to Blob
+//       canvas.toBlob((pngBlob) => {
+//           // Create a download link for the PNG Blob
+//           const downloadLink = document.createElement('a');
+//           downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
+
+//           downloadLink.download = svgname + '_1500dpi.png'; 
+//           downloadLink.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
+
+//           const pngAnchor = document.createElement('div');
+//           pngAnchor.classList.add('pngAnchorDiv');
+//           pngAnchor.innerHTML = `<p style="font-size:10px;margin:0;">${svgname}_1500dpi.png</p>`;
+//           pngAnchor.appendChild(downloadLink);
+//           pngDiv.appendChild(pngAnchor);
+//         }, "image/png");
+//         document.getElementById('canvas').appendChild(pngDiv);
+//         document.getElementById('zipBtn').style.display = 'flex';
+//     }).catch((err) => {
+//         console.log('Error : ', err);
+//     });
+//   })
+// })
