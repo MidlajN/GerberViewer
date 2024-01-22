@@ -400,6 +400,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#buttonContainer').slideDown();
     $('#allLayers, #bottomlayersbtn').removeClass('active');
     $('#toplayersbtn').addClass('active');
+    $('#renderButton').data('data-layer', 'toplayers');
+    $('#renderButton').attr('data-layer', 'toplayers');
     $('#bottomlayerlist').removeClass('layerVisible').addClass('layerHidden');
     $('#toplayerlist').removeClass('layerHidden').addClass('layerVisible');
     $('#bottomlayers, #fullLayersParent').fadeOut(function(){
@@ -413,6 +415,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#toplayerlist').removeClass('layerVisible').addClass('layerHidden');
     $('#bottomlayerlist').removeClass('layerHidden').addClass('layerVisible');
     $('#bottomlayersbtn').addClass('active');
+    $('#renderButton').data('data-layer', 'bottomlayers');
+    $('#renderButton').attr('data-layer', 'bottomlayers')
     $('#toplayers, #fullLayersParent').fadeOut(function(){
       $('#bottomlayers').fadeIn();
     });
