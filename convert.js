@@ -4,7 +4,7 @@ export function viewGerber(fileData) {
   const fileInput = fileData;
   const svgArray = {};
 
-  // _______________________--- Gerber To SVG Conversion ---____________________________
+  // ------------------------------ Gerber To SVG Conversion ------------------------------
   viewPCBStackUp(fileData).then((stackup) => {
     const svgParser = new DOMParser();
     svg_width = stackup.top.width;
@@ -14,7 +14,7 @@ export function viewGerber(fileData) {
     let layers = stackup.layers;
     console.log('Stackup : ', stackup);
 
-    // _________________--- Gerber To SVG with PCB-Stackup Library ---_________________
+    // ------------------------------ Gerber To SVG with PCB-Stackup Library ------------------------------
 
     const top_layer = stackup.top.svg;
     const bottom_layer = stackup.bottom.svg;
@@ -45,8 +45,8 @@ export function viewGerber(fileData) {
       }
     })
 
-    // _________________--- Initial Main SVG ---_________________
-    // _________________--- Get The transform attribute from pcbStackup ---_________________
+    // ------------------------------ Initial Main SVG ------------------------------
+    // ------------------------------ Get The transform attribute from pcbStackup ------------------------------
     const svgData = stackup.top.svg;
     const trailDoc = svgParser.parseFromString(svgData, "image/svg+xml");
     const gElem = trailDoc.querySelector("g[transform]");
@@ -149,14 +149,13 @@ export function viewGerber(fileData) {
       $("#result").fadeIn(700);
     })
     
-
     displaySVG(svgArray);
   });
   
 }
 
 
-// __________________________ Function For Converting All the PCB Layers to SVG __________________________
+// --------------------------- Function For Converting All the PCB Layers to SVG ---------------------------
 function viewPCBStackUp(files) {
   return new Promise((resolve, reject) => {
     console.log('fileInput : ', files.length);
@@ -198,7 +197,7 @@ function viewPCBStackUp(files) {
 }
 
 
-// ____________________________ Function To Convert The SVG To PNG ____________________________
+// --------------------------- Function To Convert The SVG To PNG ---------------------------
 export function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 
   return new Promise((resolve, reject) => {
@@ -235,7 +234,7 @@ export function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 }
 
 
-// ___________________________ Function To Display SVGs ____________________________
+// --------------------------- Function To Display SVGs ---------------------------
 function displaySVG(svgArray) {
   const { topStackSvg, bottomStackSvg,fullSvg } = svgArray;
   topStackSvg.setAttribute('id', 'topstacklayer');
@@ -247,10 +246,64 @@ function displaySVG(svgArray) {
 }
 
 
+// --------------------------- Function To Update SVG Style ------------------------
+export function updateSVG(topName = null, bottomName = null, mode) {
+  $('.colorButton').removeClass('active');
+
+  const svgTop = document.getElementById('topstacklayer');
+  const svgBottom = document.getElementById('bottomstacklayer');
+
+  let svgTopStyle = svgTop.querySelector('style');
+  let svgBottomStyle = svgBottom.querySelector('style');
+
+  if (topName & bottomName != null) {
+    svgTop.setAttribute('data-name', topName);
+    svgBottom.setAttribute('data-name', bottomName);
+  }
+
+  // since both bottom and top layer has the same ID only need to use one
+  const stackid = svgTop.getAttribute('data-stackid');
+  let svgStyleContent;
+
+  if (mode === 'bw') {
+    svgStyleContent = `
+    .${stackid}_fr4 {color: #000000  !important;}
+    .${stackid}_cu {color: #ffffff !important;}
+    .${stackid}_cf {color: #ffffff !important;}
+    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+    .${stackid}_ss {color: #ffffff !important;}
+    .${stackid}_sp {color: #ffffff !important;}
+    .${stackid}_out {color: #000000 !important;}
+    `
+  } else if (mode === 'bwInvert') {
+    svgStyleContent = `
+    .${stackid}_fr4 {color: #ffffff  !important;}
+    .${stackid}_cu {color: #000000 !important;}
+    .${stackid}_cf {color: #000000 !important;}
+    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+    .${stackid}_ss {color: #000000 !important;}
+    .${stackid}_sp {color: #000000 !important;}
+    .${stackid}_out {color: #ffffff !important;}
+    `
+  } else {
+    svgStyleContent = `
+    .${stackid}_fr4 {color: #666666  !important;}
+    .${stackid}_cu {color: #cccccc !important;}
+    .${stackid}_cf {color: #cc9933 !important;}
+    .${stackid}_sm {color: #004200 !important; opacity: 0.75 !important;}
+    .${stackid}_ss {color: #ffffff !important;}
+    .${stackid}_sp {color: #999999 !important;}
+    .${stackid}_out {color: #000000 !important;}
+    `
+  }
+
+  // update the style of the SVG
+  svgTopStyle.textContent = svgStyleContent;
+  svgBottomStyle.textContent = svgStyleContent
+}
 
 
-
-// __________________________ Zip All The Images _________________________
+// --------------------------- Zip All The Images ---------------------------
 export function zipImages() {
   const zip = new JSZip();
 

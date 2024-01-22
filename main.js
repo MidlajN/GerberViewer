@@ -1,124 +1,4 @@
-import { viewGerber, svg2png } from "./convert.js";
-
-let original = document.getElementById('original');
-let bw = document.getElementById('bw');
-let bwInvert = document.getElementById('invert');
-
-bw.addEventListener('click', () => {
-  $('.colorButton').removeClass('active');
-  bw.classList.add('active');
-  let svgTop = document.getElementById('topstacklayer');
-  let svgBottom = document.getElementById('bottomstacklayer');
-
-  let svgTopStyle = svgTop.querySelector('style');
-  let svgBottomStyle = svgBottom.querySelector('style');
-
-  svgTop.setAttribute('data-name', 'top_layers_bw');
-  svgBottom.setAttribute('data-name', 'bottom_layers_bw');
-
-  const stackid = svgTop.getAttribute('data-stackid')
-
-  if (svgTopStyle && svgBottomStyle) {
-    const svgStyleContent = `
-    .${stackid}_fr4 {color: #000000  !important;}
-    .${stackid}_cu {color: #ffffff !important;}
-    .${stackid}_cf {color: #ffffff !important;}
-    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
-    .${stackid}_ss {color: #ffffff !important;}
-    .${stackid}_sp {color: #ffffff !important;}
-    .${stackid}_out {color: #000000 !important;}
-    `
-    svgTopStyle.textContent = svgStyleContent;
-    svgBottomStyle.textContent = svgStyleContent;
-  }
-  // const toplayer = document.getElementById('toplayer');
-  // toplayer.innerHTML = '';
-  // const bottomlayer = document.getElementById('bottomlayer');
-  // bottomlayer.innerHTML = '';
-
-  // const svgTopClone = svgTop.cloneNode(true);
-  // const svgBottomClone = svgBottom.cloneNode(true);
-  
-  // toplayer.appendChild(svgTopClone);
-  // bottomlayer.appendChild(svgBottomClone);
-  
-})
-
-bwInvert.addEventListener('click', () => {
-  $('.colorButton').removeClass('active');
-  bwInvert.classList.add('active');
-  let svgTop = document.getElementById('topstacklayer');
-  let svgBottom = document.getElementById('bottomstacklayer'); 
-
-  let svgTopStyle = svgTop.querySelector('style');
-  let svgBottomStyle = svgBottom.querySelector('style');
-
-  svgTop.setAttribute('data-name', 'top_layers_bw_invert');
-  svgBottom.setAttribute('data-name', 'bottom_layers_bw_invert');
-
-  const stackid = svgTop.getAttribute('data-stackid')
-
-  if (svgTopStyle && svgBottomStyle) {
-    const svgStyleContent = `
-    .${stackid}_fr4 {color: #ffffff  !important;}
-    .${stackid}_cu {color: #000000 !important;}
-    .${stackid}_cf {color: #000000 !important;}
-    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
-    .${stackid}_ss {color: #000000 !important;}
-    .${stackid}_sp {color: #000000 !important;}
-    .${stackid}_out {color: #ffffff !important;}
-    `
-    svgTopStyle.textContent = svgStyleContent;
-    svgBottomStyle.textContent = svgStyleContent;
-  }
-  // const toplayer = document.getElementById('toplayer');
-  // toplayer.innerHTML = '';
-  // const bottomlayer = document.getElementById('bottomlayer');
-  // bottomlayer.innerHTML = '';
-
-  // const svgTopClone = svgTop.cloneNode(true);
-  // const svgBottomClone = svgBottom.cloneNode(true);
-  
-  // toplayer.appendChild(svgTopClone);
-  // bottomlayer.appendChild(svgBottomClone);
-  
-})
-
-original.addEventListener('click', () => {
-  $('.colorButton').removeClass('active');
-  original.classList.add('active');
-  let svgTop = document.getElementById('topstacklayer');
-  let svgBottom = document.getElementById('bottomstacklayer'); 
-  let svgTopStyle = svgTop.querySelector('style');
-  let svgBottomStyle = svgBottom.querySelector('style');
-  const stackid = svgTop.getAttribute('data-stackid')
-
-  if (svgTopStyle && svgBottomStyle) {
-    const svgStyleContent = `
-    .${stackid}_fr4 {color: #666666  !important;}
-    .${stackid}_cu {color: #cccccc !important;}
-    .${stackid}_cf {color: #cc9933 !important;}
-    .${stackid}_sm {color: #004200 !important; opacity: 0.75 !important;}
-    .${stackid}_ss {color: #ffffff !important;}
-    .${stackid}_sp {color: #999999 !important;}
-    .${stackid}_out {color: #000000 !important;}
-    `
-    svgTopStyle.textContent = svgStyleContent;
-    svgBottomStyle.textContent = svgStyleContent;
-  }
-  const toplayer = document.getElementById('toplayer');
-  // toplayer.innerHTML = '';
-  const bottomlayer = document.getElementById('bottomlayer');
-  // bottomlayer.innerHTML = '';
-
-  // const svgTopClone = svgTop.cloneNode(true);
-  // const svgBottomClone = svgBottom.cloneNode(true);
-  
-  // toplayer.appendChild(svgTopClone);
-  // bottomlayer.appendChild(svgBottomClone);
-  
-})
-
+import { viewGerber, svg2png, updateSVG } from "./convert.js";
 
 document.addEventListener('DOMContentLoaded', () => {
   const dropArea = document.getElementById('dropArea');
@@ -183,13 +63,29 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleButtonState();
     initializeGerberToSVG(files);
   })
-    
     toggleButtonState(); // Call the toggleButtonState function
 });
 
-const parentDiv = document.getElementById('layerSelectors');
+
+$('#bw').on('click', () => {
+  $('#bw').addClass('active')
+  updateSVG('top_layers_bw', 'bottom_layers_bw', 'bw')
+})
+
+$('#invert').on('click', () => {
+  $('#invert').addClass('active');
+  updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
+})
+
+$('#original').on('click', () => {
+  $('#original').addClass('active');
+  updateSVG(undefined, undefined, 'original')
+})
+
+
 // Function to toggle the disabled state of all buttons within the parent div
 function toggleButtonState() {
+  const parentDiv = document.getElementById('layerSelectors');
   const buttons = parentDiv.querySelectorAll('button'); // Select all buttons within the parent div
   buttons.forEach(button => {
     button.disabled = !button.disabled; // Toggle the disabled state of each button
@@ -205,11 +101,11 @@ function initializeGerberToSVG(files) {
 }
 
 
-// __________________________ NavBar Creation & Manipulation ________________________
+// --------------------------- NavBar Creation & Manipulation ---------------------------
 
 document.addEventListener('DOMContentLoaded', function() {
 
-  // ----------- Navbar Animation -----------
+  // --------------------------- Navbar Animation ---------------------------
   var tabsNewAnim = $('#navbar-animmenu');
   var activeItemNewAnim = tabsNewAnim.find('.active');
   var activeWidthNewAnimWidth = activeItemNewAnim.innerWidth();
@@ -361,15 +257,11 @@ function makeEditable(element) {
   });
 }
 
-// ____________________________________ End Of NavBar _______________________________________
 
-
-
-// _________________________------ Toggle Buttons & Zoom Layer Section ------________________________
-
+// --------------------------------- Toggle Buttons & Zoom Layer Section ---------------------------------
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ##### Zoom The Layer Using Mouse Wheel #####
+  // --------------------------- Zoom The Layer Using Mouse Wheel ---------------------------
   const zoomContainer = document.getElementById('result');
   const zoomedContent = document.getElementById('zoomContainer');
   let zoomLevel = 1;
@@ -395,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  // ##### Toggle Button on Each Layer of the PCB #####
+  // --------------------------- Toggle Button on Each Layer of the PCB ---------------------------
   const toggleButtons = document.querySelectorAll('.toggleButton');
 
   toggleButtons.forEach(button => {
@@ -418,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  // ##### Toggle Button Section For the Top and Bottom #####
+  // --------------------------- Toggle Button Section For the Top and Bottom ---------------------------
   $('#container').on('click', '#allLayers', function() {
     $('#buttonContainer').slideUp();
     $('#toplayersbtn, #bottomlayersbtn').removeClass('active');
@@ -454,10 +346,10 @@ document.addEventListener('DOMContentLoaded', () => {
       $('#bottomlayers').fadeIn();
     });
   });
-
 });
 
-// ##### Toggle Each Layer Of the  PCB #####
+
+// --------------------------- Toggle Each Layer Of the  PCB ---------------------------
 export function toggleLayer(LayerId, index) {
   console.log('LayerId : ', LayerId);
   const top = document.getElementById("toplayers");
@@ -495,42 +387,4 @@ export function toggleLayer(LayerId, index) {
   })
 }
 window.toggleLayer = toggleLayer; // Make it available in the global scope
-
-// __________________________________ End Of Toggle Buttons & Zoom Layer Section __________________________________
-
-
-// // 
-// document.addEventListener("DOMContentLoaded", () => {
-//   document.getElementById('renderButton').addEventListener('click', function(){
-//     const svgParent = document.getElementById('toplayer');
-//     const svg = svgParent.querySelector('svg');
-//     const svgname = svg.getAttribute('data-name')
-//     const pngDiv = document.createElement('div');
-//     pngDiv.classList.add('pngCard');
-//     const svgString = new XMLSerializer().serializeToString(svg);
-//     svg2png(svgString).then((canvas) => {
-//       canvas.setAttribute('style', 'width: 100%; height: 100%;');
-//       canvas.setAttribute('data-name', svgname);
-//       pngDiv.appendChild(document.createElement('div').appendChild(canvas));
-//       // Convert canvas to Blob
-//       canvas.toBlob((pngBlob) => {
-//           // Create a download link for the PNG Blob
-//           const downloadLink = document.createElement('a');
-//           downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
-
-//           downloadLink.download = svgname + '_1500dpi.png'; 
-//           downloadLink.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
-
-//           const pngAnchor = document.createElement('div');
-//           pngAnchor.classList.add('pngAnchorDiv');
-//           pngAnchor.innerHTML = `<p style="font-size:10px;margin:0;">${svgname}_1500dpi.png</p>`;
-//           pngAnchor.appendChild(downloadLink);
-//           pngDiv.appendChild(pngAnchor);
-//         }, "image/png");
-//         document.getElementById('canvas').appendChild(pngDiv);
-//         document.getElementById('zipBtn').style.display = 'flex';
-//     }).catch((err) => {
-//         console.log('Error : ', err);
-//     });
-//   })
-// })
+// --------------------------- End Of Toggle Buttons & Zoom Layer Section ---------------------------
