@@ -201,35 +201,40 @@ function viewPCBStackUp(files) {
 export function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 
   return new Promise((resolve, reject) => {
-    
-      const svgBlob = new Blob([svg], { type: "image/svg+xml" });
-      console.log(':: Blob created ::', svgBlob);
-      let blobURL = (window.URL || window.webkitURL || window).createObjectURL(svgBlob);
-      console.log(':: Blob URL ::', blobURL);
-      const img = new Image();
+    const svgBlob = new Blob([svg], { type: "image/svg+xml" });
+    console.log(':: Blob created ::', svgBlob);
+    let blobURL = (window.URL || window.webkitURL || window).createObjectURL(svgBlob);
+    console.log(':: Blob URL ::', blobURL);
+    const img = new Image();
 
-      img.onload = () => {
-          console.log(':: Image loaded ::');
-          const canvas = document.createElement("canvas");
-          const scaleFactor = 1500 / 25.4;
-          let width = swidth ;
-          let height = sheight;
-          canvas.width = width * scaleFactor + 10;
-          canvas.height = height * scaleFactor + 10; 
-          const ctx = canvas.getContext("2d");
-          
-          ctx.fillStyle = "white";
-          ctx.fillRect(0, 0, width * scaleFactor + 10, height * scaleFactor + 10);
-          ctx.drawImage(img, 5, 5, width * scaleFactor , height * scaleFactor );
-          resolve(canvas);
-      };
+    img.onload = () => {
+      console.log(':: Image loaded ::');
+      const canvas = document.createElement("canvas");
+      const scaleFactor = 1500 / 25.4;
+      let width = swidth ;
+      let height = sheight;
+      canvas.width = width * scaleFactor + 10;
+      canvas.height = height * scaleFactor + 10; 
+      
+      const ctx = canvas.getContext("2d");
+      
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, width * scaleFactor + 10, height * scaleFactor + 10);
+      ctx.drawImage(img, 5, 5, width * scaleFactor , height * scaleFactor );
 
-      // Handle errors during image loading
-      img.onerror = function (err) {
-          console.log('Error loading image:', err);
-          reject(err);
-      };
-      img.src = blobURL;
+      (window.URL || window.webkitURL || window).revokeObjectURL(blobURL);
+
+      resolve(canvas);
+    };
+
+    // Handle errors during image loading
+    img.onerror = function (err) {
+      console.log('Error loading image:', err);
+      reject(err);
+
+      (window.URL || window.webkitURL || window).revokeObjectURL(blobURL);
+    };
+    img.src = blobURL;
   });
 }
 

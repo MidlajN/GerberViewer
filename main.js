@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const gerberFileInput = document.getElementById('gerberFileInput');
   const renderBtn = document.getElementById('renderButton');
 
-  renderBtn.addEventListener('click', function(){
+  renderBtn.addEventListener('click', async function(){
     const layerId = renderBtn.getAttribute('data-layer')
     const svgParent = document.getElementById(layerId);
     const svg = svgParent.querySelector('svg');
@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const pngDiv = document.createElement('div');
     pngDiv.classList.add('pngCard');
     const svgString = new XMLSerializer().serializeToString(svg);
-    svg2png(svgString).then((canvas) => {
+
+    await svg2png(svgString).then((canvas) => {
       canvas.setAttribute('style', 'width: 100%; height: 100%;');
       canvas.setAttribute('data-name', svgname);
       pngDiv.appendChild(document.createElement('div').appendChild(canvas));
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
           pngAnchor.innerHTML = `<p style="font-size:10px;margin:0;">${svgname}_1500dpi.png</p>`;
           pngAnchor.appendChild(downloadLink);
           pngDiv.appendChild(pngAnchor);
+
         }, "image/png");
         document.getElementById('canvas').appendChild(pngDiv);
         document.getElementById('zipBtn').style.display = 'flex';
