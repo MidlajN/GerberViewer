@@ -353,40 +353,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --------------------------- Toggle Each Layer Of the  PCB ---------------------------
 export function toggleLayer(LayerId, index) {
-  console.log('LayerId : ', LayerId);
-  const top = document.getElementById("toplayers");
-  const bottom = document.getElementById("bottomlayers");
-  const allLayers = document.getElementById("fullLayers");
-
-  const Layers = allLayers.getElementsByTagName("g");
-  const topLayers = top.getElementsByTagName("g");
-  const bottomLayers = bottom.getElementsByTagName("g");
-
-  Array.from(topLayers).forEach((layer) => {
-    if (layer.hasAttribute("id")) {
-      const layerId = layer.getAttribute("id");
-      if (layerId.endsWith(LayerId)) {
-        layer.style.display = layer.style.display === "none" ? "block" : "none";
-        
-      }
-    }
-  });
-  Array.from(bottomLayers).forEach((layer) => {
-    if (layer.hasAttribute("id")) {
-      const layerId = layer.getAttribute("id");
-      if (layerId.endsWith(LayerId)) {
-        layer.style.display = layer.style.display === "none" ? "block" : "none";
-      }
-    }
-  });
+  const allLayers = document.getElementById('fullLayers');
+  const top = document.getElementById('toplayers');
+  const bottom = document.getElementById('bottomlayers');
+  
+  const Layers = allLayers.getElementsByTagName('g');
   Array.from(Layers).forEach((layer) => {
-    if (layer.hasAttribute("id")) {
-      const layerId = layer.getAttribute("id");
-      if (layerId.endsWith(LayerId)) {
-        layer.style.display = layer.style.display === "none" ? "block" : "none";
-      }
+    if (layer.hasAttribute('id') && layer.getAttribute('id').includes(LayerId)) {
+      layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
     }
   })
+
+  if (LayerId === 'outline') {
+    const topOutline = top.getElementsByTagName('clipPath');
+    topOutline.item(index).style.display = topOutline.item(index).style.display === 'none' ? 'block' : 'none';
+
+    const bottomOutline = bottom.getElementsByTagName('clipPath');
+    bottomOutline.item(index).style.display = bottomOutline.item(index).style.display === 'none' ? 'block' : 'none';
+  } else {
+    const topLayers = top.getElementsByTagName('g');
+    Array.from(topLayers).forEach((layer) => {
+      if (layer.hasAttribute("id")) {
+        const layerId = layer.getAttribute("id");
+        if (layerId.includes(LayerId)) {
+          console.log('layerId :::> ', layerId, 'LAYER :::> ', LayerId);
+          layer.style.display = layer.style.display === "none" ? "block" : "none";
+          
+        }
+      }
+    });
+
+    const bottomLayers = bottom.getElementsByTagName('g');
+    Array.from(bottomLayers).forEach((layer) => {
+      if (layer.hasAttribute("id")) {
+        const layerId = layer.getAttribute("id");
+        if (layerId.includes(LayerId)) {
+          console.log('layerId :::> ', layerId, 'LAYER :::> ', LayerId);
+          layer.style.display = layer.style.display === "none" ? "block" : "none";
+        }
+      }
+    });
+  }
 }
 window.toggleLayer = toggleLayer; // Make it available in the global scope
 // --------------------------- End Of Toggle Buttons & Zoom Layer Section ---------------------------

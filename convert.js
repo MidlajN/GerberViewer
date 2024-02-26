@@ -198,23 +198,24 @@ function viewPCBStackUp(files) {
 
 
 // --------------------------- Function To Convert The SVG To PNG ---------------------------
-export function svg2png(svg, swidth = svg_width, sheight = svg_height) {
+export async function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 
   return new Promise((resolve, reject) => {
     const svgBlob = new Blob([svg], { type: "image/svg+xml" });
     console.log(':: Blob created ::', svgBlob);
     let blobURL = (window.URL || window.webkitURL || window).createObjectURL(svgBlob);
-    console.log(':: Blob URL ::', blobURL);
+    // console.log(':: Blob URL ::', blobURL);
     const img = new Image();
 
     img.onload = () => {
-      console.log(':: Image loaded ::');
+      console.log(':: Image loaded ::', img.src);
       const canvas = document.createElement("canvas");
       const scaleFactor = 1500 / 25.4;
       let width = swidth ;
       let height = sheight;
       canvas.width = width * scaleFactor + 10;
       canvas.height = height * scaleFactor + 10; 
+     
       
       const ctx = canvas.getContext("2d");
       
@@ -238,7 +239,6 @@ export function svg2png(svg, swidth = svg_width, sheight = svg_height) {
   });
 }
 
-
 // --------------------------- Function To Display SVGs ---------------------------
 function displaySVG(svgArray) {
   const { topStackSvg, bottomStackSvg,fullSvg } = svgArray;
@@ -247,7 +247,6 @@ function displaySVG(svgArray) {
   document.getElementById('toplayer').appendChild(topStackSvg);
   document.getElementById('bottomlayer').appendChild(bottomStackSvg);
   document.getElementById('fullLayers').appendChild(fullSvg); 
-  
 }
 
 
