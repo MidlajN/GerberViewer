@@ -397,3 +397,40 @@ export function toggleLayer(LayerId, index) {
 }
 window.toggleLayer = toggleLayer; // Make it available in the global scope
 // --------------------------- End Of Toggle Buttons & Zoom Layer Section ---------------------------
+
+
+document.getElementById('newButton').addEventListener('click', function() {
+  generateSVG(45.085, 18.29, 0.8, 0.8);
+})
+
+
+function generateSVG(width, height, gap, toolwidth , viewbox) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', `0 0 ${width + 2 * toolwidth} ${height + 2 * toolwidth}`);
+  svg.setAttribute('width', `${width + 2 * toolwidth}mm`);
+  svg.setAttribute('height', `${height + 2 * toolwidth}mm`);
+
+  const pathlines =   `
+  M ${toolwidth} ${toolwidth}
+  L ${width / 2 +  2 * toolwidth} ${toolwidth}
+  L ${width / 2 + 2* toolwidth} 0
+  L ${width + 2* toolwidth} 0
+  L ${width + 2* toolwidth} ${height / 2}
+  L ${width + toolwidth} ${height / 2}
+  L ${width + toolwidth} ${ height + toolwidth }
+  L ${width / 2 } ${ height + toolwidth }
+  L ${width / 2 } ${height + 2 * toolwidth}
+  L 0 ${height + 2* toolwidth}
+  L 0 ${height / 2 + toolwidth}
+  L ${toolwidth} ${height / 2 + toolwidth} 
+  Z`
+  let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+  path.setAttribute('d', pathlines);
+  // path.setAttribute('fill', 'red');
+
+  svg.appendChild(path)
+  // document.getElementById('canvas').appendChild(svg)
+
+  console.log(svg)
+}
