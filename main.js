@@ -400,29 +400,36 @@ window.toggleLayer = toggleLayer; // Make it available in the global scope
 
 
 document.getElementById('newButton').addEventListener('click', function() {
-  generateSVG(45.085, 18.29, 0.8, 0.8);
+  generateSVG(79.228, 52.629, 0.8, 0.8, {x : 22987, y : 53086});
 })
 
 
 function generateSVG(width, height, gap, toolwidth , viewbox) {
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+  const originX = viewbox.x;
+  const originY = viewbox.y;
+
+
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', `0 0 ${width + 2 * toolwidth} ${height + 2 * toolwidth}`);
+  svg.setAttribute('viewBox', `${originX - toolwidth} ${originY - toolwidth} ${width + 2 * toolwidth} ${height + 2 * toolwidth}`);
   svg.setAttribute('width', `${width + 2 * toolwidth}mm`);
   svg.setAttribute('height', `${height + 2 * toolwidth}mm`);
 
   const pathlines =   `
-  M ${toolwidth} ${toolwidth}
-  L ${width / 2 +  2 * toolwidth} ${toolwidth}
-  L ${width / 2 + 2* toolwidth} 0
-  L ${width + 2* toolwidth} 0
-  L ${width + 2* toolwidth} ${height / 2}
-  L ${width + toolwidth} ${height / 2}
-  L ${width + toolwidth} ${ height + toolwidth }
-  L ${width / 2 } ${ height + toolwidth }
-  L ${width / 2 } ${height + 2 * toolwidth}
-  L 0 ${height + 2* toolwidth}
-  L 0 ${height / 2 + toolwidth}
-  L ${toolwidth} ${height / 2 + toolwidth} 
+  M ${ originX } ${ originY }
+  L ${ originX + halfWidth +  2 * toolwidth } ${ originY }
+  L ${ originX + halfWidth +  2 * toolwidth } ${ originY - toolwidth }
+  L ${ originX + width + toolwidth } ${ originY - toolwidth }
+  L ${ originX + width + toolwidth } ${ originY + halfHeight + 2 * toolwidth }
+  L ${ originX + width } ${ originY + halfHeight + 2 * toolwidth }
+  L ${ originX + width } ${ originY + height }
+  L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height }
+  L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height + toolwidth }
+  L ${ originX - toolwidth } ${ originY + height + toolwidth }
+  L ${ originX - toolwidth } ${ originY + halfHeight - 2 * toolwidth }
+  L ${ originX } ${ originY + halfHeight - 2 * toolwidth }
+  L ${ originX } ${ originY }
   Z`
   let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 

@@ -210,7 +210,7 @@ export async function svg2png(svg, swidth = svg_width, sheight = svg_height) {
     img.onload = () => {
       console.log(':: Image loaded ::', img.src);
       const canvas = document.createElement("canvas");
-      const scaleFactor = 1500 / 25.4;
+      const scaleFactor = 1000 / 25.4;
       let width = swidth ;
       let height = sheight;
       canvas.width = width * scaleFactor + 10;
