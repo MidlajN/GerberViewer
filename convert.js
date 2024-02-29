@@ -1,5 +1,12 @@
 let svg_width = null
 let svg_height = null
+
+export let svgConf = {
+  svgWidth : null,
+  svgHeight : null,
+  viewboxX : null,
+  viewboxY : null,
+}
 export function viewGerber(fileData) {
   const fileInput = fileData;
   const svgArray = {};
@@ -9,6 +16,12 @@ export function viewGerber(fileData) {
     const svgParser = new DOMParser();
     svg_width = stackup.top.width;
     svg_height = stackup.top.height;
+   
+    svgConf.svgHeight = svg_height;
+    svgConf.svgWidth = svg_width;
+    svgConf.viewboxX = stackup.top.viewBox[0];
+    svgConf.viewboxY = stackup.top.viewBox[1];
+
 
     let files = fileInput;
     let layers = stackup.layers;
@@ -246,7 +259,29 @@ function displaySVG(svgArray) {
   bottomStackSvg.setAttribute('id', 'bottomstacklayer');
   document.getElementById('toplayer').appendChild(topStackSvg);
   document.getElementById('bottomlayer').appendChild(bottomStackSvg);
-  document.getElementById('fullLayers').appendChild(fullSvg); 
+  // document.getElementById('fullLayers').appendChild(fullSvg); 
+
+  if (fullSvg) {
+    const mainSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const outerG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const pcbG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+    pcbG.setAttribute('transform', 'translate(3, 3)');
+
+    const outerLayer  = generateSVG(svgConf.svgWidth, svgConf.svgHeight, 0.8, {x : svgConf.viewboxX, y : svgConf.viewboxY});
+    outerLayer.svg.setAttribute('style', 'fill: #86877c;');
+
+    mainSvg.setAttribute('width', `${outerLayer.width}mm`);
+    mainSvg.setAttribute('height', `${outerLayer.height}mm`);
+    outerG.setAttribute('style', 'opacity: 0.3;display: none')
+    outerG.setAttribute('id', 'doubleSideOuterLayer');
+    outerG.appendChild(outerLayer.svg);
+    pcbG.appendChild(fullSvg);
+
+    mainSvg.appendChild(outerG);
+    mainSvg.appendChild(pcbG);
+    document.getElementById('fullLayers').appendChild(mainSvg);
+  }
 }
 
 
@@ -345,3 +380,50 @@ export function zipImages() {
   });
 }
 window.zipImages = zipImages;
+
+
+// --------------------------- Function To Generate Outer SVG ---------------------------
+function generateSVG(width, height, toolwidth , viewbox) {
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+  const originX = viewbox.x;
+  const originY = viewbox.y;
+
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', `${originX - toolwidth} ${originY - toolwidth} ${width + 2 * toolwidth} ${height + 2 * toolwidth}`);
+  svg.setAttribute('width', `${width + 2 * toolwidth}mm`);
+  svg.setAttribute('height', `${height + 2 * toolwidth}mm`);
+
+  const pathlines =   `
+  M ${ originX } ${ originY }
+  L ${ originX + halfWidth +  2 * toolwidth } ${ originY }
+  L ${ originX + halfWidth +  2 * toolwidth } ${ originY - toolwidth }
+  L ${ originX + width + toolwidth } ${ originY - toolwidth }
+  L ${ originX + width + toolwidth } ${ originY + halfHeight + 2 * toolwidth }
+  L ${ originX + width } ${ originY + halfHeight + 2 * toolwidth }
+  L ${ originX + width } ${ originY + height }
+  L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height }
+  L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height + toolwidth }
+  L ${ originX - toolwidth } ${ originY + height + toolwidth }
+  L ${ originX - toolwidth } ${ originY + halfHeight - 2 * toolwidth }
+  L ${ originX } ${ originY + halfHeight - 2 * toolwidth }
+  L ${ originX } ${ originY }
+  Z`
+  let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+  path.setAttribute('d', pathlines);
+  // path.setAttribute('fill', 'red');
+
+  svg.appendChild(path)
+  // document.getElementById('canvas').appendChild(svg)
+
+  let response = {
+    svg : svg,
+    width : width + 2 * toolwidth,
+    height : height + 2 * toolwidth,
+  }
+
+
+  return response
+}

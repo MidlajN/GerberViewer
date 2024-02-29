@@ -1,4 +1,4 @@
-import { viewGerber, svg2png, updateSVG } from "./convert.js";
+import { viewGerber, svg2png, updateSVG, svgConf } from "./convert.js";
 
 document.addEventListener('DOMContentLoaded', () => {
   const dropArea = document.getElementById('dropArea');
@@ -399,45 +399,47 @@ window.toggleLayer = toggleLayer; // Make it available in the global scope
 // --------------------------- End Of Toggle Buttons & Zoom Layer Section ---------------------------
 
 
-document.getElementById('newButton').addEventListener('click', function() {
-  generateSVG(79.228, 52.629, 0.8, 0.8, {x : 22987, y : 53086});
-})
+// document.getElementById('newButton').addEventListener('click', function() {
+//     console.log('svgConf' , svgConf)
+//     generateSVG(svgConf.svgWidth, svgConf.svgHeight, 1.5, {x : svgConf.viewboxX, y : svgConf.viewboxY});
+
+// })
 
 
-function generateSVG(width, height, gap, toolwidth , viewbox) {
-  const halfWidth = width / 2;
-  const halfHeight = height / 2;
-  const originX = viewbox.x;
-  const originY = viewbox.y;
+// function generateSVG(width, height, toolwidth , viewbox) {
+//   const halfWidth = width / 2;
+//   const halfHeight = height / 2;
+//   const originX = viewbox.x;
+//   const originY = viewbox.y;
 
 
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', `${originX - toolwidth} ${originY - toolwidth} ${width + 2 * toolwidth} ${height + 2 * toolwidth}`);
-  svg.setAttribute('width', `${width + 2 * toolwidth}mm`);
-  svg.setAttribute('height', `${height + 2 * toolwidth}mm`);
+//   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+//   svg.setAttribute('viewBox', `${originX - toolwidth} ${originY - toolwidth} ${width + 2 * toolwidth} ${height + 2 * toolwidth}`);
+//   svg.setAttribute('width', `${width + 2 * toolwidth}mm`);
+//   svg.setAttribute('height', `${height + 2 * toolwidth}mm`);
 
-  const pathlines =   `
-  M ${ originX } ${ originY }
-  L ${ originX + halfWidth +  2 * toolwidth } ${ originY }
-  L ${ originX + halfWidth +  2 * toolwidth } ${ originY - toolwidth }
-  L ${ originX + width + toolwidth } ${ originY - toolwidth }
-  L ${ originX + width + toolwidth } ${ originY + halfHeight + 2 * toolwidth }
-  L ${ originX + width } ${ originY + halfHeight + 2 * toolwidth }
-  L ${ originX + width } ${ originY + height }
-  L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height }
-  L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height + toolwidth }
-  L ${ originX - toolwidth } ${ originY + height + toolwidth }
-  L ${ originX - toolwidth } ${ originY + halfHeight - 2 * toolwidth }
-  L ${ originX } ${ originY + halfHeight - 2 * toolwidth }
-  L ${ originX } ${ originY }
-  Z`
-  let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+//   const pathlines =   `
+//   M ${ originX } ${ originY }
+//   L ${ originX + halfWidth +  2 * toolwidth } ${ originY }
+//   L ${ originX + halfWidth +  2 * toolwidth } ${ originY - toolwidth }
+//   L ${ originX + width + toolwidth } ${ originY - toolwidth }
+//   L ${ originX + width + toolwidth } ${ originY + halfHeight + 2 * toolwidth }
+//   L ${ originX + width } ${ originY + halfHeight + 2 * toolwidth }
+//   L ${ originX + width } ${ originY + height }
+//   L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height }
+//   L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height + toolwidth }
+//   L ${ originX - toolwidth } ${ originY + height + toolwidth }
+//   L ${ originX - toolwidth } ${ originY + halfHeight - 2 * toolwidth }
+//   L ${ originX } ${ originY + halfHeight - 2 * toolwidth }
+//   L ${ originX } ${ originY }
+//   Z`
+//   let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-  path.setAttribute('d', pathlines);
-  // path.setAttribute('fill', 'red');
+//   path.setAttribute('d', pathlines);
+//   // path.setAttribute('fill', 'red');
 
-  svg.appendChild(path)
-  // document.getElementById('canvas').appendChild(svg)
+//   svg.appendChild(path)
+//   // document.getElementById('canvas').appendChild(svg)
 
-  console.log(svg)
-}
+//   console.log(svg)
+// }
