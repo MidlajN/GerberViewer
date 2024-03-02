@@ -84,15 +84,15 @@
                 <ol>
                   <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Top</h5> 
                   <li class="litoggle">
-                    <p class="toggleName">Copper</p>
+                    <p class="toggleName">Traces</p>
                     <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper', 0)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                   </li>
-                  <li class="litoggle">
+                  <!-- <li class="litoggle">
                     <p class="toggleName">Solder Mask</p>
                     <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('top_soldermask', 1)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li>
+                  </li> -->
                   <li class="litoggle">
-                    <p class="toggleName">Solder Paste</p>
+                    <p class="toggleName">Pads</p>
                     <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solderpaste', 2)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                   </li>
                   <li class="litoggle">
@@ -106,15 +106,15 @@
                 <ol>
                   <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Bottom</h5>
                   <li class="litoggle">
-                    <p class="toggleName">Copper</p>
+                    <p class="toggleName">Traces</p>
                     <button class="toggleButton" style="background-color: #206b19;" onclick="toggleLayer('bottom_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                   </li>
-                  <li class="litoggle">
+                  <!-- <li class="litoggle">
                     <p class="toggleName">Solder Mask</p>
                     <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_soldermask')" ><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li>
+                  </li> -->
                   <li class="litoggle">
-                    <p class="toggleName">Solder Paste</p>
+                    <p class="toggleName">Pads</p>
                     <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('bottom_solderpaste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                   </li>
                   <li class="litoggle">
@@ -138,28 +138,28 @@
                   
                 <!-- </li> -->
               </ol>
-              <div class="layerHidden doubleSideDiv">
+              <div class="doubleSideDiv" id="doubleSideOuterDiv">
                 <div class="selectToolWidth">
                   <select name="toolWidth" id="toolWidth">
                     <option value="0.8">0.8mm</option>
                     <option value="0.4">0.4mm</option>
                   </select>
                 </div>
-                <div class="d-flex litoggle" style="margin: 0;min-width: 185px;">
-                  <p class="toggleName">Double Side Layer</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('doubleSideOuterLayer')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </div>
+                <label class="sideToggle">
+                  <input type="checkbox" id="sideToggle" onchange="toggleLayer('OuterLayer')">
+                  <div class="slider">
+                    <span class="oneSide">One Side PCB</span>
+                    <span class="twoSide">Two Side PCB</span>
+                  </div>
+                </label>
               </div>
 
-              <div style="display: flex;justify-content: space-between;padding:10px;">
-                <div >
-                  <label class="sideToggle">
-                    <input type="checkbox">
-                    <div class="slider">
-                      <span class="oneSide">One Side PCB</span>
-                      <span class="twoSide">Two Side PCB</span>
-                    </div>
-                  </label>
+              <div style="display: flex;justify-content: space-between;align-items: center;padding:10px;">
+                <div style="height: fit-content;">
+                  <select class="canvasSelect" name="canvasSelect" id="canvasBg">
+                    <option value="white" selected>White</option>
+                    <option value="black">Black</option>
+                  </select>
                 </div>
                 <button class="noselect" id="renderButton"><span class='text'>PNG</span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
               </div>

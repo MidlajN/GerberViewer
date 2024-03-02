@@ -1,5 +1,7 @@
 let svg_width = null
 let svg_height = null
+let svg_outer_width = null
+let svg_outer_height = null
 
 export let svgConf = {
   svgWidth : null,
@@ -212,7 +214,7 @@ function viewPCBStackUp(files) {
 
 // --------------------------- Function To Convert The SVG To PNG ---------------------------
 export async function svg2png(svg, swidth = svg_width, sheight = svg_height) {
-
+  console.log('swidth : ', swidth, 'sheight : ', sheight);
   return new Promise((resolve, reject) => {
     const svgBlob = new Blob([svg], { type: "image/svg+xml" });
     console.log(':: Blob created ::', svgBlob);
@@ -223,18 +225,27 @@ export async function svg2png(svg, swidth = svg_width, sheight = svg_height) {
     img.onload = () => {
       console.log(':: Image loaded ::', img.src);
       const canvas = document.createElement("canvas");
+
+      
       const scaleFactor = 1000 / 25.4;
-      let width = swidth ;
-      let height = sheight;
-      canvas.width = width * scaleFactor + 10;
-      canvas.height = height * scaleFactor + 10; 
-     
+
+      const width = swidth ;
+      const height = sheight;
+      const scaledWidth = width * scaleFactor;
+      const scaledHeight = height * scaleFactor;
+
+      const toolWidth = 0.8;
+      const toolWidthErr = 0.02;
+      const scaledToolWidth = (toolWidth + toolWidthErr) * scaleFactor;
+
+      canvas.width = scaledWidth + scaledToolWidth * 2;
+      canvas.height = scaledHeight + scaledToolWidth * 2; 
       
       const ctx = canvas.getContext("2d");
       
-      ctx.fillStyle = "white";
-      ctx.fillRect(0, 0, width * scaleFactor + 10, height * scaleFactor + 10);
-      ctx.drawImage(img, 5, 5, width * scaleFactor , height * scaleFactor );
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, scaledWidth + scaledToolWidth * 2, scaledHeight + scaledToolWidth * 2);
+      ctx.drawImage(img, scaledToolWidth, scaledToolWidth, scaledWidth , scaledHeight );
 
       (window.URL || window.webkitURL || window).revokeObjectURL(blobURL);
 
@@ -255,32 +266,48 @@ export async function svg2png(svg, swidth = svg_width, sheight = svg_height) {
 // --------------------------- Function To Display SVGs ---------------------------
 function displaySVG(svgArray) {
   const { topStackSvg, bottomStackSvg,fullSvg } = svgArray;
-  topStackSvg.setAttribute('id', 'topstacklayer');
-  bottomStackSvg.setAttribute('id', 'bottomstacklayer');
-  document.getElementById('toplayer').appendChild(topStackSvg);
-  document.getElementById('bottomlayer').appendChild(bottomStackSvg);
-  // document.getElementById('fullLayers').appendChild(fullSvg); 
 
-  if (fullSvg) {
-    const mainSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const topStackSVG = modifiedSVG(topStackSvg, 'topstack');
+  const bottomStackSVG = modifiedSVG(bottomStackSvg, 'bottomstack');
+  const fullSVG = modifiedSVG(fullSvg, 'fullstack');
+
+  document.getElementById('toplayer').appendChild(topStackSVG);
+  document.getElementById('bottomlayer').appendChild(bottomStackSVG);
+  document.getElementById('fullLayers').appendChild(fullSVG);
+
+
+  function modifiedSVG(svg, id) {
+    // Define New SVG
+    const svgNew = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const outerG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    const pcbG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const mainG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
-    pcbG.setAttribute('transform', 'translate(3, 3)');
+    // Generate Outer Layer
+    const outerSVG = generateSVG(svgConf.svgWidth, svgConf.svgHeight, 0.8, {x : svgConf.viewboxX, y : svgConf.viewboxY});
 
-    const outerLayer  = generateSVG(svgConf.svgWidth, svgConf.svgHeight, 0.8, {x : svgConf.viewboxX, y : svgConf.viewboxY});
-    outerLayer.svg.setAttribute('style', 'fill: #86877c;');
+    // Set the Attribute for the Parent SVG
+    svgNew.setAttribute('id', `${id}`);
+    svgNew.setAttribute('width', `${outerSVG.width}mm`);
+    svgNew.setAttribute('height', `${outerSVG.height}mm`);
 
-    mainSvg.setAttribute('width', `${outerLayer.width}mm`);
-    mainSvg.setAttribute('height', `${outerLayer.height}mm`);
-    outerG.setAttribute('style', 'opacity: 0.3;display: none')
-    outerG.setAttribute('id', 'doubleSideOuterLayer');
-    outerG.appendChild(outerLayer.svg);
-    pcbG.appendChild(fullSvg);
+    // Add the Outer Layer
+    outerSVG.svg.setAttribute('style', 'fill : #86877c;opacity: 0.3;');
+    outerSVG.svg.setAttribute('id', `${id}Outerlayer`);
+    outerG.appendChild(outerSVG.svg);
+    outerG.setAttribute('id', `${id}OuterLayer`);
+    outerG.setAttribute('style', 'display: none;');
 
-    mainSvg.appendChild(outerG);
-    mainSvg.appendChild(pcbG);
-    document.getElementById('fullLayers').appendChild(mainSvg);
+    // Add the Main Layer
+    svg.setAttribute('id', `${id}layer`);
+    mainG.appendChild(svg);
+    mainG.setAttribute('id', `${id}MainLayer`);
+    mainG.setAttribute('transform', 'translate(3, 3)');
+
+    // Append Both Group to the Parent
+    svgNew.appendChild(outerG);
+    svgNew.appendChild(mainG);
+
+    return svgNew;
   }
 }
 
@@ -289,19 +316,25 @@ function displaySVG(svgArray) {
 export function updateSVG(topName = null, bottomName = null, mode) {
   $('.colorButton').removeClass('active');
 
+
   const svgTop = document.getElementById('topstacklayer');
   const svgBottom = document.getElementById('bottomstacklayer');
+  
+  // const topOuterSvg = document.getElementById('topstackOuterlayer');
+  // const bottomOuterSvg = document.getElementById('bottomstackOuterlayer');
+
 
   let svgTopStyle = svgTop.querySelector('style');
   let svgBottomStyle = svgBottom.querySelector('style');
 
-  if (topName & bottomName != null) {
-    svgTop.setAttribute('data-name', topName);
-    svgBottom.setAttribute('data-name', bottomName);
-  }
+
+  svgTop.setAttribute('data-name', topName);
+  svgBottom.setAttribute('data-name', bottomName);
+  
 
   // since both bottom and top layer has the same ID only need to use one
   const stackid = svgTop.getAttribute('data-stackid');
+  // console.log(stackid)
   let svgStyleContent;
 
   if (mode === 'bw') {
@@ -314,6 +347,10 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #ffffff !important;}
     .${stackid}_out {color: #000000 !important;}
     `
+    // topOuterSvg.style.fill = '#000000';
+    // bottomOuterSvg.style.fill = '#000000';
+    // topOuterSvg.style.opacity = '0.9';
+    // bottomOuterSvg.style.opacity = '0.9';
   } else if (mode === 'bwInvert') {
     svgStyleContent = `
     .${stackid}_fr4 {color: #ffffff  !important;}
@@ -324,6 +361,10 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #000000 !important;}
     .${stackid}_out {color: #ffffff !important;}
     `
+    // topOuterSvg.style.fill = '#ffffff';
+    // bottomOuterSvg.style.fill = '#ffffff';
+    // topOuterSvg.style.opacity = '0.9';
+    // bottomOuterSvg.style.opacity = '0.9';
   } else {
     svgStyleContent = `
     .${stackid}_fr4 {color: #666666  !important;}
@@ -334,6 +375,10 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #999999 !important;}
     .${stackid}_out {color: #000000 !important;}
     `
+    // topOuterSvg.style.fill = '#86877c';
+    // bottomOuterSvg.style.fill = '#86877c';
+    // topOuterSvg.style.opacity = '0.3';
+    // bottomOuterSvg.style.opacity = '0.3';
   }
 
   // update the style of the SVG
@@ -383,11 +428,13 @@ window.zipImages = zipImages;
 
 
 // --------------------------- Function To Generate Outer SVG ---------------------------
-function generateSVG(width, height, toolwidth , viewbox) {
+export function generateSVG(width, height, toolwidth , viewbox) {
   const halfWidth = width / 2;
   const halfHeight = height / 2;
   const originX = viewbox.x;
   const originY = viewbox.y;
+  svg_outer_width = width + 2 * toolwidth;
+  svg_outer_height = height + 2 * toolwidth;
 
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -423,7 +470,5 @@ function generateSVG(width, height, toolwidth , viewbox) {
     width : width + 2 * toolwidth,
     height : height + 2 * toolwidth,
   }
-
-
   return response
 }

@@ -1,4 +1,4 @@
-import { viewGerber, svg2png, updateSVG, svgConf } from "./convert.js";
+import { viewGerber, svg2png, updateSVG, svgConf, generateSVG } from "./convert.js";
 
 document.addEventListener('DOMContentLoaded', () => {
   const dropArea = document.getElementById('dropArea');
@@ -8,11 +8,28 @@ document.addEventListener('DOMContentLoaded', () => {
   renderBtn.addEventListener('click', async function(){
     const layerId = renderBtn.getAttribute('data-layer')
     const svgParent = document.getElementById(layerId);
-    const svg = svgParent.querySelector('svg');
-    const svgname = svg.getAttribute('data-name')
+
+    let svgMain = svgParent.querySelector('svg');
+    let svgClone = svgMain.cloneNode(true);
+    
+    const nestedSvgs = svgClone.querySelectorAll('svg');
+    const outerSvg = nestedSvgs[0];
+    const stackSvg = nestedSvgs[1];
+    const svgname = stackSvg.getAttribute('data-name');
+
+    if (document.getElementById(`${svgClone.getAttribute('id')}OuterLayer`).style.display === "none"){
+      svgClone = document.getElementById(`${svgClone.getAttribute('id')}MainLayer`).querySelector('svg');
+    } else {
+      if (svgname === 'top_layers_bw' | svgname === 'bottom_layers_bw') {
+        outerSvg.setAttribute('style', 'opacity: 1; fill: #000000');
+      } else if (svgname === 'top_layers_bw_invert' | svgname === 'bottom_layers_bw_invert') {
+        outerSvg.setAttribute('style', 'opacity: 1; fill: #ffffff');
+      }
+    }
+    
     const pngDiv = document.createElement('div');
     pngDiv.classList.add('pngCard');
-    const svgString = new XMLSerializer().serializeToString(svg);
+    const svgString = new XMLSerializer().serializeToString(svgClone);
 
     await svg2png(svgString).then((canvas) => {
       canvas.setAttribute('style', 'width: 100%; height: 100%;');
@@ -81,7 +98,7 @@ $('#invert').on('click', () => {
 
 $('#original').on('click', () => {
   $('#original').addClass('active');
-  updateSVG(undefined, undefined, 'original')
+  updateSVG('top_layers_original', 'bottom_layers_original', 'original')
 })
 
 
@@ -92,6 +109,11 @@ function toggleButtonState() {
   buttons.forEach(button => {
     button.disabled = !button.disabled; // Toggle the disabled state of each button
   });
+  if (document.getElementById('doubleSideOuterDiv').classList.contains('layerHidden')) {
+    document.getElementById('doubleSideOuterDiv').classList.remove('layerHidden')
+  } else {
+    document.getElementById('doubleSideOuterDiv').classList.add('layerHidden')
+  }
 } 
 
 
@@ -396,50 +418,33 @@ export function toggleLayer(LayerId, index) {
   }
 }
 window.toggleLayer = toggleLayer; // Make it available in the global scope
-// --------------------------- End Of Toggle Buttons & Zoom Layer Section ---------------------------
 
 
-// document.getElementById('newButton').addEventListener('click', function() {
-//     console.log('svgConf' , svgConf)
-//     generateSVG(svgConf.svgWidth, svgConf.svgHeight, 1.5, {x : svgConf.viewboxX, y : svgConf.viewboxY});
+// ------------------- select option for the toolwidth ----------------------
+const selectToolwidth = document.getElementById('toolWidth');
 
-// })
+selectToolwidth.addEventListener('change', ()=>{
+  const toolwidth = parseFloat(selectToolwidth.value)
+  
+  const svgs = [
+    document.getElementById('fullstack'),
+    document.getElementById('topstack'),
+    document.getElementById('bottomstack')
+  ]
 
+  svgs.forEach(svg => updateToolWidth(svg, svg.getAttribute('id')))
 
-// function generateSVG(width, height, toolwidth , viewbox) {
-//   const halfWidth = width / 2;
-//   const halfHeight = height / 2;
-//   const originX = viewbox.x;
-//   const originY = viewbox.y;
+  function updateToolWidth(svg, id) {
 
+    const svgG = svg.querySelectorAll('g');
+    const newSvg = generateSVG(svgConf.svgWidth, svgConf.svgHeight, toolwidth, {x : svgConf.viewboxX, y : svgConf.viewboxY});
+    newSvg.svg.setAttribute('style', 'fill : #86877c;opacity: 0.3;');
+    newSvg.svg.setAttribute('id', `${id}Outerlayer`)
 
-//   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-//   svg.setAttribute('viewBox', `${originX - toolwidth} ${originY - toolwidth} ${width + 2 * toolwidth} ${height + 2 * toolwidth}`);
-//   svg.setAttribute('width', `${width + 2 * toolwidth}mm`);
-//   svg.setAttribute('height', `${height + 2 * toolwidth}mm`);
-
-//   const pathlines =   `
-//   M ${ originX } ${ originY }
-//   L ${ originX + halfWidth +  2 * toolwidth } ${ originY }
-//   L ${ originX + halfWidth +  2 * toolwidth } ${ originY - toolwidth }
-//   L ${ originX + width + toolwidth } ${ originY - toolwidth }
-//   L ${ originX + width + toolwidth } ${ originY + halfHeight + 2 * toolwidth }
-//   L ${ originX + width } ${ originY + halfHeight + 2 * toolwidth }
-//   L ${ originX + width } ${ originY + height }
-//   L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height }
-//   L ${ originX + halfWidth - 2 * toolwidth } ${ originY + height + toolwidth }
-//   L ${ originX - toolwidth } ${ originY + height + toolwidth }
-//   L ${ originX - toolwidth } ${ originY + halfHeight - 2 * toolwidth }
-//   L ${ originX } ${ originY + halfHeight - 2 * toolwidth }
-//   L ${ originX } ${ originY }
-//   Z`
-//   let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-
-//   path.setAttribute('d', pathlines);
-//   // path.setAttribute('fill', 'red');
-
-//   svg.appendChild(path)
-//   // document.getElementById('canvas').appendChild(svg)
-
-//   console.log(svg)
-// }
+    svg.setAttribute('width', `${newSvg.width}mm`);
+    svg.setAttribute('height', `${newSvg.height}mm`);
+    svgG[0].querySelector('svg').replaceWith(newSvg.svg);
+    svgG[1].setAttribute('transform', `translate(${toolwidth == 0.8 ? 3 : 1.5}, ${toolwidth == 0.8 ? 3 : 1.5})`);
+  
+  }
+})

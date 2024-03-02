@@ -423,6 +423,7 @@ transition: all 0.5s ease-in-out;
   justify-content: space-between;
   width: 100%;
   padding: 10px;
+  transition: 0.5s ease;
 }
 
 .doubleSideDiv select {
@@ -561,7 +562,6 @@ transform: scale(1.1);
   overflow: hidden;
   border-radius: 4px;
 }
-
 .sideToggle input {
   opacity: 0;
   width: 0;
@@ -600,10 +600,6 @@ transform: scale(1.1);
   color: white;
   transform: translateX(-59px);
 }
-
-
-
-
 .sideToggle .slider::before {
   position: absolute;
   content: "";
@@ -641,4 +637,27 @@ input:checked + .slider .oneSide {
 input:checked + .slider .twoSide {
   transform: translateX(0px);
   opacity: 1;
+}
+
+
+
+/* Canvas Select */
+.canvasSelect {
+  border: none;
+  background-color: white;
+  color: #394174;
+  padding: 5px 20px 5px 15px;
+  font-size: 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  width: 100%;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3e%3cg data-name='Double arrow down'%3e%3crect x='2' y='2' width='20' height='20' rx='1' ry='1' style='fill:%23ece4b7'/%3e%3cpath d='M12 17a1 1 0 0 1-.707-.293l-4-4a1 1 0 1 1 1.414-1.414L12 14.586l3.293-3.293a1 1 0 0 1 1.414 1.414l-4 4A1 1 0 0 1 12 17z' style='fill:%23ff8e31'/%3e%3cpath d='M12 13a1 1 0 0 1-.707-.293l-4-4a1 1 0 1 1 1.414-1.414L12 10.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-4 4A1 1 0 0 1 12 13z' style='fill:%23ff8e31'/%3e%3c/g%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0px top 50%, 0 0;
+}
+
+.canvasSelect:focus {
+  outline: none;
 }
