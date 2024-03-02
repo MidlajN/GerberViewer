@@ -80,9 +80,26 @@
                 <button id="bottomlayersbtn" class="button-side" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
               </div>
 
+              <div class="doubleSideDiv" id="doubleSideOuterDiv">
+                <div class="selectToolWidth layerHidden">
+                  <span>Tool Width</span>
+                  <select name="toolWidth" id="toolWidth">
+                    <option value="0.8">0.8mm</option>
+                    <option value="0.4">0.4mm</option>
+                  </select>
+                </div>
+                <label class="sideToggle" id="doubleSideToggle">
+                  <input type="checkbox" id="sideToggle" onchange="toggleLayer('OuterLayer')">
+                  <div class="slider">
+                    <span class="oneSide">One Side PCB</span>
+                    <span class="twoSide">Two Side PCB</span>
+                  </div>
+                </label>
+              </div>
+
               <div id="toplayerlist" class="layerVisible">
                 <ol>
-                  <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;margin-top: 15px;">Top</h5> 
+                  <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h5> 
                   <li class="litoggle">
                     <p class="toggleName">Traces</p>
                     <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper', 0)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
@@ -138,21 +155,7 @@
                   
                 <!-- </li> -->
               </ol>
-              <div class="doubleSideDiv" id="doubleSideOuterDiv">
-                <div class="selectToolWidth">
-                  <select name="toolWidth" id="toolWidth">
-                    <option value="0.8">0.8mm</option>
-                    <option value="0.4">0.4mm</option>
-                  </select>
-                </div>
-                <label class="sideToggle">
-                  <input type="checkbox" id="sideToggle" onchange="toggleLayer('OuterLayer')">
-                  <div class="slider">
-                    <span class="oneSide">One Side PCB</span>
-                    <span class="twoSide">Two Side PCB</span>
-                  </div>
-                </label>
-              </div>
+              
 
               <div style="display: flex;justify-content: space-between;align-items: center;padding:10px;">
                 <div style="height: fit-content;">
@@ -168,40 +171,42 @@
             <div class="col-lg-9 col-md-12 col-sm-12 " style="background-color: #f0f0f0;height: 80vh;padding: 30px;">
               
 
-              <div id="dropArea" class="shadow"  style="background-color: #f3f3f3;height:90%;position: relative;">
-                <div id="overlay">
-                  <div class="cv-spinner">
-                    <span class="spinner"></span>
+              <div class="contentArea">
+                <div id="dropArea" style="background-color: #f3f3f3;height:100%;position: relative;box-shadow:inset rgb(255 255 255) 0px 0px 4px, inset rgb(255 255 255) 0px 0px 13px -3px, rgb(0 0 0 / 54%) 0px 0px 4px inset;">
+                  <div id="overlay">
+                    <div class="cv-spinner">
+                      <span class="spinner"></span>
+                    </div>
                   </div>
-                </div>
-                
-                <div class=" d-flex justify-content-center align-items-center" style="height: 100%;">
-                  <div  class="shadow" style="border: 2px dashed #ccc; padding: 20px;text-align: center;">
-                    <p>Drop your Gerber file here</p>
-                    <input type="file" id="gerberFileInput" multiple />
+                  
+                  <div class=" d-flex justify-content-center align-items-center" style="height: 100%;">
+                    <div  class="shadow" style="border: 1px dashed #ccc; padding: 20px;text-align: center;background-color: white;">
+                      <p>Drop your Gerber file here</p>
+                      <input type="file" id="gerberFileInput" multiple />
+                    </div>
                   </div>
-                </div>
-              </div> 
-
-              <div id="result" class="shadow" style="display: none;height: 90%;">
-                <div  style="display: block;height: 100%;position: relative;overflow: hidden;">
-                  <div id="zoomContainer" style="display: block;position: relative;height: 100%;overflow: hidden;">
-                    <div  id="fullLayersParent" class="layerStyle">
-                      <div id="fullLayers" >
+                </div> 
+  
+                <div id="result" class="contentDiv" style="display: none;height: 100%;">
+                  <div  style="display: block;height: 100%;position: relative;overflow: hidden;">
+                    <div id="zoomContainer" style="display: block;position: relative;height: 100%;overflow: hidden;">
+                      <div  id="fullLayersParent" class="layerStyle">
+                        <div id="fullLayers" >
+                        </div>
+                      </div>
+      
+                      <div id="toplayers" style="display: none;height: 100%;position: relative;">
+                        <div id="toplayer" class="layerStyle contentSvg" style="visibility: visible;" >
+                        </div>
+                      </div>
+      
+                      <div id="bottomlayers" style="display: none;height: 100%;position: relative;">
+                        <div id="bottomlayer" class="layerStyle" style="visibility: visible;">  
+                        </div>  
                       </div>
                     </div>
-    
-                    <div id="toplayers" style="display: none;height: 100%;position: relative;">
-                      <div id="toplayer" class="layerStyle contentSvg" style="visibility: visible;" >
-                      </div>
-                    </div>
-    
-                    <div id="bottomlayers" style="display: none;height: 100%;position: relative;">
-                      <div id="bottomlayer" class="layerStyle" style="visibility: visible;">  
-                      </div>  
-                    </div>
                   </div>
-                </div>
+              </div>
 
                 <div class="container-fluid py-3 text-center">
                     <div id="buttonContainer" style="display: none;">

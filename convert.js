@@ -133,7 +133,7 @@ export function viewGerber(fileData) {
                 gElemClone.setAttribute('style', 'color: blue; opacity: 0.5;');
                 break;
               case 'bottom_soldermask':
-                gElemClone.setAttribute('style', 'color: #757500; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: #757500; opacity: 0.5; display: none;');
                 break;
               case 'bottom_solderpaste':
                 gElemClone.setAttribute('style', 'color: orange; opacity: 0.5;');
@@ -142,7 +142,7 @@ export function viewGerber(fileData) {
                 gElemClone.setAttribute('style', 'color: #c362c3; opacity: 0.5;');
                 break;
               case 'top_soldermask':
-                gElemClone.setAttribute('style', 'color: #af4e5f; opacity: 0.5;');
+                gElemClone.setAttribute('style', 'color: #af4e5f; opacity: 0.5; display: none;');
                 break;
             }
             
@@ -281,6 +281,20 @@ function displaySVG(svgArray) {
     const svgNew = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const outerG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     const mainG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+
+    if (id !== 'fullstack') {
+      const svgG = svg.querySelectorAll('g');
+      Array.from(svgG).forEach((layer) => {
+        if (layer.hasAttribute("id")) {
+          const layerId = layer.getAttribute("id");
+          if (layerId.includes('soldermask')) {
+            console.log('layerId :::> ', layerId, 'LAYER :::> ', id);
+            layer.style.display = layer.style.display === "none" ? "block" : "none";
+          } 
+        }
+      });
+    }
 
     // Generate Outer Layer
     const outerSVG = generateSVG(svgConf.svgWidth, svgConf.svgHeight, 0.8, {x : svgConf.viewboxX, y : svgConf.viewboxY});

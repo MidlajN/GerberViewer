@@ -109,10 +109,10 @@ function toggleButtonState() {
   buttons.forEach(button => {
     button.disabled = !button.disabled; // Toggle the disabled state of each button
   });
-  if (document.getElementById('doubleSideOuterDiv').classList.contains('layerHidden')) {
-    document.getElementById('doubleSideOuterDiv').classList.remove('layerHidden')
+  if (document.getElementById('doubleSideToggle').classList.contains('layerHidden')) {
+    document.getElementById('doubleSideToggle').classList.remove('layerHidden')
   } else {
-    document.getElementById('doubleSideOuterDiv').classList.add('layerHidden')
+    document.getElementById('doubleSideToggle').classList.add('layerHidden')
   }
 } 
 
