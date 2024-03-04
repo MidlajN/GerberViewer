@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const stackSvg = nestedSvgs[1];
     const svgname = stackSvg.getAttribute('data-name');
 
-    if (document.getElementById(`${svgClone.getAttribute('id')}OuterLayer`).style.display === "none"){
+    if (!document.getElementById('sideToggle').checked){
       svgClone = document.getElementById(`${svgClone.getAttribute('id')}MainLayer`).querySelector('svg');
     } else {
       if (svgname === 'top_layers_bw' | svgname === 'bottom_layers_bw') {
@@ -34,28 +34,67 @@ document.addEventListener('DOMContentLoaded', () => {
     await svg2png(svgString).then((canvas) => {
       canvas.setAttribute('style', 'width: 100%; height: 100%;');
       canvas.setAttribute('data-name', svgname);
-      pngDiv.appendChild(document.createElement('div').appendChild(canvas));
+      pngDiv.appendChild(canvas);
       // Convert canvas to Blob
       canvas.toBlob((pngBlob) => {
-          // Create a download link for the PNG Blob
-          const downloadLink = document.createElement('a');
-          downloadLink.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
+        // Create Download Link
+        const downloadLink = createDownloadLink(pngBlob, svgname);
+        const pngFooter = createPngFooter(svgname, downloadLink, pngDiv);
 
-          downloadLink.download = svgname + '_1500dpi.png'; 
-          downloadLink.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
-
-          const pngAnchor = document.createElement('div');
-          pngAnchor.classList.add('pngAnchorDiv');
-          pngAnchor.innerHTML = `<p style="font-size:10px;margin:0;">${svgname}_1500dpi.png</p>`;
-          pngAnchor.appendChild(downloadLink);
-          pngDiv.appendChild(pngAnchor);
-
-        }, "image/png");
-        document.getElementById('canvas').appendChild(pngDiv);
-        document.getElementById('zipBtn').style.display = 'flex';
+        pngDiv.appendChild(pngFooter);
+      }, "image/png");
+      document.getElementById('canvas').appendChild(pngDiv);
+      document.getElementById('zipBtn').style.display = 'flex';
     }).catch((err) => {
         console.log('Error : ', err);
     });
+
+    function createDownloadLink(pngBlob, svgname) {
+      const link = document.createElement('a');
+      link.setAttribute('id', 'pngDownload');
+      link.download = `${svgname}_1000dpi.png`; 
+      link.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
+      link.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
+      return link
+    }
+
+    function createPngFooter(svgname, downloadLink, pngDiv) {
+      const footer = document.createElement('div');
+      footer.classList.add('pngAnchorDiv');
+
+      const footerP = document.createElement('p');
+      footerP.setAttribute('style', 'font-size:10px;margin:0;');
+      
+      const nameSpan = document.createElement('span');
+      nameSpan.setAttribute('class', 'pngName');
+      nameSpan.setAttribute('contenteditable', 'true');
+      nameSpan.innerHTML = svgname + '_1000dpi';
+      nameSpan.addEventListener('input', (e) => {
+        downloadLink.download = e.target.textContent;
+      })
+
+      const extSpan = document.createElement('span');
+      extSpan.innerHTML = '.png';
+
+      const downloadDiv = document.createElement('div');
+      downloadDiv.appendChild(downloadLink);
+
+      footerP.appendChild(nameSpan);
+      footerP.appendChild(extSpan);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+      deleteButton.classList.add('deleteButton');
+      downloadDiv.appendChild(deleteButton);
+      deleteButton.addEventListener('click', () => {
+        pngDiv.remove();
+      })
+
+      footer.appendChild(footerP);
+      footer.appendChild(downloadDiv);
+
+      return footer
+    }
   })
 
   dropArea.addEventListener('dragenter', (e) => {
@@ -87,19 +126,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 $('#bw').on('click', () => {
+  $('.colorButton').removeClass('active')
   $('#bw').addClass('active')
   updateSVG('top_layers_bw', 'bottom_layers_bw', 'bw')
 })
 
 $('#invert').on('click', () => {
+  $('.colorButton').removeClass('active')
   $('#invert').addClass('active');
   updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
 })
 
 $('#original').on('click', () => {
+  $('.colorButton').removeClass('active')
   $('#original').addClass('active');
   updateSVG('top_layers_original', 'bottom_layers_original', 'original')
-})
+}) 
 
 
 // Function to toggle the disabled state of all buttons within the parent div
@@ -373,50 +415,54 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// --------------------------- Toggle Each Layer Of the  PCB ---------------------------
-export function toggleLayer(LayerId, index) {
+// Toggle each layer of the PCB
+export function toggleLayer(layerId, index) {
+
   const allLayers = document.getElementById('fullLayers');
-  const top = document.getElementById('toplayers');
-  const bottom = document.getElementById('bottomlayers');
+  const topLayers = document.getElementById('toplayers');
+  const bottomLayers = document.getElementById('bottomlayers');
+  const toggle = document.getElementById('sideToggle').checked;
+  const toolwidth = document.getElementById('selectToolWidth');
+  const OuterLayer = document.getElementById('doubleSidelist');
   
-  const Layers = allLayers.getElementsByTagName('g');
-  Array.from(Layers).forEach((layer) => {
-    if (layer.hasAttribute('id') && layer.getAttribute('id').includes(LayerId)) {
-      layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
-    }
-  })
+  const layers = allLayers.getElementsByTagName('g');
+  toggleLayerVisibility(layers, layerId);
 
-  if (LayerId === 'outline') {
-    const topOutline = top.getElementsByTagName('clipPath');
-    topOutline.item(index).style.display = topOutline.item(index).style.display === 'none' ? 'block' : 'none';
-
-    const bottomOutline = bottom.getElementsByTagName('clipPath');
-    bottomOutline.item(index).style.display = bottomOutline.item(index).style.display === 'none' ? 'block' : 'none';
+  if (layerId === 'outline') {
+    toggleOutline(topLayers.getElementsByTagName('clipPath'), index);
+    toggleOutline(bottomLayers.getElementsByTagName('clipPath'), index);
   } else {
-    const topLayers = top.getElementsByTagName('g');
-    Array.from(topLayers).forEach((layer) => {
-      if (layer.hasAttribute("id")) {
-        const layerId = layer.getAttribute("id");
-        if (layerId.includes(LayerId)) {
-          console.log('layerId :::> ', layerId, 'LAYER :::> ', LayerId);
-          layer.style.display = layer.style.display === "none" ? "block" : "none";
-          
-        }
-      }
-    });
+    toggleLayerVisibility(topLayers.getElementsByTagName('g'), layerId);
+    toggleLayerVisibility(bottomLayers.getElementsByTagName('g'), layerId);
 
-    const bottomLayers = bottom.getElementsByTagName('g');
-    Array.from(bottomLayers).forEach((layer) => {
-      if (layer.hasAttribute("id")) {
-        const layerId = layer.getAttribute("id");
-        if (layerId.includes(LayerId)) {
-          console.log('layerId :::> ', layerId, 'LAYER :::> ', LayerId);
-          layer.style.display = layer.style.display === "none" ? "block" : "none";
-        }
+    const toggleOuterClass = (element, isHidden) => {
+      if (isHidden) {
+        element.classList.add('layerHidden');
+      } else {
+        element.classList.remove('layerHidden');
       }
-    });
+    };
+
+    toggleOuterClass(OuterLayer, !toggle);
+    toggleOuterClass(toolwidth, !toggle);
   }
 }
+
+function toggleOutline(layer, index) {
+  layer.item(index).style.display = layer.item(index).style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleLayerVisibility(layers, layerId) {
+  Array.from(layers).forEach((layer) => {
+    if (layer.hasAttribute('id')) {
+      const currentLayerId = layer.getAttribute('id');
+      if (currentLayerId.includes(layerId)) {
+        layer.style.display = layer.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+  });
+}
+
 window.toggleLayer = toggleLayer; // Make it available in the global scope
 
 
@@ -446,5 +492,18 @@ selectToolwidth.addEventListener('change', ()=>{
     svgG[0].querySelector('svg').replaceWith(newSvg.svg);
     svgG[1].setAttribute('transform', `translate(${toolwidth == 0.8 ? 3 : 1.5}, ${toolwidth == 0.8 ? 3 : 1.5})`);
   
+  }
+})
+
+document.getElementById('sideToggle').addEventListener('change', () => {
+  const select = document.getElementById('selectToolWidth');
+  const bottomBtn = document.getElementById('bottomlayersbtn');
+
+  if (select.classList.contains('layerHide')) {
+    select.classList.remove('layerHide');
+    bottomBtn.classList.remove('layerHide');
+  } else {
+    select.classList.add('layerHide');
+    bottomBtn.classList.add('layerHide');
   }
 })

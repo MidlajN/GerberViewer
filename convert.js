@@ -102,7 +102,7 @@ export function viewGerber(fileData) {
         gerberToSvgStream.on("end", () => {
           // 'data' now contains the full SVG output
           const svgDocument = svgParser.parseFromString(data, "image/svg+xml");
-
+          console.log('svgData ;:::', data);
           const defElements = svgDocument.querySelector("defs");
           
           if (defElements) {
@@ -243,7 +243,8 @@ export async function svg2png(svg, swidth = svg_width, sheight = svg_height) {
       
       const ctx = canvas.getContext("2d");
       
-      ctx.fillStyle = "black";
+      const canvasBg = document.getElementById('canvasBg').value;
+      ctx.fillStyle = canvasBg;
       ctx.fillRect(0, 0, scaledWidth + scaledToolWidth * 2, scaledHeight + scaledToolWidth * 2);
       ctx.drawImage(img, scaledToolWidth, scaledToolWidth, scaledWidth , scaledHeight );
 
@@ -328,8 +329,6 @@ function displaySVG(svgArray) {
 
 // --------------------------- Function To Update SVG Style ------------------------
 export function updateSVG(topName = null, bottomName = null, mode) {
-  $('.colorButton').removeClass('active');
-
 
   const svgTop = document.getElementById('topstacklayer');
   const svgBottom = document.getElementById('bottomstacklayer');

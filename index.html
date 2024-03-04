@@ -53,7 +53,7 @@
   <section style="background-color: #fbfbfc;">
     
     <div class="shadow-lg mx-4 mt-3 layerNav row" style="height: 87vh;">
-      <div class="col-md-9" style="padding: 0 !important;">
+      <div class="col-lg-9 col-md-12" style="padding: 0 !important;">
         <!-- Navbar -->
         <div class="navbar-animmenu" id="navbar-animmenu">
           <ul class="show-dropdown main-navbar">
@@ -77,24 +77,27 @@
               <div id="container" class="container-fluid d-flex justify-content-between">
                 <button id="allLayers" class="button-side active" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Layers</span></button>
                 <button id="toplayersbtn" class="button-side " style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Top</span></button>
-                <button id="bottomlayersbtn" class="button-side" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
+                <button id="bottomlayersbtn" class="button-side layerHide" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
               </div>
 
               <div class="doubleSideDiv" id="doubleSideOuterDiv">
-                <div class="selectToolWidth layerHidden">
+                <div class="doubleSideCheckBox">
+                  <span>Double Side</span>
+                  <label class="sideToggle" id="doubleSideToggle">
+                    <input type="checkbox" id="sideToggle" onchange="toggleLayer('OuterLayer');">
+                    <div class="slider">
+                      <span class="oneSide"></span>
+                      <span class="twoSide"></span>
+                    </div>
+                  </label>
+                </div>
+                <div class="selectToolWidth layerHide" id="selectToolWidth">
                   <span>Tool Width</span>
                   <select name="toolWidth" id="toolWidth">
-                    <option value="0.8">0.8mm</option>
-                    <option value="0.4">0.4mm</option>
+                    <option value="0.8">0.8</option>
+                    <option value="0.4">0.4</option>
                   </select>
                 </div>
-                <label class="sideToggle" id="doubleSideToggle">
-                  <input type="checkbox" id="sideToggle" onchange="toggleLayer('OuterLayer')">
-                  <div class="slider">
-                    <span class="oneSide">One Side PCB</span>
-                    <span class="twoSide">Two Side PCB</span>
-                  </div>
-                </label>
               </div>
 
               <div id="toplayerlist" class="layerVisible">
@@ -151,19 +154,24 @@
                   <p class="toggleName">Drill</p>
                   <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('drill')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                 </li>
+                <li class="litoggle layerHidden" id="doubleSidelist" style="transition: 0.5s ease;">
+                  <p class="toggleName">OuterLayer</p>
+                  <button class="toggleButton" style="background-color: rgb(85 119 89);" onclick="toggleLayer('OuterLayer')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                </li>
                 <!-- <li class="litoggle layerHidden"  > -->
                   
                 <!-- </li> -->
               </ol>
               
+              <div class="canvasDiv">
+                <label for="canvasBg">Canvas Background </label>
+                <select class="canvasSelect" name="canvasSelect" id="canvasBg">
+                  <option value="black" selected>Black</option>
+                  <option value="white">White</option>
+                </select>
+              </div>
 
-              <div style="display: flex;justify-content: space-between;align-items: center;padding:10px;">
-                <div style="height: fit-content;">
-                  <select class="canvasSelect" name="canvasSelect" id="canvasBg">
-                    <option value="white" selected>White</option>
-                    <option value="black">Black</option>
-                  </select>
-                </div>
+              <div style="display: flex;justify-content: flex-end;align-items: center;padding:10px;">
                 <button class="noselect" id="renderButton"><span class='text'>PNG</span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
               </div>
             </div>
@@ -224,7 +232,7 @@
       </div>
 
       <!-- Right Side -->
-      <div class="col-md-3" style="padding-right: 0 !important; padding-left: 2px; height: 100%; overflow: hidden;">
+      <div class="col-lg-3 col-md-12" style="padding-right: 0 !important; padding-left: 2px; height: 100%; overflow: hidden;">
         <div class="navbar-animmenu2 sticky-top">
           <!-- Content of navbar-animmenu2 -->
           <div id="zipBtn" class="navbarRight " style="display: none;">
