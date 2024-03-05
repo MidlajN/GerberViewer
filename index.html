@@ -22,10 +22,7 @@
   <link rel="stylesheet" href="style.css">
 
   <script src="/libs/gerber_to_svg.js" ></script>
-  <script src="/libs/pcb_stackup.js" ></script>
-  <!-- <script src="convert.js"></script> -->
-
-  <!-- <script type="module" src="main.js"></script> -->
+  <script src="/libs/pcb_stackup.js" ></script> 
 
 </head>
 <body>
@@ -76,11 +73,23 @@
             <div id="layerSelectors" class="col-lg-3 col-md-12 col-sm-12" style="padding: 30px;" aria-disabled="true">
               
               <div class="setupMainDiv">
-                <div id="container" class="container-fluid d-flex justify-content-between">
-                  <button id="allLayers" class="button-side active" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Layers</span></button>
-                  <button id="toplayersbtn" class="button-side " style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Top</span></button>
-                  <button id="bottomlayersbtn" class="button-side layerHide" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
+                <div class="setupDiv">
+                  <div>
+                    <h5 for="toolWidth"> Quick Setup</h5>
+                    <select name="toolWidth" id="quickSetup">
+                      <option value="custom-setup" selected>Custom</option>
+                      <option value="top-trace">Top Trace</option>
+                      <option value="top-drill">Top Drill</option>
+                      <option value="top-cut">Top Cut</option>
+                      <option value="bottom-trace" class="bottomSetup" disabled>Bottom Trace</option>
+                      <option value="bottom-cut" class="bottomSetup" disabled>Bottom Cut</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button class="noselect" id="renderButton"><span class='text'>Generate PNG </span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
+                  </div>  
                 </div>
+                
   
                 <div class="doubleSideDiv" id="doubleSideOuterDiv">
                   <div class="doubleSideCheckBox">
@@ -102,25 +111,10 @@
                   </div>
                 </div>
   
-                <div class="setupDiv">
-                  <div>
-                    <label for="toolWidth"> Quick Setup</label>
-                    <select name="toolWidth" id="quickSetup">
-                      <option value="custom-setup" selected>Custom</option>
-                      <option value="top-trace">Top Trace</option>
-                      <option value="top-drill">Top Drill</option>
-                      <option value="top-cut">Top Cut</option>
-                      <option value="bottom-trace" class="bottomSetup" disabled>Bottom Trace</option>
-                      <option value="bottom-cut" class="bottomSetup" disabled>Bottom Cut</option>
-                    </select>
-                  </div>
-                  <div>
-                    <button class="noselect" id="renderButton"><span class='text'>Generate PNG </span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
-                  </div>  
-                </div>
+                
               </div>
 
-              <div class="layerDiv" style="margin-top: 20px;">
+              <div class="layerDiv" style="margin-top: 10px;">
                 <div id="toplayerlist" class="layerVisible">
                   <ol>
                     <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h5> 
@@ -182,7 +176,7 @@
                   </ol>
                 </div>
               </div>
-              
+
               <div class="canvasDiv">
                 <label for="canvasBg">Canvas Background </label>
                 <select class="canvasSelect" name="canvasSelect" id="canvasBg">
@@ -198,6 +192,12 @@
               
 
               <div class="contentArea">
+                <div id="container" class="layerBtnGroup">
+                  <button id="allLayers" class="button-side" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Layers</span></button>
+                  <button id="toplayersbtn" class="button-side active" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Top</span></button>
+                  <button id="bottomlayersbtn" class="button-side layerHide" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
+                </div>
+
                 <div id="dropArea" style="background-color: #f3f3f3;height:100%;position: relative;box-shadow:inset rgb(255 255 255) 0px 0px 4px, inset rgb(255 255 255) 0px 0px 13px -3px, rgb(0 0 0 / 54%) 0px 0px 4px inset;">
                   <div id="overlay">
                     <div class="cv-spinner">
@@ -216,12 +216,12 @@
                 <div id="result" class="contentDiv" style="display: none;height: 100%;">
                   <div  style="display: block;height: 100%;position: relative;overflow: hidden;">
                     <div id="zoomContainer" style="display: block;position: relative;height: 100%;overflow: hidden;">
-                      <div  id="fullLayersParent" class="layerStyle">
+                      <div  id="fullLayersParent" class="layerStyle" style="display: none;height: 100%;position: relative;">
                         <div id="fullLayers" >
                         </div>
                       </div>
       
-                      <div id="toplayers" style="display: none;height: 100%;position: relative;">
+                      <div id="toplayers" >
                         <div id="toplayer" class="layerStyle contentSvg" style="visibility: visible;" >
                         </div>
                       </div>

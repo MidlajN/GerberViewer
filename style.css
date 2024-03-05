@@ -418,7 +418,8 @@ transition: all 0.5s ease-in-out;
 }
 
 .layerHide {
-  opacity: 0 !important;
+  opacity: 0.3 !important;
+  pointer-events: none;
   transition: all 0.5s ease-in-out;
 }
 
@@ -694,7 +695,17 @@ input:checked + .slider .twoSide {
 
 .contentArea {
   height: 90%;
+  position: relative;
 }
+.contentArea .layerBtnGroup {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 99;
+  top: 1rem;
+}
+
+
 .contentArea .contentDiv {
   box-shadow:inset rgb(255 255 255) 0px 0px 4px, inset rgb(255 255 255) 0px 0px 13px -3px, rgb(37 37 37 / 54%) 0px 0px 4px inset;
   opacity: 1;
@@ -703,19 +714,35 @@ input:checked + .slider .twoSide {
   background-position: 0 0,16px 16px;
 }
 
+
+
+/* Layer Selector Full Div */
+h5{
+  font-size: 1.05rem !important;
+}
+/* Setup Configuration Div */
+.setupMainDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+
+
 .setupDiv {
   padding-inline: 10px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 5px;
+  margin-top: 15px;
 }
 
-.setupDiv label {
+/* .setupDiv label {
   font-size: 0.9rem;
   font-weight: 500;
   padding-inline: 3px;
-}
+} */
 
 .setupDiv select {
   border: none;

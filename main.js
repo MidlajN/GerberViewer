@@ -147,6 +147,13 @@ $('#original').on('click', () => {
 // Function to toggle the disabled state of all buttons within the parent div
 function toggleButtonState() {
   const parentDiv = document.getElementById('layerSelectors');
+  const sideBtnDiv = document.getElementById('container');
+  
+  const sideButtons = sideBtnDiv.querySelectorAll('button');
+  sideButtons.forEach(button => {
+    button.disabled = !button.disabled; // Toggle the disabled state of each button
+  });
+
   const buttons = parentDiv.querySelectorAll('button'); // Select all buttons within the parent div
   buttons.forEach(button => {
     button.disabled = !button.disabled; // Toggle the disabled state of each button
