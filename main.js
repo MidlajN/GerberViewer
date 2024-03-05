@@ -1,4 +1,7 @@
 import { viewGerber, svg2png, updateSVG, svgConf, generateSVG } from "./convert.js";
+import './setup.js';
+import './style.css';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   const dropArea = document.getElementById('dropArea');
@@ -52,9 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function createDownloadLink(pngBlob, svgname) {
       const link = document.createElement('a');
       link.setAttribute('id', 'pngDownload');
+      link.classList.add('pngButton')
       link.download = `${svgname}_1000dpi.png`; 
       link.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
-      link.innerHTML = '<button class="pngButton"><i class="fa-solid fa-download"></i></button>';
+      link.innerHTML = '<i class="fa-solid fa-download"></i>';
       return link
     }
 
@@ -82,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       footerP.appendChild(nameSpan);
       footerP.appendChild(extSpan);
 
-      const deleteButton = document.createElement('button');
+      const deleteButton = document.createElement('a');
       deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
       deleteButton.classList.add('deleteButton');
       downloadDiv.appendChild(deleteButton);
@@ -148,7 +152,7 @@ $('#original').on('click', () => {
 function toggleButtonState() {
   const parentDiv = document.getElementById('layerSelectors');
   const sideBtnDiv = document.getElementById('container');
-  
+
   const sideButtons = sideBtnDiv.querySelectorAll('button');
   sideButtons.forEach(button => {
     button.disabled = !button.disabled; // Toggle the disabled state of each button

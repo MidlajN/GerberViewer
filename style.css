@@ -4,7 +4,7 @@
   width: 100%;
   padding: 10px;
   font-size: 22px;
-  background-color: #fbfcfc;
+  background-color: #ffffff;
   margin: auto;
   opacity: 0.8;
   
@@ -196,9 +196,7 @@ color: #b3b3b3;
 
 /* NavBar for the layer */
 .layerNav {
-border-top-left-radius: 10px;
-border-top-right-radius: 10px;
-background-color: #f0f0f0;
+  border-radius: 10px;
 }
 
 #addNewButton {
@@ -412,7 +410,7 @@ transition: all 0.5s ease-in-out;
 }
 
 .layerHidden {
-opacity: 0.4;
+opacity: 0.4 !important;
 pointer-events: none;
 transition: all 0.5s ease-in-out;
 }
@@ -461,39 +459,31 @@ align-items: center;
 }
 
 .pngButton {
-appearance: none;
-border: none;
-border-radius: 9px;
-width: fit-content;
-padding-inline: 10px;
-box-sizing: border-box;
-color: #2a83b6;
-cursor: pointer;
-transition: transform 500ms ease-in-out, background-color 500ms ease-in-out, color 500ms ease-in-out;
-}
-
-.pngButton:hover {
-background-color: #ffffff;
-color: #2a83b6;
-transform: scale(1.1);
-}
-
-.deleteButton {
-  margin-left: 7px;
-  border: none;
-  color: red;
-  border-radius: 9px;
-  width: fit-content;
   padding-inline: 10px;
   box-sizing: border-box;
+  color: #2a83b6;
+  cursor: pointer;
   transition: transform 500ms ease-in-out, background-color 500ms ease-in-out, color 500ms ease-in-out;
-
 }
-.deleteButton:hover {
+
+/* .pngButton:hover {
+background-color: #885252;
+color: #2a83b6;
+transform: scale(1.1);
+} */
+
+.deleteButton {
+  color: red;
+  padding-inline: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: transform 500ms ease-in-out, background-color 500ms ease-in-out, color 500ms ease-in-out;
+}
+/* .deleteButton:hover {
   background-color: #ffffff;
   color: rgb(247, 50, 50);
   transform: scale(1.1);
-}
+} */
 
 .pngName {
   outline: none;
@@ -672,7 +662,7 @@ input:checked + .slider .twoSide {
 }
 .canvasSelect {
   border: none;
-  background-color: white;
+  background-color: #f0f0f0;
   color: #394174;
   padding: 5px 35px 5px 8px;
   font-size: 13px;
@@ -686,6 +676,8 @@ input:checked + .slider .twoSide {
   background-repeat: no-repeat;
   background-position: right 0px top 50%, 0 0;
   cursor: pointer;
+  
+  box-shadow: 0 1px 1px rgba(0,0,0,0.12), 0 2px 2px rgba(0,0,0,0.12) ;
 }
 
 .canvasSelect:focus {
@@ -708,10 +700,11 @@ input:checked + .slider .twoSide {
 
 .contentArea .contentDiv {
   box-shadow:inset rgb(255 255 255) 0px 0px 4px, inset rgb(255 255 255) 0px 0px 13px -3px, rgb(37 37 37 / 54%) 0px 0px 4px inset;
+  height: 100%;
+  background-color: #e5e5f7;
   opacity: 1;
-  background-image: radial-gradient(#00000014 1px, transparent 0.8px), radial-gradient(#5d5d5d3d 0.8px, #f1f1f1 0.8px);
-  background-size: 32px 32px;
-  background-position: 0 0,16px 16px;
+  background-image: radial-gradient(#444cf7 0.65px, #eff3ff 0.65px);
+  background-size: 13px 13px;
 }
 
 
@@ -746,7 +739,7 @@ h5{
 
 .setupDiv select {
   border: none;
-  background-color: white;
+  background-color: #f0f0f0;
   color: #394174;
   padding: 3px 35px 3px 8px;
   font-size: 13px;
@@ -759,6 +752,7 @@ h5{
   background-repeat: no-repeat;
   background-position: right 0px top 50%, 0 0;
   cursor: pointer;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .13), 0 1px 1px 0 rgba(0, 0, 0, .11);
 }
 .setupDiv select:focus {
   outline: none;

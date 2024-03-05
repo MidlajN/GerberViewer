@@ -51,7 +51,7 @@ export function viewGerber(fileData) {
     let bottomFlag = false;
     layers.forEach((layer) => {
       let idstring = layer.side + '_' + layer.type;
-      console.log('ID : ', idstring);
+      // console.log('ID : ', idstring);
       id.push(idstring);
       if (layer.side === 'top') {
         topFlag = true;
@@ -179,7 +179,7 @@ export function viewGerber(fileData) {
 // --------------------------- Function For Converting All the PCB Layers to SVG ---------------------------
 function viewPCBStackUp(files) {
   return new Promise((resolve, reject) => {
-    console.log('fileInput : ', files.length);
+    // console.log('fileInput : ', files.length);
     if (files !== null && files.length > 0) {
       const filePromises = Array.from(files).map((file) => {
         return new Promise((resolve) => {
@@ -202,7 +202,7 @@ function viewPCBStackUp(files) {
 
       Promise.all(filePromises)
         .then((layers) => {
-          console.log(layers);
+          // console.log(layers);
           pcbStackup(layers)
             .then((stackup) => {
               resolve(stackup);
@@ -223,13 +223,13 @@ export async function svg2png(svg, swidth = svg_width, sheight = svg_height) {
   console.log('swidth : ', swidth, 'sheight : ', sheight);
   return new Promise((resolve, reject) => {
     const svgBlob = new Blob([svg], { type: "image/svg+xml" });
-    console.log(':: Blob created ::', svgBlob);
+    // console.log(':: Blob created ::', svgBlob);
     let blobURL = (window.URL || window.webkitURL || window).createObjectURL(svgBlob);
     // console.log(':: Blob URL ::', blobURL);
     const img = new Image();
 
     img.onload = () => {
-      console.log(':: Image loaded ::', img.src);
+      // console.log(':: Image loaded ::', img.src);
       const canvas = document.createElement("canvas");
 
       
@@ -279,6 +279,8 @@ function displaySVG(svgArray) {
   const fullSVG = modifiedSVG(fullSvg, 'fullstack');
 
   document.getElementById('toplayer').appendChild(topStackSVG);
+  $('#buttonContainer').slideDown();
+  document.getElementById('bottomlayerlist').classList.add('layerHidden')
   document.getElementById('bottomlayer').appendChild(bottomStackSVG);
   document.getElementById('fullLayers').appendChild(fullSVG);
 
@@ -296,7 +298,6 @@ function displaySVG(svgArray) {
         if (layer.hasAttribute("id")) {
           const layerId = layer.getAttribute("id");
           if (layerId.includes('soldermask')) {
-            console.log('layerId :::> ', layerId, 'LAYER :::> ', id);
             layer.style.display = layer.style.display === "none" ? "block" : "none";
           } 
         }

@@ -19,7 +19,7 @@
   <!-- <script src="https://unpkg.com/pcb-stackup-core@^4.0.0/dist/pcb-stackup-core.min.js"></script>  -->
   <!-- <script src="https://unpkg.com/gerber-to-svg@^4.0.0/dist/gerber-to-svg.min.js" onload="initializeGerberToSVG()" defer></script> -->
   
-  <link rel="stylesheet" href="style.css">
+  <!-- <link rel="stylesheet" href="style.css"> -->
 
   <script src="/libs/gerber_to_svg.js" ></script>
   <script src="/libs/pcb_stackup.js" ></script> 
@@ -47,7 +47,7 @@
 
 
   <!-- Drag and Drop -->
-  <section style="background-color: #fbfbfc;">
+  <section style="background-color: #ffffff;">
     
     <div class="shadow-lg mx-4 mt-3 layerNav row" style="height: 87vh;">
       <div class="col-lg-9 col-md-12" style="padding: 0 !important;">
@@ -68,11 +68,11 @@
         </div>
 
         <!-- Layout -->
-        <div class="layerNav container-fluid" style="background-color: #f0f0f0;" >  
+        <div class="layerNav container-fluid" id="gerberSection">  
           <div class="row">
             <div id="layerSelectors" class="col-lg-3 col-md-12 col-sm-12" style="padding: 30px;" aria-disabled="true">
               
-              <div class="setupMainDiv">
+              <div class="setupMainDiv" id="setupDiv">
                 <div class="setupDiv">
                   <div>
                     <h5 for="toolWidth"> Quick Setup</h5>
@@ -86,7 +86,7 @@
                     </select>
                   </div>
                   <div>
-                    <button class="noselect" id="renderButton"><span class='text'>Generate PNG </span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
+                    <button class="noselect" id="renderButton" data-layer="toplayers"><span class='text'>Generate PNG </span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
                   </div>  
                 </div>
                 
@@ -110,11 +110,9 @@
                     </select>
                   </div>
                 </div>
-  
-                
               </div>
 
-              <div class="layerDiv" style="margin-top: 10px;">
+              <div class="layerDiv" id="layerDiv" style="margin-top: 10px;">
                 <div id="toplayerlist" class="layerVisible">
                   <ol>
                     <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h5> 
@@ -159,7 +157,7 @@
                   </ol>
                 </div> 
                 
-                <div class="commonLayers">
+                <div class="commonLayers" id="commonlayerlist">
                   <ol>
                     <li class="litoggle">
                       <p class="toggleName">Outline</p>
@@ -183,12 +181,10 @@
                   <option value="black" selected>Black</option>
                   <option value="white">White</option>
                 </select>
-              </div>
-    
-              
+              </div>  
             </div>
 
-            <div class="col-lg-9 col-md-12 col-sm-12 " style="background-color: #f0f0f0;height: 80vh;padding: 30px;">
+            <div class="col-lg-9 col-md-12 col-sm-12 " style="height: 80vh;padding: 30px;">
               
 
               <div class="contentArea">
@@ -198,7 +194,7 @@
                   <button id="bottomlayersbtn" class="button-side layerHide" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
                 </div>
 
-                <div id="dropArea" style="background-color: #f3f3f3;height:100%;position: relative;box-shadow:inset rgb(255 255 255) 0px 0px 4px, inset rgb(255 255 255) 0px 0px 13px -3px, rgb(0 0 0 / 54%) 0px 0px 4px inset;">
+                <div id="dropArea" style="background-color: #e8f1ff54;height:100%;position: relative;box-shadow:inset rgb(255 255 255) 0px 0px 4px, inset rgb(255 255 255) 0px 0px 13px -3px, rgb(0 0 0 / 54%) 0px 0px 4px inset;">
                   <div id="overlay">
                     <div class="cv-spinner">
                       <span class="spinner"></span>
@@ -235,10 +231,10 @@
               </div>
 
                 <div class="container-fluid py-3 text-center">
-                    <div id="buttonContainer" style="display: none;">
-                      <button id="original" class="button-side colorButton active" role="button"><span class="text">Original</span></button>
-                      <button id="bw" class="button-side colorButton" role="button"><span class="text">B/W</span></button>
-                      <button id="invert" class="button-side colorButton" role="button"><span class="text">Invert</span></button> 
+                  <div id="buttonContainer" style="display: none;">
+                    <button id="original" class="button-side colorButton active" role="button"><span class="text">Original</span></button>
+                    <button id="bw" class="button-side colorButton" role="button"><span class="text">B/W</span></button>
+                    <button id="invert" class="button-side colorButton" role="button"><span class="text">Invert</span></button> 
                   </div>
                 </div>
               </div>
