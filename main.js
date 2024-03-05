@@ -490,20 +490,30 @@ selectToolwidth.addEventListener('change', ()=>{
     svg.setAttribute('width', `${newSvg.width}mm`);
     svg.setAttribute('height', `${newSvg.height}mm`);
     svgG[0].querySelector('svg').replaceWith(newSvg.svg);
-    svgG[1].setAttribute('transform', `translate(${toolwidth == 0.8 ? 3 : 1.5}, ${toolwidth == 0.8 ? 3 : 1.5})`);
+    svgG[1].setAttribute('transform', `translate(${toolwidth == 0.8 ? 3 : 0}, ${toolwidth == 0.8 ? 3 : 0})`);
   
   }
 })
 
-document.getElementById('sideToggle').addEventListener('change', () => {
+const sideToggle = document.getElementById('sideToggle');
+sideToggle.addEventListener('change', () => {
   const select = document.getElementById('selectToolWidth');
   const bottomBtn = document.getElementById('bottomlayersbtn');
+  const setupList = document.getElementById('quickSetup');
 
-  if (select.classList.contains('layerHide')) {
+  if (sideToggle.checked) {
+    setupList.querySelectorAll('.bottomSetup').forEach((element) => {
+      element.removeAttribute('disabled');
+    });
+
     select.classList.remove('layerHide');
     bottomBtn.classList.remove('layerHide');
   } else {
+    setupList.querySelectorAll('.bottomSetup').forEach((element) => {
+      element.setAttribute('disabled', 'true');
+    });
+
     select.classList.add('layerHide');
     bottomBtn.classList.add('layerHide');
   }
-})
+});

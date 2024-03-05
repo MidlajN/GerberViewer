@@ -64,7 +64,7 @@ export function viewGerber(fileData) {
     // ------------------------------ Get The transform attribute from pcbStackup ------------------------------
     const svgData = stackup.top.svg;
     const trailDoc = svgParser.parseFromString(svgData, "image/svg+xml");
-    const gElem = trailDoc.querySelector("g[transform]");
+    const gElem = trailDoc.querySelector("svg > g"); // In order to get the <g> as the direct child of the root svg
     let gTransform = gElem.getAttribute("transform");
 
     function createSVG(svgData, id) {
@@ -92,7 +92,12 @@ export function viewGerber(fileData) {
         const fileContent = event.target.result;
         const uint8Array = new Uint8Array(fileContent);
 
-        const gerberToSvgStream = gerberToSvg(uint8Array);
+        let gerberToSvgStream;
+        // if (id[i] === 'all_drill') {
+           gerberToSvgStream = gerberToSvg(uint8Array);
+        // } else {
+        //    gerberToSvgStream = ""
+        // }
         let data = "";
 
         gerberToSvgStream.on("data", (chunk) => {
@@ -102,7 +107,8 @@ export function viewGerber(fileData) {
         gerberToSvgStream.on("end", () => {
           // 'data' now contains the full SVG output
           const svgDocument = svgParser.parseFromString(data, "image/svg+xml");
-          console.log('svgData ;:::', data);
+
+          // console.log(svgDocument.documentElement);
           const defElements = svgDocument.querySelector("defs");
           
           if (defElements) {

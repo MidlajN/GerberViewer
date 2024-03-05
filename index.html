@@ -74,94 +74,114 @@
         <div class="layerNav container-fluid" style="background-color: #f0f0f0;" >  
           <div class="row">
             <div id="layerSelectors" class="col-lg-3 col-md-12 col-sm-12" style="padding: 30px;" aria-disabled="true">
-              <div id="container" class="container-fluid d-flex justify-content-between">
-                <button id="allLayers" class="button-side active" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Layers</span></button>
-                <button id="toplayersbtn" class="button-side " style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Top</span></button>
-                <button id="bottomlayersbtn" class="button-side layerHide" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
-              </div>
-
-              <div class="doubleSideDiv" id="doubleSideOuterDiv">
-                <div class="doubleSideCheckBox">
-                  <span>Double Side</span>
-                  <label class="sideToggle" id="doubleSideToggle">
-                    <input type="checkbox" id="sideToggle" onchange="toggleLayer('OuterLayer');">
-                    <div class="slider">
-                      <span class="oneSide"></span>
-                      <span class="twoSide"></span>
-                    </div>
-                  </label>
-                </div>
-                <div class="selectToolWidth layerHide" id="selectToolWidth">
-                  <span>Tool Width</span>
-                  <select name="toolWidth" id="toolWidth">
-                    <option value="0.8">0.8</option>
-                    <option value="0.4">0.4</option>
-                  </select>
-                </div>
-              </div>
-
-              <div id="toplayerlist" class="layerVisible">
-                <ol>
-                  <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h5> 
-                  <li class="litoggle">
-                    <p class="toggleName">Traces</p>
-                    <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper', 0)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li>
-                  <!-- <li class="litoggle">
-                    <p class="toggleName">Solder Mask</p>
-                    <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('top_soldermask', 1)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li> -->
-                  <li class="litoggle">
-                    <p class="toggleName">Pads</p>
-                    <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solderpaste', 2)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li>
-                  <li class="litoggle">
-                    <p class="toggleName">Silk Screen</p>
-                    <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silkscreen', 3)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li>
-                </ol>
-              </div>
               
-              <div id="bottomlayerlist" class="layerVisible">
-                <ol>
-                  <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Bottom</h5>
-                  <li class="litoggle">
-                    <p class="toggleName">Traces</p>
-                    <button class="toggleButton" style="background-color: #206b19;" onclick="toggleLayer('bottom_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li>
-                  <!-- <li class="litoggle">
-                    <p class="toggleName">Solder Mask</p>
-                    <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_soldermask')" ><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li> -->
-                  <li class="litoggle">
-                    <p class="toggleName">Pads</p>
-                    <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('bottom_solderpaste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li>
-                  <li class="litoggle">
-                    <p class="toggleName">Silk Screen</p>
-                    <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silkscreen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                  </li>
-                </ol>
+              <div class="setupMainDiv">
+                <div id="container" class="container-fluid d-flex justify-content-between">
+                  <button id="allLayers" class="button-side active" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Layers</span></button>
+                  <button id="toplayersbtn" class="button-side " style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Top</span></button>
+                  <button id="bottomlayersbtn" class="button-side layerHide" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
+                </div>
+  
+                <div class="doubleSideDiv" id="doubleSideOuterDiv">
+                  <div class="doubleSideCheckBox">
+                    <span>Double Side</span>
+                    <label class="sideToggle" id="doubleSideToggle">
+                      <input type="checkbox" id="sideToggle" onchange="toggleLayer('OuterLayer');">
+                      <div class="slider">
+                        <span class="oneSide"></span>
+                        <span class="twoSide"></span>
+                      </div>
+                    </label>
+                  </div>
+                  <div class="selectToolWidth layerHide" id="selectToolWidth">
+                    <span>Tool Width</span>
+                    <select name="toolWidth" id="toolWidth">
+                      <option value="0.8">0.8</option>
+                      <option value="0.0">0.0</option>
+                    </select>
+                  </div>
+                </div>
+  
+                <div class="setupDiv">
+                  <div>
+                    <label for="toolWidth"> Quick Setup</label>
+                    <select name="toolWidth" id="quickSetup">
+                      <option value="custom-setup" selected>Custom</option>
+                      <option value="top-trace">Top Trace</option>
+                      <option value="top-drill">Top Drill</option>
+                      <option value="top-cut">Top Cut</option>
+                      <option value="bottom-trace" class="bottomSetup" disabled>Bottom Trace</option>
+                      <option value="bottom-cut" class="bottomSetup" disabled>Bottom Cut</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button class="noselect" id="renderButton"><span class='text'>Generate PNG </span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
+                  </div>  
+                </div>
               </div>
-              
 
-              <ol>
-                <li class="litoggle">
-                  <p class="toggleName">Outline</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('outline')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <li class="litoggle">
-                  <p class="toggleName">Drill</p>
-                  <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('drill')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <li class="litoggle layerHidden" id="doubleSidelist" style="transition: 0.5s ease;">
-                  <p class="toggleName">OuterLayer</p>
-                  <button class="toggleButton" style="background-color: rgb(85 119 89);" onclick="toggleLayer('OuterLayer')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
-                </li>
-                <!-- <li class="litoggle layerHidden"  > -->
-                  
-                <!-- </li> -->
-              </ol>
+              <div class="layerDiv" style="margin-top: 20px;">
+                <div id="toplayerlist" class="layerVisible">
+                  <ol>
+                    <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Top</h5> 
+                    <li class="litoggle">
+                      <p class="toggleName">Traces</p>
+                      <button class="toggleButton" style="background-color: #ced8cd;" onclick="toggleLayer('top_copper', 0)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                    <!-- <li class="litoggle">
+                      <p class="toggleName">Solder Mask</p>
+                      <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('top_soldermask', 1)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li> -->
+                    <li class="litoggle">
+                      <p class="toggleName">Pads</p>
+                      <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('top_solderpaste', 2)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                    <li class="litoggle">
+                      <p class="toggleName">Silk Screen</p>
+                      <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('top_silkscreen', 3)"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                  </ol>
+                </div>
+                
+                <div id="bottomlayerlist" class="layerVisible">
+                  <ol>
+                    <h5 style="color: #363636;text-shadow: #d9d9d9b3 4px 2px 6px;">Bottom</h5>
+                    <li class="litoggle">
+                      <p class="toggleName">Traces</p>
+                      <button class="toggleButton" style="background-color: #206b19;" onclick="toggleLayer('bottom_copper')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                    <!-- <li class="litoggle">
+                      <p class="toggleName">Solder Mask</p>
+                      <button class="toggleButton" style="background-color: #193d6b;" onclick="toggleLayer('bottom_soldermask')" ><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li> -->
+                    <li class="litoggle">
+                      <p class="toggleName">Pads</p>
+                      <button class="toggleButton" style="background-color: #b9a323;" onclick="toggleLayer('bottom_solderpaste')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                    <li class="litoggle">
+                      <p class="toggleName">Silk Screen</p>
+                      <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('bottom_silkscreen')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                  </ol>
+                </div> 
+                
+                <div class="commonLayers">
+                  <ol>
+                    <li class="litoggle">
+                      <p class="toggleName">Outline</p>
+                      <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('outline')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                    <li class="litoggle">
+                      <p class="toggleName">Drill</p>
+                      <button class="toggleButton" style="background-color: #348f9b;" onclick="toggleLayer('drill')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                    <li class="litoggle layerHidden" id="doubleSidelist" style="transition: 0.5s ease;">
+                      <p class="toggleName">OuterLayer</p>
+                      <button class="toggleButton" style="background-color: rgb(85 119 89);" onclick="toggleLayer('OuterLayer')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                    </li>
+                  </ol>
+                </div>
+              </div>
               
               <div class="canvasDiv">
                 <label for="canvasBg">Canvas Background </label>
@@ -170,10 +190,8 @@
                   <option value="white">White</option>
                 </select>
               </div>
-
-              <div style="display: flex;justify-content: flex-end;align-items: center;padding:10px;">
-                <button class="noselect" id="renderButton"><span class='text'>PNG</span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
-              </div>
+    
+              
             </div>
 
             <div class="col-lg-9 col-md-12 col-sm-12 " style="background-color: #f0f0f0;height: 80vh;padding: 30px;">
