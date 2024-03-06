@@ -86,7 +86,7 @@
                     </select>
                   </div>
                   <div>
-                    <button class="noselect" id="renderButton" data-layer="toplayers"><span class='text'>Generate PNG </span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
+                    <button class="noselect" id="renderButton" data-layer="toplayers"><span class='text' id="renderBtnText">Generate PNG </span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
                   </div>  
                 </div>
                 
@@ -95,7 +95,7 @@
                   <div class="doubleSideCheckBox">
                     <span>Double Side</span>
                     <label class="sideToggle" id="doubleSideToggle">
-                      <input type="checkbox" id="sideToggle" onchange="toggleLayer('OuterLayer');">
+                      <input type="checkbox" id="sideToggle" >
                       <div class="slider">
                         <span class="oneSide"></span>
                         <span class="twoSide"></span>
@@ -169,7 +169,7 @@
                     </li>
                     <li class="litoggle layerHidden" id="doubleSidelist" style="transition: 0.5s ease;">
                       <p class="toggleName">OuterLayer</p>
-                      <button class="toggleButton" style="background-color: rgb(85 119 89);" onclick="toggleLayer('OuterLayer')"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
+                      <button class="toggleButton" style="background-color: rgb(85 119 89);" onclick="toggleLayer('OuterLayer')" id="doubleSideBtn"><i class="fa-solid fa-eye" style="color: #ffffff;"></i></button>
                     </li>
                   </ol>
                 </div>

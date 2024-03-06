@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const nestedSvgs = svgClone.querySelectorAll('svg');
     const outerSvg = nestedSvgs[0];
-    const stackSvg = nestedSvgs[1];
+    const drillMaskSvg = nestedSvgs[1];
+    const stackSvg = nestedSvgs[2];
     const svgname = stackSvg.getAttribute('data-name');
 
     if (!document.getElementById('sideToggle').checked){
@@ -30,6 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
+
+    const canvasBg = document.getElementById('canvasBg');
+    if (canvasBg.value === 'white') {
+      console.log('white');
+      drillMaskSvg.setAttribute('style', 'display: block;fill: #000000');
+      console.log('drillMaskSvg : ', drillMaskSvg);
+    }
+
     const pngDiv = document.createElement('div');
     pngDiv.classList.add('pngCard');
     const svgString = new XMLSerializer().serializeToString(svgClone);
@@ -277,7 +286,7 @@ function removeItem(parent) {
 
   const isActive = $(parent).hasClass("active");
   let parentWidth = $(parent).innerWidth();
-  const horiSelectorPositon = $(".hori-selector").position();
+  const horiSelectorPositon = $("canvasSelect.value = 'black';.hori-selector").position();
   let newHoriPosition = horiSelectorPositon.left - parentWidth;
 
   if (newHoriPosition <= 0) {
@@ -496,7 +505,7 @@ selectToolwidth.addEventListener('change', ()=>{
     const svgG = svg.querySelectorAll('g');
     const newSvg = generateSVG(svgConf.svgWidth, svgConf.svgHeight, toolwidth, {x : svgConf.viewboxX, y : svgConf.viewboxY});
     newSvg.svg.setAttribute('style', 'fill : #86877c;opacity: 0.3;');
-    newSvg.svg.setAttribute('id', `${id}Outerlayer`)
+    newSvg.svg.setAttribute('id', `${id}OuterSvg`)
 
     svg.setAttribute('width', `${newSvg.width}mm`);
     svg.setAttribute('height', `${newSvg.height}mm`);
@@ -513,6 +522,8 @@ sideToggle.addEventListener('change', () => {
   const setupList = document.getElementById('quickSetup');
 
   if (sideToggle.checked) {
+    toggleLayer('OuterLayer')
+
     setupList.querySelectorAll('.bottomSetup').forEach((element) => {
       element.removeAttribute('disabled');
     });
@@ -520,6 +531,22 @@ sideToggle.addEventListener('change', () => {
     select.classList.remove('layerHide');
     bottomBtn.classList.remove('layerHide');
   } else {
+    const outerSvgs = [
+      document.getElementById('fullstackOuterLayer'),
+      document.getElementById('topstackOuterLayer'),
+      document.getElementById('bottomstackOuterLayer')
+    ]
+    outerSvgs.forEach(svg => svg.style.display = 'none');
+
+    const layerBtn = document.getElementById("doubleSideBtn");
+    const i = layerBtn.querySelector('i');
+    if (i.classList.contains('fa-eye-slash')) {
+      i.classList.remove('fa-eye-slash');
+      i.classList.add('fa-eye');
+      i.style.color = 'white';
+      layerBtn.style.backgroundColor = 'rgb(85 119 89)';
+    }
+
     setupList.querySelectorAll('.bottomSetup').forEach((element) => {
       element.setAttribute('disabled', 'true');
     });

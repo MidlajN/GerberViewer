@@ -290,6 +290,7 @@ function displaySVG(svgArray) {
     const svgNew = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const outerG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     const mainG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const drillMaskG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
 
     if (id !== 'fullstack') {
@@ -314,10 +315,16 @@ function displaySVG(svgArray) {
 
     // Add the Outer Layer
     outerSVG.svg.setAttribute('style', 'fill : #86877c;opacity: 0.3;');
-    outerSVG.svg.setAttribute('id', `${id}Outerlayer`);
+    outerSVG.svg.setAttribute('id', `${id}OuterSvg`);
     outerG.appendChild(outerSVG.svg);
     outerG.setAttribute('id', `${id}OuterLayer`);
     outerG.setAttribute('style', 'display: none;');
+
+    // Add the Drill Masking Layer
+    drillMaskG.setAttribute('id', `drillMask`);
+    drillMaskG.setAttribute('transform', 'translate(3, 3)');
+    outerSVG.drillMaskSvg.setAttribute('style', 'display:none;fill:#000000;');
+    drillMaskG.appendChild(outerSVG.drillMaskSvg);
 
     // Add the Main Layer
     svg.setAttribute('id', `${id}layer`);
@@ -327,6 +334,7 @@ function displaySVG(svgArray) {
 
     // Append Both Group to the Parent
     svgNew.appendChild(outerG);
+    svgNew.appendChild(drillMaskG);
     svgNew.appendChild(mainG);
 
     return svgNew;
@@ -456,7 +464,7 @@ export function generateSVG(width, height, toolwidth , viewbox) {
   svg_outer_width = width + 2 * toolwidth;
   svg_outer_height = height + 2 * toolwidth;
 
-
+  // Generate Outer SVG
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', `${originX - toolwidth} ${originY - toolwidth} ${width + 2 * toolwidth} ${height + 2 * toolwidth}`);
   svg.setAttribute('width', `${width + 2 * toolwidth}mm`);
@@ -477,9 +485,29 @@ export function generateSVG(width, height, toolwidth , viewbox) {
   L ${ originX } ${ originY + halfHeight - 2 * toolwidth }
   L ${ originX } ${ originY }
   Z`
-  let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
+  let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', pathlines);
+
+  // Generate Drill Mask
+  const drillSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  drillSvg.setAttribute('viewBox', `${originX} ${originY} ${width} ${height}`);
+  drillSvg.setAttribute('width', `${width}mm`);
+  drillSvg.setAttribute('height', `${height}mm`);
+  drillSvg.setAttribute('style', 'fill: #000000;');
+
+  const drillMaskPathlines = `
+  M ${ originX } ${ originY }
+  L ${ originX + width } ${ originY }
+  L ${ originX + width } ${ originY + height }
+  L ${ originX } ${ originY + height }
+  L ${ originX } ${ originY }
+  Z
+  `
+  let maskPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  maskPath.setAttribute('d', drillMaskPathlines);
+  drillSvg.appendChild(maskPath);
+
   // path.setAttribute('fill', 'red');
 
   svg.appendChild(path)
@@ -487,6 +515,7 @@ export function generateSVG(width, height, toolwidth , viewbox) {
 
   let response = {
     svg : svg,
+    drillMaskSvg : drillSvg,
     width : width + 2 * toolwidth,
     height : height + 2 * toolwidth,
   }

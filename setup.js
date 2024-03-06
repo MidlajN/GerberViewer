@@ -1,5 +1,3 @@
-const setupSelect = document.getElementById('quickSetup');
-
 const doubleSideToggle = document.getElementById('sideToggle');
 const toolWidthSelect = document.getElementById('toolWidth')
 
@@ -20,18 +18,23 @@ const colorButtons = colorButtonDiv.querySelectorAll('button');
 
 const hideLayerButton = (button) => {
     button.querySelector('i').classList.add('fa-eye-slash');
+    button.querySelector('i').classList.remove('fa-eye');
     button.querySelector('i').style.color = 'black';
     button.style.backgroundColor = 'transparent';
 }
 
+// Update Svg To Traces for select Top-Traces
 const updateSvgtoTraces = () => {
     const svg = document.getElementById('topstack');
     const stackid = svg.querySelector('g svg[data-stackid]').getAttribute('data-stackid');
+    svg.querySelector('g svg[data-stackid]').setAttribute('data-name', 'top_layers_bw')
 
     const svgMainG = document.getElementById('topstackMainLayer');
-    const svgG = svgMainG.querySelectorAll('g');
+    const svgLayers = svgMainG.querySelectorAll('g');
+    const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
+    clipPath.style.display = 'none';
 
-    Array.from(svgG).forEach((layer) => {
+    Array.from(svgLayers).forEach((layer) => {
         if (layer.hasAttribute("id")) {
             const layerId = layer.getAttribute("id");
             if (layerId.includes('top_copper')) {
@@ -42,8 +45,8 @@ const updateSvgtoTraces = () => {
         }
     })
     
-    const defs = svgMainG.querySelector('style');
-    console.log('defs : ', defs);
+    const defStyle = svgMainG.querySelector('style');
+    console.log('defs : ', defStyle);
     const svgStyleContent = `
     .${stackid}_fr4 {color: #000000  !important;}
     .${stackid}_cu {color: #ffffff !important;}
@@ -53,17 +56,223 @@ const updateSvgtoTraces = () => {
     .${stackid}_sp {color: #ffffff !important;}
     .${stackid}_out {color: #000000 !important;}
     `
+    defStyle.innerHTML = svgStyleContent
 
-    defs.innerHTML = svgStyleContent
-    
+    colorButtons.forEach((button) => {
+        if (button.getAttribute('id') === 'bw') {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    })
 
+    canvasSelect.value = 'black';
 }
 
 
+// Update Svg To Drills For the Select Top-Drill
+const updateSvgToDrill = () => {
+    const svg = document.getElementById('topstack');
+    const stackid = svg.querySelector('g svg[data-stackid]').getAttribute('data-stackid');
+    svg.querySelector('g svg[data-stackid]').setAttribute('data-name', 'top_layers_bw_invert')
+
+    const svgMainG = document.getElementById('topstackMainLayer');
+    const svgLayers = svgMainG.querySelectorAll('g');
+    const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
+    clipPath.style.display = 'none';
+
+    Array.from(svgLayers).forEach((layer) => {
+        if (layer.hasAttribute("id")) {
+            const layerId = layer.getAttribute("id");
+            if (layerId.includes('top_drill')) {
+                layer.style.display = 'block';
+            } else {
+                layer.style.display = 'none';
+            }
+        }
+    })
+    
+    const defStyle = svgMainG.querySelector('style');
+    console.log('defs : ', defStyle);
+    const svgStyleContent = `
+    .${stackid}_fr4 {color: #ffffff  !important;}
+    .${stackid}_cu {color: #000000 !important;}
+    .${stackid}_cf {color: #000000 !important;}
+    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+    .${stackid}_ss {color: #000000 !important;}
+    .${stackid}_sp {color: #000000 !important;}
+    .${stackid}_out {color: #ffffff !important;}
+    `
+    defStyle.innerHTML = svgStyleContent;
+
+    colorButtons.forEach((button) => {
+        if (button.getAttribute('id') === 'invert') {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    })
+
+    canvasSelect.value = 'black';
+}
+
+
+// Update Svg To Drills For the Select Top-Drill
+const updateSvgToCut = () => {
+    const svg = document.getElementById('topstack');
+    const stackid = svg.querySelector('g svg[data-stackid]').getAttribute('data-stackid');
+    svg.querySelector('g svg[data-stackid]').setAttribute('data-name', 'top_layers_bw_invert')
+
+    const svgMainG = document.getElementById('topstackMainLayer');
+    const svgLayers = svgMainG.querySelectorAll('g');
+    const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
+    clipPath.style.display = 'block';
+
+    Array.from(svgLayers).forEach((layer) => {
+        if (layer.hasAttribute("id")) {
+            const layerId = layer.getAttribute("id");
+            if (layerId.includes('outline')) {
+                layer.style.display = 'block';
+            } else {
+                layer.style.display = 'none';
+            }
+        }
+    })
+    
+    const defStyle = svgMainG.querySelector('style');
+    console.log('defs : ', defStyle);
+    const svgStyleContent = `
+    .${stackid}_fr4 {color: #ffffff  !important;}
+    .${stackid}_cu {color: #000000 !important;}
+    .${stackid}_cf {color: #000000 !important;}
+    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+    .${stackid}_ss {color: #000000 !important;}
+    .${stackid}_sp {color: #000000 !important;}
+    .${stackid}_out {color: #ffffff !important;}
+    `
+    defStyle.innerHTML = svgStyleContent;
+
+    colorButtons.forEach((button) => {
+        if (button.getAttribute('id') === 'invert') {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    })
+
+    canvasSelect.value = 'black';
+}
+
+
+// Update Svg To Traces for select Top-Traces
+const updateSvgBottomToTraces = () => {
+    const svg = document.getElementById('bottomstack');
+    const stackid = svg.querySelector('g svg[data-stackid]').getAttribute('data-stackid');
+    svg.querySelector('g svg[data-stackid]').setAttribute('data-name', 'bottom_layers_bw')
+
+    const svgMainG = document.getElementById('bottomstackMainLayer');
+    const svgLayers = svgMainG.querySelectorAll('g');
+    const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
+    clipPath.style.display = 'none';
+
+    const outerLayer = document.getElementById('bottomstackOuterLayer');
+    outerLayer.style.display = 'none';
+
+    Array.from(svgLayers).forEach((layer) => {
+        if (layer.hasAttribute("id")) {
+            const layerId = layer.getAttribute("id");
+            if (layerId.includes('bottom_copper')) {
+                layer.style.display = 'block';
+            } else {
+                layer.style.display = 'none';
+            }
+        }
+    })
+    
+    const defStyle = svgMainG.querySelector('style');
+    // console.log('defs : ', defStyle);
+    const svgStyleContent = `
+    .${stackid}_fr4 {color: #000000  !important;}
+    .${stackid}_cu {color: #ffffff !important;}
+    .${stackid}_cf {color: #ffffff !important;}
+    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+    .${stackid}_ss {color: #ffffff !important;}
+    .${stackid}_sp {color: #ffffff !important;}
+    .${stackid}_out {color: #000000 !important;}
+    `
+    defStyle.innerHTML = svgStyleContent
+
+    colorButtons.forEach((button) => {
+        if (button.getAttribute('id') === 'bw') {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    })
+
+    canvasSelect.value = 'black';
+}
+
+
+// Update Svg To Cut For Select Bottom-Cut
+const updateSvgBottomToCut = () => {
+    const svg = document.getElementById('bottomstack');
+    const stackid = svg.querySelector('g svg[data-stackid]').getAttribute('data-stackid');
+    svg.querySelector('g svg[data-stackid]').setAttribute('data-name', 'bottom_layers_bw_invert')
+
+    const svgMainG = document.getElementById('bottomstackMainLayer');
+    const svgLayers = svgMainG.querySelectorAll('g');
+    const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
+    clipPath.style.display = 'block';
+
+    const outerLayer = document.getElementById('bottomstackOuterLayer');
+    outerLayer.style.display = 'none';
+
+    svgLayers.forEach((layer) => {
+        if (layer.hasAttribute("id")) {
+            const layerId = layer.getAttribute("id");
+            if (layerId.includes('outline')) {
+                layer.style.display = 'block';
+            } else {
+                layer.style.display = 'none';
+            }
+        }
+    })
+
+    const defStyle = svgMainG.querySelector('style');
+    // console.log('defs : ', defStyle);
+    const svgStyleContent = `
+    .${stackid}_fr4 {color: #ffffff  !important;}
+    .${stackid}_cu {color: #000000 !important;}
+    .${stackid}_cf {color: #000000 !important;}
+    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
+    .${stackid}_ss {color: #000000 !important;}
+    .${stackid}_sp {color: #000000 !important;}
+    .${stackid}_out {color: #ffffff !important;}
+    `
+    defStyle.innerHTML = svgStyleContent
+
+    colorButtons.forEach((button) => {
+        if (button.getAttribute('id') === 'invert') {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    })
+}
+
+
+
+const setupSelect = document.getElementById('quickSetup');
 setupSelect.addEventListener('change', () => {
     if (setupSelect.value === 'top-trace') {
+        topLayerDiv.classList.remove('layerHidden')
         bottomLayerDiv.classList.add('layerHidden')
 
+        topLayerButtons[0].querySelector('i').classList.remove('fa-eye-slash');
+        topLayerButtons[0].querySelector('i').classList.add('fa-eye');
+        topLayerButtons[0].querySelector('i').style.color = 'white';
+        topLayerButtons[0].style.backgroundColor = '#ced8cd';
         // Hide Toggle Buttons Other Than Top Trace
         hideLayerButton(topLayerButtons[1])
         hideLayerButton(topLayerButtons[2])
@@ -71,7 +280,7 @@ setupSelect.addEventListener('change', () => {
         hideLayerButton(commonLayerButtons[1])
 
         updateSvgtoTraces();
-        // Show Top Trace
+        // Show Top Side
         $('#fullLayersParent, #bottomlayers').fadeOut(function(){
             $('#toplayers').fadeIn();
         })
@@ -81,12 +290,135 @@ setupSelect.addEventListener('change', () => {
         $('#toplayersbtn').addClass('active');
 
         // Set the data-layer attribute to the render button
-        $('#renderButton').attr('data-layer', 'checklayers')
+        $('#renderButton').attr('data-layer', 'toplayers')
 
         // Show the Button Container
         $('#buttonContainer').slideDown();
         
 
+    } else if (setupSelect.value === 'top-drill') {
+        topLayerDiv.classList.remove('layerHidden');
+        bottomLayerDiv.classList.add('layerHidden');
+
+        commonLayerButtons[1].querySelector('i').classList.remove('fa-eye-slash');
+        commonLayerButtons[1].querySelector('i').classList.add('fa-eye');
+        commonLayerButtons[1].querySelector('i').style.color = 'white';
+        commonLayerButtons[1].style.backgroundColor = '#348f9b';
+
+        // Hide Toggle Buttons Other Than Top Trace
+        hideLayerButton(topLayerButtons[0])
+        hideLayerButton(topLayerButtons[1])
+        hideLayerButton(topLayerButtons[2])
+        hideLayerButton(commonLayerButtons[0])
+        // hideLayerButton(commonLayerButtons[1])
+
+        updateSvgToDrill();
+        // Show Top Side
+        $('#fullLayersParent, #bottomlayers').fadeOut(function(){
+            $('#toplayers').fadeIn();
+        })
+
+        // Change the Side Choosing Button to Top and remove class active from the rest
+        $('#allLayers, #bottomlayersbtn').removeClass('active');
+        $('#toplayersbtn').addClass('active');
+
+        // Set the data-layer attribute to the render button
+        $('#renderButton').attr('data-layer', 'toplayers')
+
+        // Show the Button Container
+        $('#buttonContainer').slideDown();
+    } else if (setupSelect.value === 'top-cut') {
+        topLayerDiv.classList.remove('layerHidden');
+        bottomLayerDiv.classList.add('layerHidden');
+
+        commonLayerButtons[1].querySelector('i').classList.remove('fa-eye-slash');
+        commonLayerButtons[1].querySelector('i').classList.add('fa-eye');
+        commonLayerButtons[1].querySelector('i').style.color = 'white';
+        commonLayerButtons[1].style.backgroundColor = '#348f9b';
+
+        // Hide Toggle Buttons Other Than Top Trace
+        hideLayerButton(topLayerButtons[0])
+        hideLayerButton(topLayerButtons[1])
+        hideLayerButton(topLayerButtons[2])
+        hideLayerButton(commonLayerButtons[1])
+
+        updateSvgToCut();
+        // Show Top Side
+        $('#fullLayersParent, #bottomlayers').fadeOut(function(){
+            $('#toplayers').fadeIn();
+        })
+    } else if (setupSelect.value === 'bottom-trace') {
+        topLayerDiv.classList.add('layerHidden')
+        bottomLayerDiv.classList.remove('layerHidden')
+
+        topLayerButtons[0].querySelector('i').classList.remove('fa-eye-slash');
+        topLayerButtons[0].querySelector('i').classList.add('fa-eye');
+        topLayerButtons[0].querySelector('i').style.color = 'white';
+        topLayerButtons[0].style.backgroundColor = '#206b19';
+
+        // Hide Toggle Buttons Other Than Top Trace
+        hideLayerButton(bottomLayerButtons[1])
+        hideLayerButton(bottomLayerButtons[2])
+        hideLayerButton(commonLayerButtons[0])
+        hideLayerButton(commonLayerButtons[1])
+        hideLayerButton(commonLayerButtons[2])
+
+        updateSvgBottomToTraces();
+        // Show Bottom Side
+        $('#fullLayersParent, #toplayers').fadeOut(function(){
+            $('#bottomlayers').fadeIn();
+        })
+
+        // Change the Side Choosing Button to Bottom and remove class active from the rest
+        $('#allLayers, #toplayersbtn').removeClass('active');
+        $('#bottomlayersbtn').addClass('active');
+
+        // Set the data-layer attribute to the render button
+        $('#renderButton').attr('data-layer', 'bottomlayers')
+        
+        // Show the Button Container
+        $('#buttonContainer').slideDown();
+    } else if (setupSelect.value === 'bottom-cut') {
+        topLayerDiv.classList.add('layerHidden')
+        bottomLayerDiv.classList.remove('layerHidden')
+
+        commonLayerButtons[0].querySelector('i').classList.remove('fa-eye-slash');
+        commonLayerButtons[0].querySelector('i').classList.add('fa-eye');
+        commonLayerButtons[0].querySelector('i').style.color = 'white';
+        commonLayerButtons[0].style.backgroundColor = '#206b19';
+
+        // Hide Toggle Buttons Other Than Top Trace
+        hideLayerButton(bottomLayerButtons[0])
+        hideLayerButton(bottomLayerButtons[1])
+        hideLayerButton(bottomLayerButtons[2])
+        hideLayerButton(commonLayerButtons[1])
+        hideLayerButton(commonLayerButtons[2])
+
+        updateSvgBottomToCut();
+        // Show Bottom Side
+        $('#fullLayersParent, #toplayers').fadeOut(function(){
+            $('#bottomlayers').fadeIn();
+        })
+
+        // Change the Side Choosing Button to Bottom and remove class active from the rest
+        $('#allLayers, #toplayersbtn').removeClass('active');
+        $('#bottomlayersbtn').addClass('active');
+
+        // Set the data-layer attribute to the render button
+        $('#renderButton').attr('data-layer', 'bottomlayers')
+        
+        // Show the Button Container
+        $('#buttonContainer').slideDown();
     }
 })
 
+const gerberSection = document.getElementById('gerberSection');
+
+gerberSection.addEventListener('click', (event) => {
+    if (event.target.id !== 'quickSetup' && event.target.id !== 'renderBtnText') {
+        console.log('ID', event.target.id)
+        setupSelect.value = 'custom-setup';
+    }
+    
+    // setupSelect.dispatchEvent(new Event('change'));
+})
