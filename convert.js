@@ -290,8 +290,6 @@ function displaySVG(svgArray) {
     const svgNew = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const outerG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     const mainG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    const drillMaskG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-
 
     if (id !== 'fullstack') {
       const svgG = svg.querySelectorAll('g');
@@ -320,12 +318,23 @@ function displaySVG(svgArray) {
     outerG.setAttribute('id', `${id}OuterLayer`);
     outerG.setAttribute('style', 'display: none;');
 
-    // Add the Drill Masking Layer
-    drillMaskG.setAttribute('id', `drillMask`);
-    // drillMaskG.setAttribute('transform', 'translate(3, 3)');
-    outerSVG.drillMaskSvg.setAttribute('style', 'display:none;fill:#000000;');
-    drillMaskG.appendChild(outerSVG.drillMaskSvg);
-    mainG.appendChild(drillMaskG);
+    // Get the Path from the ClipPath element
+    const clipPath = svg.querySelector('clipPath');
+    if (clipPath) {
+      const d = clipPath.querySelector('path').getAttribute('d');
+
+      const outlineG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      // path.setAttribute('stroke-width', '1mm');
+      // path.setAttribute('stroke', 'white');
+      outlineG.setAttribute('id', 'drillMask');
+      outlineG.appendChild(path);
+      
+      // Insert the Drill Mask into the SVG as the first child
+      svg.insertBefore(outlineG, svg.firstChild);
+    }
 
     // Add the Main Layer
     svg.setAttribute('id', `${id}layer`);
@@ -348,6 +357,11 @@ export function updateSVG(topName = null, bottomName = null, mode) {
   const svgTop = document.getElementById('topstacklayer');
   const svgBottom = document.getElementById('bottomstacklayer');
 
+  const colorButtons = document.querySelectorAll('#buttonContainer button');
+  colorButtons.forEach((btn) => {
+    btn.classList.remove('active');
+  })
+
   let svgTopStyle = svgTop.querySelector('style');
   let svgBottomStyle = svgBottom.querySelector('style');
 
@@ -369,6 +383,8 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #ffffff !important;}
     .${stackid}_out {color: #000000 !important;}
     `
+    document.getElementById('bw').classList.add('active');
+  
   } else if (mode === 'bwInvert') {
     svgStyleContent = `
     .${stackid}_fr4 {color: #ffffff  !important;}
@@ -379,6 +395,7 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #000000 !important;}
     .${stackid}_out {color: #ffffff !important;}
     `
+    document.getElementById('invert').classList.add('active');
   } else {
     svgStyleContent = `
     .${stackid}_fr4 {color: #666666  !important;}
@@ -389,6 +406,7 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #999999 !important;}
     .${stackid}_out {color: #000000 !important;}
     `
+    document.getElementById('original').classList.add('active');
   }
 
   // update the style of the SVG
@@ -471,24 +489,24 @@ export function generateSVG(width, height, toolwidth , viewbox) {
   let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', pathlines);
 
-  // Generate Drill Mask
-  const drillSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  drillSvg.setAttribute('viewBox', `${originX} ${originY} ${width} ${height}`);
-  drillSvg.setAttribute('width', `${width}mm`);
-  drillSvg.setAttribute('height', `${height}mm`);
-  drillSvg.setAttribute('style', 'fill: #000000;');
+  // // Generate Drill Mask
+  // const drillSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  // drillSvg.setAttribute('viewBox', `${originX} ${originY} ${width} ${height}`);
+  // drillSvg.setAttribute('width', `${width}mm`);
+  // drillSvg.setAttribute('height', `${height}mm`);
+  // drillSvg.setAttribute('style', 'fill: #000000;');
 
-  const drillMaskPathlines = `
-  M ${ originX } ${ originY }
-  L ${ originX + width } ${ originY }
-  L ${ originX + width } ${ originY + height }
-  L ${ originX } ${ originY + height }
-  L ${ originX } ${ originY }
-  Z
-  `
-  let maskPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  maskPath.setAttribute('d', drillMaskPathlines);
-  drillSvg.appendChild(maskPath);
+  // const drillMaskPathlines = `
+  // M ${ originX } ${ originY }
+  // L ${ originX + width } ${ originY }
+  // L ${ originX + width } ${ originY + height }
+  // L ${ originX } ${ originY + height }
+  // L ${ originX } ${ originY }
+  // Z
+  // `
+  // let maskPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  // maskPath.setAttribute('d', drillMaskPathlines);
+  // drillSvg.appendChild(maskPath);
 
   // path.setAttribute('fill', 'red');
 
@@ -497,7 +515,7 @@ export function generateSVG(width, height, toolwidth , viewbox) {
 
   let response = {
     svg : svg,
-    drillMaskSvg : drillSvg,
+    // drillMaskSvg : drillSvg,
     width : width + 2 * toolwidth,
     height : height + 2 * toolwidth,
   }

@@ -53,14 +53,6 @@ const updateSvgtoTraces = () => {
     
     updateSVG('top_layers_bw', 'bottom_layers_bw', 'bw')
 
-    colorButtons.forEach((button) => {
-        if (button.getAttribute('id') === 'bw') {
-            button.classList.add('active');
-        } else {
-            button.classList.remove('active');
-        }
-    })
-
     canvasSelect.value = 'black';
 }
 
@@ -88,14 +80,6 @@ const updateSvgToDrill = () => {
     })
     
     updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
-
-    colorButtons.forEach((button) => {
-        if (button.getAttribute('id') === 'invert') {
-            button.classList.add('active');
-        } else {
-            button.classList.remove('active');
-        }
-    })
 
     canvasSelect.value = 'white';
 }
@@ -125,14 +109,6 @@ const updateSvgToCut = () => {
     
     updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
 
-    colorButtons.forEach((button) => {
-        if (button.getAttribute('id') === 'invert') {
-            button.classList.add('active');
-        } else {
-            button.classList.remove('active');
-        }
-    })
-
     canvasSelect.value = 'black';
 }
 
@@ -148,8 +124,8 @@ const updateSvgBottomToTraces = () => {
     const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
     clipPath.style.display = 'none';
 
-    // const outerLayer = document.getElementById('bottomstackOuterLayer');
-    // outerLayer.style.display = 'none';
+    const outerLayer = document.getElementById('bottomstackOuterLayer');
+    outerLayer.style.display = 'block';
 
     Array.from(svgLayers).forEach((layer) => {
         if (layer.hasAttribute("id")) {
@@ -159,23 +135,10 @@ const updateSvgBottomToTraces = () => {
             } else {
                 layer.style.display = 'none';
             }
-        }// gerberSection.addEventListener('click', (event) => {
-//     console.log(event.target)
-//     if (event.target.id !== 'quickSetup' && event.target.id !== 'renderBtnText') {
-//         setupSelect.value = 'custom-setup';
-//     }
-// })
+        }
     })
     
     updateSVG('top_layers_bw', 'bottom_layers_bw', 'bw')
-
-    colorButtons.forEach((button) => {
-        if (button.getAttribute('id') === 'bw') {
-            button.classList.add('active');
-        } else {
-            button.classList.remove('active');
-        }
-    })
 
     canvasSelect.value = 'black';
 }
@@ -192,8 +155,8 @@ const updateSvgBottomToCut = () => {
     const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
     clipPath.style.display = 'block';
 
-    // const outerLayer = document.getElementById('bottomstackOuterLayer');
-    // outerLayer.style.display = 'none';
+    const outerLayer = document.getElementById('bottomstackOuterLayer');
+    outerLayer.style.display = 'none';
 
     svgLayers.forEach((layer) => {
         if (layer.hasAttribute("id")) {
@@ -208,13 +171,7 @@ const updateSvgBottomToCut = () => {
 
     updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
 
-    colorButtons.forEach((button) => {
-        if (button.getAttribute('id') === 'invert') {
-            button.classList.add('active');
-        } else {
-            button.classList.remove('active');
-        }
-    })
+    canvasSelect.value = 'black';
 }
 
 

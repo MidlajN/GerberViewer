@@ -9,31 +9,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const renderBtn = document.getElementById('renderButton');
 
   renderBtn.addEventListener('click', async function(){
+    // Get the layer Id from the PNG Conversion Button and the SVG Div
     const layerId = renderBtn.getAttribute('data-layer')
     const svgParent = document.getElementById(layerId);
-
-    let svgMain = svgParent.querySelector('svg');
-    let svgClone = svgMain.cloneNode(true);
+    let svgClone = svgParent.querySelector('svg').cloneNode(true);   // Create a Clone of the SVG from the SVG Div
     
     const nestedSvgs = svgClone.querySelectorAll('svg');
-    const outerSvg = nestedSvgs[0];
-    const stackSvg = nestedSvgs[2];
+    const outerSvg = nestedSvgs[0];   // Corresponds to the Outer Layer For the DoubleSide Svg
+    const stackSvg = nestedSvgs[1]; // Corresponds to the Main Svg Of the Gerber
     const svgname = stackSvg.getAttribute('data-name');
 
-    // const Gs = svgClone.querySelectorAll('g');
 
-
+    const MainG = svgClone.querySelector(`#${svgClone.getAttribute('id')}MainLayer`);
+    const Layers = MainG.querySelectorAll('g[id*="drill"]');
+    const drillMask = Layers[0];
+    const drillG = Layers[1];
+    const drillMaskSvg = drillMask.querySelector('svg');
+    const outlineClipPath = MainG.querySelector('clipPath');
     if (!document.getElementById('sideToggle').checked){
-      const MainG = document.getElementById(`${svgClone.getAttribute('id')}MainLayer`);
-      const MainGClone = MainG.cloneNode(true);
-      const Layers = MainGClone.querySelectorAll('g[id*="drill"]');
-      const drillMask = Layers[0];
-      const drillG = Layers[1];
-      const outlineClipPath = MainGClone.querySelector('clipPath');
-      MainGClone.removeAttribute('transform');
-      const mainSvg = MainGClone.querySelector('svg[id]');
+      
+      MainG.removeAttribute('transform');
+      const mainSvg = MainG.querySelector('svg[id]');
+
       if (drillG.style.display === 'block' && outlineClipPath.style.display === 'none') {
-        const drillMaskSvg = drillMask.querySelector('svg');
         drillMask.setAttribute('transform', 'translate(2, 2) scale(0.99, 0.99)');
         drillMaskSvg.style.fill = document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000';
         drillMaskSvg.style.display = 'block';
@@ -43,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         newSvg.setAttribute('width', mainSvg.getAttribute('width'));
         newSvg.setAttribute('height', mainSvg.getAttribute('height'));
 
-        newSvg.appendChild(MainGClone);
+        newSvg.appendChild(MainG);
 
         svgClone = newSvg; 
       } else {
@@ -51,11 +49,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
     } else {
-      if (svgname === 'top_layers_bw' | svgname === 'bottom_layers_bw') {
-        outerSvg.setAttribute('style', 'opacity: 1; fill: #000000');
-      } else if (svgname === 'top_layers_bw_invert' | svgname === 'bottom_layers_bw_invert') {
-        outerSvg.setAttribute('style', 'opacity: 1; fill: #ffffff');
-      }
+      console.log('drll', drillMaskSvg)
+      drillMaskSvg.style.display = 'block';
+      // if (drillG.style.display === 'block' && outlineClipPath.style.display === 'none') {
+        // drillMaskSvg.style.fill = document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000';
+        // drillMaskSvg.style.display = 'block';
+        drillMask.style.display = 'block';
+        // drillMask.setAttribute('transform', 'translate(2, 2) scale(0.99, 0.99)');
+      // }
+
+      outerSvg.setAttribute('style', 'opacity: 1;fill :' + (svgname.includes('invert') ? '#ffffff' : '#000000') )
+      drillMaskSvg.setAttribute('style', 'opacity: 1;fill :' + (document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000') )
+
+      
     }
     
     const pngDiv = document.createElement('div');
@@ -161,20 +167,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 $('#bw').on('click', () => {
-  $('.colorButton').removeClass('active')
-  $('#bw').addClass('active')
   updateSVG('top_layers_bw', 'bottom_layers_bw', 'bw')
 })
 
 $('#invert').on('click', () => {
-  $('.colorButton').removeClass('active')
-  $('#invert').addClass('active');
   updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
 })
 
 $('#original').on('click', () => {
-  $('.colorButton').removeClass('active')
-  $('#original').addClass('active');
   updateSVG('top_layers_original', 'bottom_layers_original', 'original')
 }) 
 
