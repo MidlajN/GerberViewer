@@ -17,12 +17,39 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const nestedSvgs = svgClone.querySelectorAll('svg');
     const outerSvg = nestedSvgs[0];
-    const drillMaskSvg = nestedSvgs[1];
     const stackSvg = nestedSvgs[2];
     const svgname = stackSvg.getAttribute('data-name');
 
+    // const Gs = svgClone.querySelectorAll('g');
+
+
     if (!document.getElementById('sideToggle').checked){
-      svgClone = document.getElementById(`${svgClone.getAttribute('id')}MainLayer`).querySelector('svg');
+      const MainG = document.getElementById(`${svgClone.getAttribute('id')}MainLayer`);
+      const MainGClone = MainG.cloneNode(true);
+      const Layers = MainGClone.querySelectorAll('g[id*="drill"]');
+      const drillMask = Layers[0];
+      const drillG = Layers[1];
+      const outlineClipPath = MainGClone.querySelector('clipPath');
+      MainGClone.removeAttribute('transform');
+      const mainSvg = MainGClone.querySelector('svg[id]');
+      if (drillG.style.display === 'block' && outlineClipPath.style.display === 'none') {
+        const drillMaskSvg = drillMask.querySelector('svg');
+        drillMask.setAttribute('transform', 'translate(2, 2) scale(0.99, 0.99)');
+        drillMaskSvg.style.fill = document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000';
+        drillMaskSvg.style.display = 'block';
+        drillMask.style.display = 'block';
+        
+        const newSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        newSvg.setAttribute('width', mainSvg.getAttribute('width'));
+        newSvg.setAttribute('height', mainSvg.getAttribute('height'));
+
+        newSvg.appendChild(MainGClone);
+
+        svgClone = newSvg; 
+      } else {
+        svgClone = mainSvg;
+      }
+      
     } else {
       if (svgname === 'top_layers_bw' | svgname === 'bottom_layers_bw') {
         outerSvg.setAttribute('style', 'opacity: 1; fill: #000000');
@@ -31,19 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
-
-    const canvasBg = document.getElementById('canvasBg');
-    if (canvasBg.value === 'white') {
-      console.log('white');
-      drillMaskSvg.setAttribute('style', 'display: block;fill: #000000');
-      console.log('drillMaskSvg : ', drillMaskSvg);
-    }
-
     const pngDiv = document.createElement('div');
     pngDiv.classList.add('pngCard');
+    console.log('svgClone', svgClone)
     const svgString = new XMLSerializer().serializeToString(svgClone);
+    let swidth= parseFloat(svgClone.getAttribute('width'));
+    let sheight = parseFloat(svgClone.getAttribute('height'));
 
-    await svg2png(svgString).then((canvas) => {
+    await svg2png(svgString, swidth, sheight).then((canvas) => {
       canvas.setAttribute('style', 'width: 100%; height: 100%;');
       canvas.setAttribute('data-name', svgname);
       pngDiv.appendChild(canvas);
@@ -538,7 +560,8 @@ sideToggle.addEventListener('change', () => {
     ]
     outerSvgs.forEach(svg => svg.style.display = 'none');
 
-    const layerBtn = document.getElementById("doubleSideBtn");
+    const layerList = document.getElementById("doubleSidelist");
+    const layerBtn = layerList.querySelector('button')
     const i = layerBtn.querySelector('i');
     if (i.classList.contains('fa-eye-slash')) {
       i.classList.remove('fa-eye-slash');
@@ -546,6 +569,7 @@ sideToggle.addEventListener('change', () => {
       i.style.color = 'white';
       layerBtn.style.backgroundColor = 'rgb(85 119 89)';
     }
+    layerList.classList.add('layerHidden');
 
     setupList.querySelectorAll('.bottomSetup').forEach((element) => {
       element.setAttribute('disabled', 'true');

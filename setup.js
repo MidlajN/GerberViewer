@@ -1,3 +1,7 @@
+import { updateSVG } from "./convert";
+
+
+
 const doubleSideToggle = document.getElementById('sideToggle');
 const toolWidthSelect = document.getElementById('toolWidth')
 
@@ -16,6 +20,8 @@ const sideButtons = sideButtonDiv.querySelectorAll('button');
 const colorButtonDiv = document.getElementById('buttonContainer');
 const colorButtons = colorButtonDiv.querySelectorAll('button');
 
+
+let svgStyleContent;
 const hideLayerButton = (button) => {
     button.querySelector('i').classList.add('fa-eye-slash');
     button.querySelector('i').classList.remove('fa-eye');
@@ -45,18 +51,7 @@ const updateSvgtoTraces = () => {
         }
     })
     
-    const defStyle = svgMainG.querySelector('style');
-    console.log('defs : ', defStyle);
-    const svgStyleContent = `
-    .${stackid}_fr4 {color: #000000  !important;}
-    .${stackid}_cu {color: #ffffff !important;}
-    .${stackid}_cf {color: #ffffff !important;}
-    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
-    .${stackid}_ss {color: #ffffff !important;}
-    .${stackid}_sp {color: #ffffff !important;}
-    .${stackid}_out {color: #000000 !important;}
-    `
-    defStyle.innerHTML = svgStyleContent
+    updateSVG('top_layers_bw', 'bottom_layers_bw', 'bw')
 
     colorButtons.forEach((button) => {
         if (button.getAttribute('id') === 'bw') {
@@ -92,18 +87,7 @@ const updateSvgToDrill = () => {
         }
     })
     
-    const defStyle = svgMainG.querySelector('style');
-    console.log('defs : ', defStyle);
-    const svgStyleContent = `
-    .${stackid}_fr4 {color: #ffffff  !important;}
-    .${stackid}_cu {color: #000000 !important;}
-    .${stackid}_cf {color: #000000 !important;}
-    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
-    .${stackid}_ss {color: #000000 !important;}
-    .${stackid}_sp {color: #000000 !important;}
-    .${stackid}_out {color: #ffffff !important;}
-    `
-    defStyle.innerHTML = svgStyleContent;
+    updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
 
     colorButtons.forEach((button) => {
         if (button.getAttribute('id') === 'invert') {
@@ -113,7 +97,7 @@ const updateSvgToDrill = () => {
         }
     })
 
-    canvasSelect.value = 'black';
+    canvasSelect.value = 'white';
 }
 
 
@@ -139,18 +123,7 @@ const updateSvgToCut = () => {
         }
     })
     
-    const defStyle = svgMainG.querySelector('style');
-    console.log('defs : ', defStyle);
-    const svgStyleContent = `
-    .${stackid}_fr4 {color: #ffffff  !important;}
-    .${stackid}_cu {color: #000000 !important;}
-    .${stackid}_cf {color: #000000 !important;}
-    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
-    .${stackid}_ss {color: #000000 !important;}
-    .${stackid}_sp {color: #000000 !important;}
-    .${stackid}_out {color: #ffffff !important;}
-    `
-    defStyle.innerHTML = svgStyleContent;
+    updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
 
     colorButtons.forEach((button) => {
         if (button.getAttribute('id') === 'invert') {
@@ -175,8 +148,8 @@ const updateSvgBottomToTraces = () => {
     const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
     clipPath.style.display = 'none';
 
-    const outerLayer = document.getElementById('bottomstackOuterLayer');
-    outerLayer.style.display = 'none';
+    // const outerLayer = document.getElementById('bottomstackOuterLayer');
+    // outerLayer.style.display = 'none';
 
     Array.from(svgLayers).forEach((layer) => {
         if (layer.hasAttribute("id")) {
@@ -186,21 +159,15 @@ const updateSvgBottomToTraces = () => {
             } else {
                 layer.style.display = 'none';
             }
-        }
+        }// gerberSection.addEventListener('click', (event) => {
+//     console.log(event.target)
+//     if (event.target.id !== 'quickSetup' && event.target.id !== 'renderBtnText') {
+//         setupSelect.value = 'custom-setup';
+//     }
+// })
     })
     
-    const defStyle = svgMainG.querySelector('style');
-    // console.log('defs : ', defStyle);
-    const svgStyleContent = `
-    .${stackid}_fr4 {color: #000000  !important;}
-    .${stackid}_cu {color: #ffffff !important;}
-    .${stackid}_cf {color: #ffffff !important;}
-    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
-    .${stackid}_ss {color: #ffffff !important;}
-    .${stackid}_sp {color: #ffffff !important;}
-    .${stackid}_out {color: #000000 !important;}
-    `
-    defStyle.innerHTML = svgStyleContent
+    updateSVG('top_layers_bw', 'bottom_layers_bw', 'bw')
 
     colorButtons.forEach((button) => {
         if (button.getAttribute('id') === 'bw') {
@@ -225,8 +192,8 @@ const updateSvgBottomToCut = () => {
     const clipPath = svgMainG.getElementsByTagName('clipPath')[0];
     clipPath.style.display = 'block';
 
-    const outerLayer = document.getElementById('bottomstackOuterLayer');
-    outerLayer.style.display = 'none';
+    // const outerLayer = document.getElementById('bottomstackOuterLayer');
+    // outerLayer.style.display = 'none';
 
     svgLayers.forEach((layer) => {
         if (layer.hasAttribute("id")) {
@@ -239,18 +206,7 @@ const updateSvgBottomToCut = () => {
         }
     })
 
-    const defStyle = svgMainG.querySelector('style');
-    // console.log('defs : ', defStyle);
-    const svgStyleContent = `
-    .${stackid}_fr4 {color: #ffffff  !important;}
-    .${stackid}_cu {color: #000000 !important;}
-    .${stackid}_cf {color: #000000 !important;}
-    .${stackid}_sm {color: #ffffff; opacity: 0 !important;}
-    .${stackid}_ss {color: #000000 !important;}
-    .${stackid}_sp {color: #000000 !important;}
-    .${stackid}_out {color: #ffffff !important;}
-    `
-    defStyle.innerHTML = svgStyleContent
+    updateSVG('top_layers_bw_invert', 'bottom_layers_bw_invert', 'bwInvert')
 
     colorButtons.forEach((button) => {
         if (button.getAttribute('id') === 'invert') {
@@ -331,10 +287,10 @@ setupSelect.addEventListener('change', () => {
         topLayerDiv.classList.remove('layerHidden');
         bottomLayerDiv.classList.add('layerHidden');
 
-        commonLayerButtons[1].querySelector('i').classList.remove('fa-eye-slash');
-        commonLayerButtons[1].querySelector('i').classList.add('fa-eye');
-        commonLayerButtons[1].querySelector('i').style.color = 'white';
-        commonLayerButtons[1].style.backgroundColor = '#348f9b';
+        commonLayerButtons[0].querySelector('i').classList.remove('fa-eye-slash');
+        commonLayerButtons[0].querySelector('i').classList.add('fa-eye');
+        commonLayerButtons[0].querySelector('i').style.color = 'white';
+        commonLayerButtons[0].style.backgroundColor = '#348f9b';
 
         // Hide Toggle Buttons Other Than Top Trace
         hideLayerButton(topLayerButtons[0])
@@ -361,7 +317,7 @@ setupSelect.addEventListener('change', () => {
         hideLayerButton(bottomLayerButtons[2])
         hideLayerButton(commonLayerButtons[0])
         hideLayerButton(commonLayerButtons[1])
-        hideLayerButton(commonLayerButtons[2])
+        // hideLayerButton(commonLayerButtons[2])
 
         updateSvgBottomToTraces();
         // Show Bottom Side
@@ -392,7 +348,7 @@ setupSelect.addEventListener('change', () => {
         hideLayerButton(bottomLayerButtons[1])
         hideLayerButton(bottomLayerButtons[2])
         hideLayerButton(commonLayerButtons[1])
-        hideLayerButton(commonLayerButtons[2])
+        // hideLayerButton(commonLayerButtons[2])
 
         updateSvgBottomToCut();
         // Show Bottom Side
@@ -412,13 +368,47 @@ setupSelect.addEventListener('change', () => {
     }
 })
 
-const gerberSection = document.getElementById('gerberSection');
 
-gerberSection.addEventListener('click', (event) => {
-    if (event.target.id !== 'quickSetup' && event.target.id !== 'renderBtnText') {
-        console.log('ID', event.target.id)
-        setupSelect.value = 'custom-setup';
-    }
-    
-    // setupSelect.dispatchEvent(new Event('change'));
+function updateSvgForSelect() {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const gerberSection = document.getElementById('gerberSection');
+const gerberButtons = gerberSection.querySelectorAll('button');
+const gerberSelects = gerberSection.querySelectorAll('select');
+gerberButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+        if (event.target.id !== 'renderBtnText') {
+            setupSelect.value = 'custom-setup';
+        }
+    })
+})
+
+gerberSelects.forEach((select) => {
+    select.addEventListener('change', (event) => {
+        console.log(event.target.id)
+        if (event.target.id !== 'quickSetup') {
+            setupSelect.value = 'custom-setup';
+        }
+    })
 })

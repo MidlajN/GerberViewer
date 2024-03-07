@@ -219,7 +219,7 @@ function viewPCBStackUp(files) {
 
 
 // --------------------------- Function To Convert The SVG To PNG ---------------------------
-export async function svg2png(svg, swidth = svg_width, sheight = svg_height) {
+export async function svg2png(svg, swidth = null, sheight = null) {
   console.log('swidth : ', swidth, 'sheight : ', sheight);
   return new Promise((resolve, reject) => {
     const svgBlob = new Blob([svg], { type: "image/svg+xml" });
@@ -322,9 +322,10 @@ function displaySVG(svgArray) {
 
     // Add the Drill Masking Layer
     drillMaskG.setAttribute('id', `drillMask`);
-    drillMaskG.setAttribute('transform', 'translate(3, 3)');
+    // drillMaskG.setAttribute('transform', 'translate(3, 3)');
     outerSVG.drillMaskSvg.setAttribute('style', 'display:none;fill:#000000;');
     drillMaskG.appendChild(outerSVG.drillMaskSvg);
+    mainG.appendChild(drillMaskG);
 
     // Add the Main Layer
     svg.setAttribute('id', `${id}layer`);
@@ -334,7 +335,6 @@ function displaySVG(svgArray) {
 
     // Append Both Group to the Parent
     svgNew.appendChild(outerG);
-    svgNew.appendChild(drillMaskG);
     svgNew.appendChild(mainG);
 
     return svgNew;
@@ -347,22 +347,16 @@ export function updateSVG(topName = null, bottomName = null, mode) {
 
   const svgTop = document.getElementById('topstacklayer');
   const svgBottom = document.getElementById('bottomstacklayer');
-  
-  // const topOuterSvg = document.getElementById('topstackOuterlayer');
-  // const bottomOuterSvg = document.getElementById('bottomstackOuterlayer');
-
 
   let svgTopStyle = svgTop.querySelector('style');
   let svgBottomStyle = svgBottom.querySelector('style');
 
-
   svgTop.setAttribute('data-name', topName);
   svgBottom.setAttribute('data-name', bottomName);
   
-
   // since both bottom and top layer has the same ID only need to use one
   const stackid = svgTop.getAttribute('data-stackid');
-  // console.log(stackid)
+
   let svgStyleContent;
 
   if (mode === 'bw') {
@@ -375,10 +369,6 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #ffffff !important;}
     .${stackid}_out {color: #000000 !important;}
     `
-    // topOuterSvg.style.fill = '#000000';
-    // bottomOuterSvg.style.fill = '#000000';
-    // topOuterSvg.style.opacity = '0.9';
-    // bottomOuterSvg.style.opacity = '0.9';
   } else if (mode === 'bwInvert') {
     svgStyleContent = `
     .${stackid}_fr4 {color: #ffffff  !important;}
@@ -389,10 +379,6 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #000000 !important;}
     .${stackid}_out {color: #ffffff !important;}
     `
-    // topOuterSvg.style.fill = '#ffffff';
-    // bottomOuterSvg.style.fill = '#ffffff';
-    // topOuterSvg.style.opacity = '0.9';
-    // bottomOuterSvg.style.opacity = '0.9';
   } else {
     svgStyleContent = `
     .${stackid}_fr4 {color: #666666  !important;}
@@ -403,10 +389,6 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #999999 !important;}
     .${stackid}_out {color: #000000 !important;}
     `
-    // topOuterSvg.style.fill = '#86877c';
-    // bottomOuterSvg.style.fill = '#86877c';
-    // topOuterSvg.style.opacity = '0.3';
-    // bottomOuterSvg.style.opacity = '0.3';
   }
 
   // update the style of the SVG
