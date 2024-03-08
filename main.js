@@ -19,50 +19,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const stackSvg = nestedSvgs[1]; // Corresponds to the Main Svg Of the Gerber
     const svgname = stackSvg.getAttribute('data-name');
 
+    console.log('sg ::', stackSvg)
 
-    const MainG = svgClone.querySelector(`#${svgClone.getAttribute('id')}MainLayer`);
-    const Layers = MainG.querySelectorAll('g[id*="drill"]');
-    const drillMask = Layers[0];
-    const drillG = Layers[1];
-    const drillMaskSvg = drillMask.querySelector('svg');
-    const outlineClipPath = MainG.querySelector('clipPath');
-    if (!document.getElementById('sideToggle').checked){
+
+    // const MainG = svgClone.querySelector(`#${svgClone.getAttribute('id')}MainLayer`);
+    // const Layers = MainG.querySelectorAll('g[id*="drill"]');
+    // const drillMask = Layers[0];
+    // const drillG = Layers[1];
+    // const drillMaskSvg = drillMask.querySelector('svg');
+    // const outlineClipPath = MainG.querySelector('clipPath');
+    // if (!document.getElementById('sideToggle').checked){
       
-      MainG.removeAttribute('transform');
-      const mainSvg = MainG.querySelector('svg[id]');
+    //   MainG.removeAttribute('transform');
+    //   const mainSvg = MainG.querySelector('svg[id]');
 
-      if (drillG.style.display === 'block' && outlineClipPath.style.display === 'none') {
-        drillMask.setAttribute('transform', 'translate(2, 2) scale(0.99, 0.99)');
-        drillMaskSvg.style.fill = document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000';
-        drillMaskSvg.style.display = 'block';
-        drillMask.style.display = 'block';
+    //   if (drillG.style.display === 'block' && outlineClipPath.style.display === 'none') {
+    //     drillMask.setAttribute('transform', 'translate(2, 2) scale(0.99, 0.99)');
+    //     drillMaskSvg.style.fill = document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000';
+    //     drillMaskSvg.style.display = 'block';
+    //     drillMask.style.display = 'block';
         
-        const newSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        newSvg.setAttribute('width', mainSvg.getAttribute('width'));
-        newSvg.setAttribute('height', mainSvg.getAttribute('height'));
+    //     const newSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    //     newSvg.setAttribute('width', mainSvg.getAttribute('width'));
+    //     newSvg.setAttribute('height', mainSvg.getAttribute('height'));
 
-        newSvg.appendChild(MainG);
+    //     newSvg.appendChild(MainG);
 
-        svgClone = newSvg; 
-      } else {
-        svgClone = mainSvg;
-      }
+    //     svgClone = newSvg; 
+    //   } else {
+    //     svgClone = mainSvg;
+    //   }
       
-    } else {
-      console.log('drll', drillMaskSvg)
-      drillMaskSvg.style.display = 'block';
-      // if (drillG.style.display === 'block' && outlineClipPath.style.display === 'none') {
-        // drillMaskSvg.style.fill = document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000';
-        // drillMaskSvg.style.display = 'block';
-        drillMask.style.display = 'block';
-        // drillMask.setAttribute('transform', 'translate(2, 2) scale(0.99, 0.99)');
-      // }
+    // } else {
+    //   console.log('drll', drillMaskSvg)
+    //   drillMaskSvg.style.display = 'block';
+    //   // if (drillG.style.display === 'block' && outlineClipPath.style.display === 'none') {
+    //     // drillMaskSvg.style.fill = document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000';
+    //     // drillMaskSvg.style.display = 'block';
+    //     drillMask.style.display = 'block';
+    //     // drillMask.setAttribute('transform', 'translate(2, 2) scale(0.99, 0.99)');
+    //   // }
 
-      outerSvg.setAttribute('style', 'opacity: 1;fill :' + (svgname.includes('invert') ? '#ffffff' : '#000000') )
-      drillMaskSvg.setAttribute('style', 'opacity: 1;fill :' + (document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000') )
+    //   outerSvg.setAttribute('style', 'opacity: 1;fill :' + (svgname.includes('invert') ? '#ffffff' : '#000000') )
+    //   drillMaskSvg.setAttribute('style', 'opacity: 1;fill :' + (document.getElementById('canvasBg').value === 'black' ? '#ffffff' : '#000000') )
 
       
-    }
+    // }
     
     const pngDiv = document.createElement('div');
     pngDiv.classList.add('pngCard');
