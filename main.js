@@ -161,11 +161,14 @@ function toggleButtonState() {
   buttons.forEach(button => {
     button.disabled = !button.disabled; // Toggle the disabled state of each button
   });
+
   if (document.getElementById('doubleSideToggle').classList.contains('layerHidden')) {
     document.getElementById('doubleSideToggle').classList.remove('layerHidden')
   } else {
     document.getElementById('doubleSideToggle').classList.add('layerHidden')
   }
+
+  document.getElementById('quickSetup').disabled = !document.getElementById('quickSetup').disabled;
 } 
 
 

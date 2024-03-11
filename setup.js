@@ -4,19 +4,76 @@ const doubleSideToggle = document.getElementById('sideToggle');
 
 const topLayerDiv = document.getElementById('toplayerlist');
 const topLayerButtons = topLayerDiv.querySelectorAll('button');
+
 const bottomLayerDiv = document.getElementById('bottomlayerlist');
 const bottomLayerButtons = bottomLayerDiv.querySelectorAll('button');
+
 const commonLayerDiv = document.getElementById('commonlayerlist');
 const commonLayerButtons = commonLayerDiv.querySelectorAll('button');
 
 const canvasSelect = document.getElementById('canvasBg');
 
-
-const hideLayerButton = (button) => {
-    button.querySelector('i').classList.add('fa-eye-slash');
-    button.querySelector('i').classList.remove('fa-eye');
-    button.querySelector('i').style.color = 'black';
-    button.style.backgroundColor = 'transparent';
+const setupConfig = {
+    'top-trace': {
+        button: topLayerButtons[0],
+        color: '#ced8cd',
+        toggleButtons: [topLayerButtons[1], topLayerButtons[2], commonLayerButtons[0], commonLayerButtons[1]],
+        svgOptions: { 
+            stack:'topstack', 
+            dataname: 'top_layers_bw', 
+            layerid: 'top_copper', 
+            updateSvgConfig: ['top_layers_bw','bottom_layers_bw','bw'], 
+            canvasValue: 'black' 
+        },
+    },
+    'top-drill': {
+        button: commonLayerButtons[1],
+        color: '#348f9b',
+        toggleButtons: [topLayerButtons[0], topLayerButtons[1], topLayerButtons[2], commonLayerButtons[0]],
+        svgOptions: { 
+            stack:'topstack', 
+            dataname: 'top_layers_bw_invert', 
+            layerid: 'drill', 
+            updateSvgConfig: ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'], 
+            canvasValue: 'white' 
+        },
+    },
+    'top-cut': {
+        button: commonLayerButtons[0],
+        color: '#348f9b',
+        toggleButtons: [topLayerButtons[0], topLayerButtons[1], topLayerButtons[2], commonLayerButtons[1]],
+        svgOptions: { 
+            stack:'topstack', 
+            dataname: 'top_layers_bw_invert', 
+            layerid: 'outline', 
+            updateSvgConfig: ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'], 
+            canvasValue: 'black' 
+        },
+    },
+    'bottom-trace': {
+        button: bottomLayerButtons[0],
+        color: '#206b19',
+        toggleButtons: [bottomLayerButtons[1], bottomLayerButtons[2], commonLayerButtons[0], commonLayerButtons[1]],
+        svgOptions: {
+            stack: 'bottomstack',
+            dataname: 'bottom_layers_bw',
+            layerid: 'bottom_copper',
+            updateSvgConfig: ['top_layers_bw','bottom_layers_bw','bw'],
+            canvasValue: 'black'
+        }
+    },
+    'bottom-cut': {
+        button: commonLayerButtons[0],
+        color: '#206b19',
+        toggleButtons: [bottomLayerButtons[0], bottomLayerButtons[1], bottomLayerButtons[2], commonLayerButtons[1]],
+        svgOptions: {
+            stack: 'bottomstack',
+            dataname: 'bottom_layers_bw_invert',
+            layerid: 'outline',
+            updateSvgConfig: ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'],
+            canvasValue: 'black'
+        }
+    }
 }
 
 
@@ -29,13 +86,20 @@ setupSelect.addEventListener('change', () => {
         button.style.backgroundColor = bgcolor;
     }
 
-    const updateSvgForOption = (id, dataname, layerid, updateSvgConfig, canvasValue) => {
+    const hideLayerButton = (button) => {
+        button.querySelector('i').classList.add('fa-eye-slash');
+        button.querySelector('i').classList.remove('fa-eye');
+        button.querySelector('i').style.color = 'black';
+        button.style.backgroundColor = 'transparent';
+    }
+
+    const updateSvgForOption = ({ stack, dataname, layerid, updateSvgConfig, canvasValue }) => {
         // Get the SVG element and set the data-name attribute to render button
-        const svg = document.getElementById(id);
+        const svg = document.getElementById(stack);
         svg.querySelector('g svg[data-stackid]').setAttribute('data-name', dataname);
     
         // Get the G element which include the main pcb layers
-        const svgMainG = document.getElementById(`${id}MainLayer`);
+        const svgMainG = document.getElementById(`${stack}MainLayer`);
         console.log('svgMainG : ', svgMainG)
         const svgLayers = svgMainG.querySelectorAll('g');
         const clipPath = svg.getElementsByTagName('clipPath')[0];
@@ -58,7 +122,7 @@ setupSelect.addEventListener('change', () => {
         // Change the Value For the Canvas Option Select
         canvasSelect.value = canvasValue
 
-        if (id === 'topstack') {
+        if (stack === 'topstack') {
             topLayerDiv.classList.remove('layerHidden')
             bottomLayerDiv.classList.add('layerHidden')
 
@@ -97,102 +161,41 @@ setupSelect.addEventListener('change', () => {
         if (doubleSideToggle.checked) {
             if (setupSelect.value === 'top-cut') {
 
-                updateButton(commonLayerButtons[2])
-                document.getElementById(`${id}OuterLayer`).style.display = 'block';
+                updateButton(commonLayerButtons[2], 'rgb(85 119 89)')
+                document.getElementById(`${stack}OuterLayer`).style.display = 'block';
 
             } else {
 
                 hideLayerButton(commonLayerButtons[2])
-                document.getElementById(`${id}OuterLayer`).style.display = 'none';
+                document.getElementById(`${stack}OuterLayer`).style.display = 'none';
             }
         }
     
     }
 
-    if (setupSelect.value === 'top-trace') {
+    const selection = setupConfig[setupSelect.value];
+    if (selection) {
+        updateButton(selection.button, selection.color);
 
-        updateButton(topLayerButtons[0], '#ced8cd')
+        selection.toggleButtons.forEach((button) => { hideLayerButton(button) });
 
-        // Hide Toggle Buttons Other Than Top Trace
-        hideLayerButton(topLayerButtons[1])
-        hideLayerButton(topLayerButtons[2])
-        hideLayerButton(commonLayerButtons[0])
-        hideLayerButton(commonLayerButtons[1])
-
-        updateSvgForOption('topstack', 'top_layers_bw', 'top_copper', ['top_layers_bw','bottom_layers_bw','bw'], 'black');
-    
-    } else if (setupSelect.value === 'top-drill') {
-
-        updateButton(commonLayerButtons[1], '#348f9b')
-
-        // Hide Toggle Buttons Other Than Top Trace
-        hideLayerButton(topLayerButtons[0])
-        hideLayerButton(topLayerButtons[1])
-        hideLayerButton(topLayerButtons[2])
-        hideLayerButton(commonLayerButtons[0])
-
-        updateSvgForOption('topstack', 'top_layers_bw_invert', 'drill', ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'], 'white');
-
-    } else if (setupSelect.value === 'top-cut') {
-
-        updateButton(commonLayerButtons[0], '#348f9b')
-        updateButton(commonLayerButtons[2], 'rgb(85, 119, 89)')
-
-        // Hide Toggle Buttons Other Than Top Trace
-        hideLayerButton(topLayerButtons[0])
-        hideLayerButton(topLayerButtons[1])
-        hideLayerButton(topLayerButtons[2])
-        hideLayerButton(commonLayerButtons[1])
-
-        updateSvgForOption('topstack', 'top_layers_bw_invert', 'outline', ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'], 'black');
-
-    } else if (setupSelect.value === 'bottom-trace') {
-
-        updateButton(bottomLayerButtons[0], '#206b19')
-
-        // Hide Toggle Buttons Other Than Top Trace
-        hideLayerButton(bottomLayerButtons[1])
-        hideLayerButton(bottomLayerButtons[2])
-        hideLayerButton(commonLayerButtons[0])
-        hideLayerButton(commonLayerButtons[1])
-
-        updateSvgForOption('bottomstack', 'bottom_layers_bw', 'bottom_copper', ['top_layers_bw','bottom_layers_bw','bw'], 'black');
-
-    } else if (setupSelect.value === 'bottom-cut') {
-
-        updateButton(commonLayerButtons[0], '#206b19')
-
-        // Hide Toggle Buttons Other Than Top Trace
-        hideLayerButton(bottomLayerButtons[0])
-        hideLayerButton(bottomLayerButtons[1])
-        hideLayerButton(bottomLayerButtons[2])
-        hideLayerButton(commonLayerButtons[1])
-
-        updateSvgForOption('bottomstack', 'bottom_layers_bw_invert', 'outline', ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'], 'black');
-
+        updateSvgForOption(selection.svgOptions);
     }
 })
+
 
 const gerberSection = document.getElementById('gerberSection');
 const gerberButtons = gerberSection.querySelectorAll('button');
 const gerberSelects = gerberSection.querySelectorAll('select');
-gerberButtons.forEach((button) => {
-    button.addEventListener('click', (event) => {
-        if (event.target.id !== 'renderBtnText') {
-            setupSelect.value = 'custom-setup';
-        }
-    })
-})
+const sideToggle = document.getElementById('sideToggle');
 
-gerberSelects.forEach((select) => {
-    select.addEventListener('change', (event) => {
-        console.log(event.target.id)
-        if (event.target.id !== 'quickSetup') {
-            setupSelect.value = 'custom-setup';
-        }
-    })
-})
-
-document.getElementById('sideToggle').addEventListener('change', () => {
+const handleEvent = () => {
     setupSelect.value = 'custom-setup';
-})
+}
+
+gerberButtons.forEach((button) => button.addEventListener('click', handleEvent));
+
+gerberSelects.forEach((select) => select.addEventListener('change', handleEvent));
+
+sideToggle.addEventListener('change', handleEvent);
+
