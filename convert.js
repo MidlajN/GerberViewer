@@ -312,7 +312,7 @@ function displaySVG(svgArray) {
     svgNew.setAttribute('height', `${outerSVG.height}mm`);
 
     // Add the Outer Layer
-    outerSVG.svg.setAttribute('style', 'fill : #86877c;opacity: 0.3;');
+    outerSVG.svg.setAttribute('style', 'fill : #86877c;opacity: 0.5;');
     outerSVG.svg.setAttribute('id', `${id}OuterSvg`);
     outerG.appendChild(outerSVG.svg);
     outerG.setAttribute('id', `${id}OuterLayer`);
@@ -330,6 +330,7 @@ function displaySVG(svgArray) {
       // path.setAttribute('stroke-width', '1mm');
       // path.setAttribute('stroke', 'white');
       outlineG.setAttribute('id', 'drillMask');
+      // outlineG.setAttribute('transform', 'scale(0.99, 0.99)');
       outlineG.appendChild(path);
       
       // Insert the Drill Mask into the SVG as the first child
