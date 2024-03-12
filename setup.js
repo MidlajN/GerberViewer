@@ -122,38 +122,20 @@ setupSelect.addEventListener('change', () => {
         // Change the Value For the Canvas Option Select
         canvasSelect.value = canvasValue
 
-        if (stack === 'topstack') {
-            topLayerDiv.classList.remove('layerHidden')
-            bottomLayerDiv.classList.add('layerHidden')
+        const isTopStack = stack === 'topstack';
+        const divToShow = isTopStack ? topLayerDiv : bottomLayerDiv;
+        const divToHide = isTopStack ? bottomLayerDiv : topLayerDiv;
 
-            // Show Top Side
-            $('#fullLayersParent, #bottomlayers').fadeOut(function(){
-                $('#toplayers').fadeIn();
-            })
+        divToShow.classList.add('layerHidden')
+        divToHide.classList.remove('layerHidden')
 
-            // Change the Side Choosing Button to Top and remove class active from the rest
-            $('#allLayers, #bottomlayersbtn').removeClass('active');
-            $('#toplayersbtn').addClass('active');
+        $(`#fullLayersParent, #${ isTopStack ? 'bottomlayers' : 'toplayers' }`).fadeOut(function(){
+            $(`#${ isTopStack ? 'toplayers' : 'bottomlayers' }`).fadeIn();
+        });
 
-            // Set the data-layer attribute to the render button
-            $('#renderButton').attr('data-layer', 'toplayers')
-
-            
-        } else {
-            topLayerDiv.classList.add('layerHidden')
-            bottomLayerDiv.classList.remove('layerHidden')
-        
-            $('#fullLayersParent, #toplayers').fadeOut(function(){
-                $('#bottomlayers').fadeIn();
-            })
-    
-            // Change the Side Choosing Button to Bottom and remove class active from the rest
-            $('#allLayers, #toplayersbtn').removeClass('active');
-            $('#bottomlayersbtn').addClass('active');
-    
-            // Set the data-layer attribute to the render button
-            $('#renderButton').attr('data-layer', 'bottomlayers')
-        }
+        $('#allLayers, #toplayersbtn, #bottomlayersbtn').removeClass('active');
+        $(`${isTopStack ? 'top' : 'bottom'}layersbtn`).addClass('active');
+        $(`#renderButton`).attr('data-layer', `${ isTopStack ? 'toplayers' : 'bottomlayers' }`);
 
         // Show the Button Container
         $('#buttonContainer').slideDown();
@@ -189,13 +171,10 @@ const gerberButtons = gerberSection.querySelectorAll('button');
 const gerberSelects = gerberSection.querySelectorAll('select');
 const sideToggle = document.getElementById('sideToggle');
 
-const handleEvent = () => {
-    setupSelect.value = 'custom-setup';
-}
+const handleEvent = () => { setupSelect.value = 'custom-setup'; }
 
-gerberButtons.forEach((button) => button.addEventListener('click', handleEvent));
+gerberButtons.forEach((button) => button.addEventListener('click', (event) => { event.target.id === 'renderButton' ? null : handleEvent }));
 
-gerberSelects.forEach((select) => select.addEventListener('change', handleEvent));
+gerberSelects.forEach((select) => select.addEventListener('change', (event) => { event.target.id === 'quickSetup' ? null : handleEvent }));
 
 sideToggle.addEventListener('change', handleEvent);
-

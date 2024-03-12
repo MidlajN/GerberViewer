@@ -93,11 +93,9 @@ export function viewGerber(fileData) {
         const uint8Array = new Uint8Array(fileContent);
 
         let gerberToSvgStream;
-        // if (id[i] === 'all_drill') {
-           gerberToSvgStream = gerberToSvg(uint8Array);
-        // } else {
-        //    gerberToSvgStream = ""
-        // }
+
+        gerberToSvgStream = gerberToSvg(uint8Array);
+
         let data = "";
 
         gerberToSvgStream.on("data", (chunk) => {
@@ -232,7 +230,6 @@ export async function svg2png(svg, swidth = null, sheight = null) {
       // console.log(':: Image loaded ::', img.src);
       const canvas = document.createElement("canvas");
 
-      
       const scaleFactor = 1000 / 25.4;
 
       const width = swidth ;
@@ -327,10 +324,7 @@ function displaySVG(svgArray) {
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', d);
       path.setAttribute('fill', 'none');
-      // path.setAttribute('stroke-width', '1mm');
-      // path.setAttribute('stroke', 'white');
       outlineG.setAttribute('id', 'drillMask');
-      // outlineG.setAttribute('transform', 'scale(0.99, 0.99)');
       outlineG.appendChild(path);
       
       // Insert the Drill Mask into the SVG as the first child
@@ -490,33 +484,11 @@ export function generateSVG(width, height, toolwidth , viewbox) {
   let path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   path.setAttribute('d', pathlines);
 
-  // // Generate Drill Mask
-  // const drillSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  // drillSvg.setAttribute('viewBox', `${originX} ${originY} ${width} ${height}`);
-  // drillSvg.setAttribute('width', `${width}mm`);
-  // drillSvg.setAttribute('height', `${height}mm`);
-  // drillSvg.setAttribute('style', 'fill: #000000;');
-
-  // const drillMaskPathlines = `
-  // M ${ originX } ${ originY }
-  // L ${ originX + width } ${ originY }
-  // L ${ originX + width } ${ originY + height }
-  // L ${ originX } ${ originY + height }
-  // L ${ originX } ${ originY }
-  // Z
-  // `
-  // let maskPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  // maskPath.setAttribute('d', drillMaskPathlines);
-  // drillSvg.appendChild(maskPath);
-
-  // path.setAttribute('fill', 'red');
-
   svg.appendChild(path)
-  // document.getElementById('canvas').appendChild(svg)
+
 
   let response = {
     svg : svg,
-    // drillMaskSvg : drillSvg,
     width : width + 2 * toolwidth,
     height : height + 2 * toolwidth,
   }

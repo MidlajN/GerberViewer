@@ -64,6 +64,10 @@ display:none;
 outline: none;
 }
 
+/* Gerber Section Div */
+.gerberSection {
+  height: 87vh;
+}
 
 /* CSS */
 .button-side {
@@ -833,5 +837,28 @@ h5{
   }
   .layerDiv div {
     width: 100%;
+  }
+
+  /* Gerber Section */
+  .gerberSection {
+    height: fit-content;
+  }
+
+  #canvas {
+    padding: 15px;
+    margin-bottom: 34px;
+    display: flex;
+    /* width: 100%; */
+    /* gap: 1%; */
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .pngCard {
+    width: 30%;
+    height: fit-content;
+  }
+  /* Navbar on the right  */
+  .navbar-animmenu2 {
+    border-radius: 0;
   }
 }
