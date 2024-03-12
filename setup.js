@@ -100,7 +100,6 @@ setupSelect.addEventListener('change', () => {
     
         // Get the G element which include the main pcb layers
         const svgMainG = document.getElementById(`${stack}MainLayer`);
-        console.log('svgMainG : ', svgMainG)
         const svgLayers = svgMainG.querySelectorAll('g');
         const clipPath = svg.getElementsByTagName('clipPath')[0];
         clipPath.style.display = layerid === 'outline' ? 'block' : 'none';
@@ -115,12 +114,27 @@ setupSelect.addEventListener('change', () => {
                 }
             } 
         })
+
+        const allLayers = document.getElementById('fullstacklayer');
+        const allLayersG = allLayers.querySelector('g');
+        const Gs = allLayersG.querySelectorAll('g');
+
+        // Loop through the G elements and set the specified layer display to block
+        Array.from(Gs).forEach((layer) => {
+            if (layer.hasAttribute("id")) {
+                if (layer.getAttribute('id').includes(layerid)) {
+                    layer.style.display = 'block';
+                } else {
+                    if (!layer.getAttribute('id').includes(`${stack === 'topstack' ? 'bottom' : 'top'}`)) {
+                        layer.style.display = 'none';
+                    }
+                }
+            } 
+        })
     
-        // Update the SVG element
-        updateSVG(...updateSvgConfig);
+        updateSVG(...updateSvgConfig);  // Update the SVG element
     
-        // Change the Value For the Canvas Option Select
-        canvasSelect.value = canvasValue
+        canvasSelect.value = canvasValue;   // Change the Value For the Canvas Option Select
 
         const isTopStack = stack === 'topstack';
         const divToShow = isTopStack ? topLayerDiv : bottomLayerDiv;
