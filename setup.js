@@ -126,8 +126,8 @@ setupSelect.addEventListener('change', () => {
         const divToShow = isTopStack ? topLayerDiv : bottomLayerDiv;
         const divToHide = isTopStack ? bottomLayerDiv : topLayerDiv;
 
-        divToShow.classList.add('layerHidden')
-        divToHide.classList.remove('layerHidden')
+        divToShow.classList.remove('layerHidden')
+        divToHide.classList.add('layerHidden')
 
         $(`#fullLayersParent, #${ isTopStack ? 'bottomlayers' : 'toplayers' }`).fadeOut(function(){
             $(`#${ isTopStack ? 'toplayers' : 'bottomlayers' }`).fadeIn();
