@@ -187,8 +187,16 @@ const sideToggle = document.getElementById('sideToggle');
 
 const handleEvent = () => { setupSelect.value = 'custom-setup'; }
 
-gerberButtons.forEach((button) => button.addEventListener('click', (event) => { event.target.id === 'renderButton' ? null : handleEvent }));
+gerberButtons.forEach((button) => button.addEventListener('click', (event) => { 
+    if (event.target.id !== 'renderButton') {
+        handleEvent();
+    }
+}));
 
-gerberSelects.forEach((select) => select.addEventListener('change', (event) => { event.target.id === 'quickSetup' ? null : handleEvent }));
+gerberSelects.forEach((select) => select.addEventListener('change', (event) => {
+    if (event.target.id !== 'quickSetup') {
+        handleEvent();
+    } 
+}));
 
 sideToggle.addEventListener('change', handleEvent);
