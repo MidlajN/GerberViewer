@@ -1,8 +1,28 @@
+.gerberNav .gerber {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: rgb(229 115 69);
+  margin-left: 5px;
+}
+.gerberNav .two {
+  font-size: 2rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.473);
+  letter-spacing: 2px;
+  /* margin-left: 4px; */
+}
+.gerberNav .png {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: rgb(206, 94, 49);
+}
+
+
 .gerberNav {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding: 10px;
+  padding: 10px 30px;
   font-size: 22px;
   background-color: #ffffff;
   margin: auto;
@@ -17,7 +37,19 @@
 }
 
 .fablogo {
-  padding-right: 10px;
+  height: fit-content;
+  margin-block: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fablogo a {
+  text-decoration: none;
+  color: #0b634d;
+  transition: 0.3s ease;
+}
+.fablogo a:hover {
+  color: #003a30af;
 }
 
 .secondNav {
@@ -26,6 +58,7 @@ justify-content: end;
 font-size: small;
 color: #ccc;
 background-color: #fafcfd;
+padding: 0px 30px;
 }
 
 
