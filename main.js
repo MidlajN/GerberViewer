@@ -206,21 +206,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // add new Task to the Navbar list
-  const button = document.getElementById('addNewButton');
+  // const button = document.getElementById('addNewButton');
 
-  button.addEventListener('click', function() {
-    const addNewIndex = button.getAttribute('data-sds');
-    const indexInt = parseInt(addNewIndex);
+  // button.addEventListener('click', function() {
+  //   const addNewIndex = button.getAttribute('data-sds');
+  //   const indexInt = parseInt(addNewIndex);
 
-    button.setAttribute('data-sds', indexInt + 1);
+  //   button.setAttribute('data-sds', indexInt + 1);
 
-    if (indexInt + 1 < 10) {
-      createNewItem();
-    } else {
-      createNewItem();
-      button.style.display = 'none';
-    }
-  });
+  //   if (indexInt + 1 < 10) {
+  //     createNewItem();
+  //   } else {
+  //     createNewItem();
+  //     button.style.display = 'none';
+  //   }
+  // });
 
 
   // ---------------- Create New Task in Navbar ----------------
