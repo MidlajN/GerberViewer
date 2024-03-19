@@ -13,14 +13,15 @@ const commonLayerButtons = commonLayerDiv.querySelectorAll('button');
 
 const canvasSelect = document.getElementById('canvasBg');
 
-const setupConfig = {
+
+export const setupConfig = {
     'top-trace': {
         button: topLayerButtons[0],
         color: '#ced8cd',
         toggleButtons: [topLayerButtons[1], topLayerButtons[2], commonLayerButtons[0], commonLayerButtons[1]],
         svgOptions: { 
             stack:'topstack', 
-            dataname: 'top_layers_bw', 
+            dataname: 'top_trace_bw', 
             layerid: 'top_copper', 
             updateSvgConfig: ['top_layers_bw','bottom_layers_bw','bw'], 
             canvasValue: 'black' 
@@ -32,7 +33,7 @@ const setupConfig = {
         toggleButtons: [topLayerButtons[0], topLayerButtons[1], topLayerButtons[2], commonLayerButtons[0]],
         svgOptions: { 
             stack:'topstack', 
-            dataname: 'top_layers_bw_invert', 
+            dataname: 'top_drill_bw_invert', 
             layerid: 'drill', 
             updateSvgConfig: ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'], 
             canvasValue: 'white' 
@@ -44,7 +45,7 @@ const setupConfig = {
         toggleButtons: [topLayerButtons[0], topLayerButtons[1], topLayerButtons[2], commonLayerButtons[1]],
         svgOptions: { 
             stack:'topstack', 
-            dataname: 'top_layers_bw_invert', 
+            dataname: 'top_cut_bw_invert', 
             layerid: 'outline', 
             updateSvgConfig: ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'], 
             canvasValue: 'black' 
@@ -56,7 +57,7 @@ const setupConfig = {
         toggleButtons: [bottomLayerButtons[1], bottomLayerButtons[2], commonLayerButtons[0], commonLayerButtons[1]],
         svgOptions: {
             stack: 'bottomstack',
-            dataname: 'bottom_layers_bw',
+            dataname: 'bottom_trace_bw',
             layerid: 'bottom_copper',
             updateSvgConfig: ['top_layers_bw','bottom_layers_bw','bw'],
             canvasValue: 'black'
@@ -68,7 +69,7 @@ const setupConfig = {
         toggleButtons: [bottomLayerButtons[0], bottomLayerButtons[1], bottomLayerButtons[2], commonLayerButtons[1]],
         svgOptions: {
             stack: 'bottomstack',
-            dataname: 'bottom_layers_bw_invert',
+            dataname: 'bottom_cut_bw_invert',
             layerid: 'outline',
             updateSvgConfig: ['top_layers_bw_invert','bottom_layers_bw_invert','bwInvert'],
             canvasValue: 'black'
@@ -79,6 +80,7 @@ const setupConfig = {
 
 const setupSelect = document.getElementById('quickSetup');
 setupSelect.addEventListener('change', () => {
+
     const updateButton = (button, bgcolor) => {
         button.querySelector('i').classList.remove('fa-eye-slash');
         button.querySelector('i').classList.add('fa-eye');
@@ -177,6 +179,7 @@ setupSelect.addEventListener('change', () => {
 
         updateSvgForOption(selection.svgOptions);
     }
+
 })
 
 

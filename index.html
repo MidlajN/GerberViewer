@@ -85,10 +85,11 @@
                       <option value="top-cut">Top Cut</option>
                       <option value="bottom-trace" class="bottomSetup" disabled>Bottom Trace</option>
                       <option value="bottom-cut" class="bottomSetup" disabled>Bottom Cut</option>
+                      <option value="generate-all" style="font-weight: 600;">Generate All</option>
                     </select>
                   </div>
                   <div>
-                    <button class="noselect" id="renderButton" data-layer="toplayers"><span class='text' id="renderBtnText">Generate PNG </span><span class="icon"><i class="fa-solid fa-download fa-sm"></i></span></button>
+                    <button class="noselect" id="renderButton" data-layer="toplayers">Generate PNG</button>
                   </div>  
                 </div>
                 
@@ -195,7 +196,7 @@
                   <button id="bottomlayersbtn" class="button-side layerHide" style="padding-inline: 10px;border-radius: 5px;" role="button"><span class="text">Bottom</span></button>
                 </div>
 
-                <div id="dropArea" style="background-color: #e8f1ff54;height:100%;position: relative;box-shadow:inset rgb(255 255 255) 0px 0px 4px, inset rgb(255 255 255) 0px 0px 13px -3px, rgb(0 0 0 / 54%) 0px 0px 4px inset;">
+                <div id="dropArea" style="background-color: #e8f1ff54;height:100%;position: relative;box-shadow:inset rgb(255 255 255) 0px 0px 4px, inset rgb(255 255 255) 0px 0px 13px -3px, rgb(0 0 0 / 54%) 0px 0px 4px inset;z-index: 99;">
                   <div id="overlay">
                     <div class="cv-spinner">
                       <span class="spinner"></span>

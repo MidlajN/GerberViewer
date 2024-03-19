@@ -1,111 +1,74 @@
-import { viewGerber, svg2png, updateSVG, svgConf, generateSVG } from "./convert.js";
+import { viewGerber, updateSVG, svgConf, generateSVG, changeSvgColor } from "./convert.js";
+import { createPNG } from "./svg2png.js";
+import { setupConfig } from "./setup.js";
 import './setup.js';
+import './navbar.js';
 import './style.css';
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
   const dropArea = document.getElementById('dropArea');
   const gerberFileInput = document.getElementById('gerberFileInput');
   const renderBtn = document.getElementById('renderButton');
+  const sideToggle = document.getElementById('sideToggle');
 
   renderBtn.addEventListener('click', async function(){
-    // Get the layer Id from the PNG Conversion Button and the SVG Div
-    const layerId = renderBtn.getAttribute('data-layer')
-    const svgParent = document.getElementById(layerId);
-    let svgClone = svgParent.querySelector('svg').cloneNode(true);   // Create a Clone of the SVG from the SVG Div
-    
-    const nestedSvgs = svgClone.querySelectorAll('svg');
-    const outerSvg = nestedSvgs[0];   // Corresponds to the Outer Layer For the DoubleSide Svg
-    const stackSvg = nestedSvgs[1]; // Corresponds to the Main Svg Of the Gerber
-    const svgname = stackSvg.getAttribute('data-name');
+    const setup = document.getElementById('quickSetup').value;
+    if (setup === 'generate-all') {
+      for (const key in setupConfig) {
+        if (!sideToggle.checked && setupConfig[key].svgOptions.stack !== 'topstack') {
+          continue;
+        }
 
-    const canvasBg = document.getElementById('canvasBg').value;
-   
-    const drillMask = stackSvg.querySelector('#drillMask');
-    
-    if (drillMask) {
-      const drillMaskPath = drillMask.querySelector('path');
-      drillMaskPath.setAttribute('fill', canvasBg === 'black' ? '#ffffff' : '#000000');
-    }
+        const option = setupConfig[key];
+        const stack = option['svgOptions']['stack'];
+        const layerId = option['svgOptions']['layerid'];
 
-    console.log('sg ::', stackSvg)
-    if (!document.getElementById('sideToggle').checked){
-      svgClone = stackSvg;
+        const svg = document.getElementById(stack);
+        const svgClone = svg.cloneNode(true);
+
+        const outerLayer = svgClone.querySelector(`#${stack}OuterLayer`);
+        if (stack === 'topstack') {
+          outerLayer.style.display = layerId === 'outline' ? 'block' : 'none';
+        } else {
+          outerLayer.style.display = 'none'
+        }
+
+        const layers = svgClone.querySelector(`#${stack}MainLayer`).querySelectorAll('g');
+        const clipPath = svgClone.querySelector(`#${stack}MainLayer`).getElementsByTagName('clipPath')[0];
+        clipPath.style.display = layerId === 'outline' ? 'block' : 'none';
+        
+        Array.from(layers).forEach((layer) => {
+          if (layer.hasAttribute('id')) {
+            if (layer.getAttribute('id').includes(layerId)) {
+              layer.style.display = 'block';
+            } else {
+              layer.style.display = 'none';
+            }
+          }
+        })
+
+        const stackid = svgClone.querySelector(`#${ stack }MainLayer > svg`).getAttribute('data-stackid');
+        svgClone.querySelector(`#${ stack }MainLayer > svg`).setAttribute('data-name', option['svgOptions']['dataname']);
+        changeSvgColor(svgClone, stackid, option['svgOptions']['updateSvgConfig'][2]);
+        document.getElementById('canvasBg').value = option['svgOptions']['canvasValue'];
+
+        createPNG(svgClone).then((pngDiv) => {
+          document.getElementById('canvas').insertBefore(pngDiv, document.getElementById('canvas').firstChild);
+          document.getElementById('zipBtn').style.display = 'flex';
+        });
+      }
     } else {
-      outerSvg.setAttribute('style', 'opacity:1;fill:' + (canvasBg === 'black' ? '#ffffff' : '#000000') + ';');
-    }
-    
-    const pngDiv = document.createElement('div');
-    pngDiv.classList.add('pngCard');
-    console.log('svgClone', svgClone)
-    const svgString = new XMLSerializer().serializeToString(svgClone);
-    let swidth= parseFloat(svgClone.getAttribute('width'));
-    let sheight = parseFloat(svgClone.getAttribute('height'));
-
-    await svg2png(svgString, swidth, sheight).then((canvas) => {
-      canvas.setAttribute('style', 'width: 100%; height: 100%;');
-      canvas.setAttribute('data-name', svgname);
-      pngDiv.appendChild(canvas);
-      // Convert canvas to Blob
-      canvas.toBlob((pngBlob) => {
-        // Create Download Link
-        const downloadLink = createDownloadLink(pngBlob, svgname);
-        const pngFooter = createPngFooter(svgname, downloadLink, pngDiv);
-
-        pngDiv.appendChild(pngFooter);
-      }, "image/png",  { dpi: 1000 });
-      document.getElementById('canvas').appendChild(pngDiv);
-      document.getElementById('zipBtn').style.display = 'flex';
-    }).catch((err) => {
-        console.log('Error : ', err);
-    });
-
-    function createDownloadLink(pngBlob, svgname) {
-      const link = document.createElement('a');
-      link.setAttribute('id', 'pngDownload');
-      link.classList.add('pngButton')
-      link.download = `${svgname}_1000dpi.png`; 
-      link.href = (window.URL || window.webkitURL || window).createObjectURL(pngBlob);
-      link.innerHTML = '<i class="fa-solid fa-download"></i>';
-      return link
-    }
-
-    function createPngFooter(svgname, downloadLink, pngDiv) {
-      const footer = document.createElement('div');
-      footer.classList.add('pngAnchorDiv');
-
-      const footerP = document.createElement('p');
-      footerP.setAttribute('style', 'font-size:10px;margin:0;');
+      // Get the layer Id from the PNG Conversion Button and the SVG Div
+      const layerId = renderBtn.getAttribute('data-layer')
+      const svgParent = document.getElementById(layerId);
+      let svgClone = svgParent.querySelector('svg').cloneNode(true);   // Create a Clone of the SVG from the SVG Div
       
-      const nameSpan = document.createElement('span');
-      nameSpan.setAttribute('class', 'pngName');
-      nameSpan.setAttribute('contenteditable', 'true');
-      nameSpan.innerHTML = svgname + '_1000dpi';
-      nameSpan.addEventListener('input', (e) => {
-        downloadLink.download = e.target.textContent;
-      })
-
-      const extSpan = document.createElement('span');
-      extSpan.innerHTML = '.png';
-
-      const downloadDiv = document.createElement('div');
-      downloadDiv.appendChild(downloadLink);
-
-      footerP.appendChild(nameSpan);
-      footerP.appendChild(extSpan);
-
-      const deleteButton = document.createElement('a');
-      deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-      deleteButton.classList.add('deleteButton');
-      downloadDiv.appendChild(deleteButton);
-      deleteButton.addEventListener('click', () => {
-        pngDiv.remove();
-      })
-
-      footer.appendChild(footerP);
-      footer.appendChild(downloadDiv);
-
-      return footer
+      createPNG(svgClone).then((pngDiv) => {
+        document.getElementById('canvas').insertBefore(pngDiv, document.getElementById('canvas').firstChild);
+        document.getElementById('zipBtn').style.display = 'flex';
+      });
     }
   })
 
@@ -182,162 +145,6 @@ function initializeGerberToSVG(files) {
   });
 }
 
-
-// --------------------------- NavBar Creation & Manipulation ---------------------------
-
-document.addEventListener('DOMContentLoaded', function() {
-
-  // --------------------------- Navbar Animation ---------------------------
-  var tabsNewAnim = $('#navbar-animmenu');
-  var activeItemNewAnim = tabsNewAnim.find('.active');
-  var activeWidthNewAnimWidth = activeItemNewAnim.innerWidth();
-  var itemPosNewAnimLeft = activeItemNewAnim.position();
-  $(".hori-selector").css({
-      "left": itemPosNewAnimLeft.left + "px",
-      "width": activeWidthNewAnimWidth + "px"
-  });
-
-  $("#navbar-animmenu").on("click", "li", function(e) {
-      $('#navbar-animmenu ul li').removeClass("active");
-      $(this).addClass('active');
-      var activeWidthNewAnimWidth = $(this).innerWidth();
-      var itemPosNewAnimLeft = $(this).position();
-      $(".hori-selector").css({
-          "left": itemPosNewAnimLeft.left + "px",
-          "width": activeWidthNewAnimWidth + "px"
-      });
-  });
-
-  // add new Task to the Navbar list
-  // const button = document.getElementById('addNewButton');
-
-  // button.addEventListener('click', function() {
-  //   const addNewIndex = button.getAttribute('data-sds');
-  //   const indexInt = parseInt(addNewIndex);
-
-  //   button.setAttribute('data-sds', indexInt + 1);
-
-  //   if (indexInt + 1 < 10) {
-  //     createNewItem();
-  //   } else {
-  //     createNewItem();
-  //     button.style.display = 'none';
-  //   }
-  // });
-
-
-  // ---------------- Create New Task in Navbar ----------------
-  // function createNewItem() {
-  //   const newItem = document.createElement('li');
-  //   const newLink = document.createElement('a');
-  //   const secondLink = document.createElement('a');
-  //   const name = document.createElement('a');
-  
-  //   name.setAttribute('contenteditable', 'false');
-  //   name.classList.add('editableName');
-  //   secondLink.style.paddingLeft = '0px';
-  //   newItem.style.width = '130px';
-  //   newItem.style.maxWidth = '130px';
-    
-  //   // Set the click event handler for the second link to remove the item
-  //   secondLink.onclick = function() {
-  //     removeItem(this.parentElement);
-  //   };
-    
-  //   // Set the double click event handler for the new item to make it editable
-  //   newItem.ondblclick = function() {
-  //     makeEditable(this);
-  //   };
-
-  //   newLink.style.maxWidth = '30px';
-  //   newLink.innerHTML = '<i class="far fa-file"></i>';
-  //   name.innerHTML = 'New Layer';
-  //   secondLink.innerHTML = '<i class="fa-solid fa-circle-xmark fa-sm" style="position:relative; right:-8px"></i>';
-    
-  //   newItem.appendChild(newLink);
-  //   newItem.appendChild(name);
-  //   newItem.appendChild(secondLink);
-  
-  //   $('#navbar-animmenu ul li').removeClass('active');
-  
-  //   const navbarList = document.querySelector('#navbar-animmenu ul');
-  //   navbarList.appendChild(newItem);
-  
-  //   newItem.classList.add('active');
-  
-  //   const activeWidth = $(newItem).innerWidth();
-  //   const itemPosLeft = $(newItem).position();
-  //   $('.hori-selector').css({
-  //     left: itemPosLeft.left + 'px',
-  //     width: activeWidth + 'px'
-  //   });
-  // }
-});
-
-
-// ------------------- Remove The Task from TaskBar -------------------
-// function removeItem(parent) {
-//   const addNewButton = document.getElementById('addNewButton');
-//   const index = parseInt(addNewButton.getAttribute('data-sds'));
-
-//   const isActive = $(parent).hasClass("active");
-//   let parentWidth = $(parent).innerWidth();
-//   const horiSelectorPositon = $("canvasSelect.value = 'black';.hori-selector").position();
-//   let newHoriPosition = horiSelectorPositon.left - parentWidth;
-
-//   if (newHoriPosition <= 0) {
-//     newHoriPosition = 10;
-//     parentWidth -= 10;
-//   }
-
-//   const siblings = $(parent).siblings();
-//   const parentIndex = $(parent).index();
-//   const activeIndex = siblings.index(siblings.filter('.active'));
-
-//   // Check if the parent element is active or the active element is after the parent element
-//   if (isActive || activeIndex >= parentIndex) {
-//     $('.hori-selector').css({
-//       "left": newHoriPosition + "px",
-//       "width": parentWidth + "px",
-//     });
-
-//     if (isActive) {
-//       $(parent).prev().addClass("active");
-//     }
-//     $(parent).remove();
-//     addNewButton.setAttribute('data-sds', index - 1);
-//   } else {
-//     $(parent).remove();
-//   }
-  
-//   if (index === 10) {
-//       addNewButton.style.display = '';
-//   }
-
-//   addNewButton.setAttribute('data-sds', index - 1);
-//   // 
-// }
-
-
-// ----------------------- Make The Task Name Editable ------------------------
-// function makeEditable(element) {
-//   const contentElement = element.querySelector('a[contenteditable]');
-//   contentElement.setAttribute('contenteditable', 'true');
-//   contentElement.focus();
-  
-//   // Add event listener for blur (when user clicks outside the element)
-//   contentElement.addEventListener('blur', function() {
-//       contentElement.setAttribute('contenteditable', 'false');
-//   });
-
-//   // Add event listener for Enter key
-//   contentElement.addEventListener('keydown', function(event) {
-//       if (event.key === 'Enter') {
-//           event.preventDefault(); // Prevent newline from being added
-//           contentElement.blur(); // Trigger blur event to make content uneditable
-//       }
-//   });
-// }
 
 
 // --------------------------------- Toggle Buttons & Zoom Layer Section ---------------------------------

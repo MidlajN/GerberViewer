@@ -741,6 +741,7 @@ input:checked + .slider .twoSide {
   opacity: 1;
   background-image: radial-gradient(#444cf7 0.65px, #eff3ff 0.65px);
   background-size: 13px 13px;
+  
 }
 
 
@@ -808,23 +809,20 @@ h5{
   cursor: pointer;
   display: flex;
   align-items: center;
+  justify-content: center;
   background: rgb(31, 14, 14);
   border: none;
   border-radius: 5px;
   box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
   background: #5c1e1e;
   overflow: hidden;
-}
-.noselect, .noselect span {
-  transition: 700ms cubic-bezier(0.27, -0.66, 0.73, 1.61);
-}
-.noselect .text {
-  transform: translateX(5px);
   color: white;
   font-weight: bold;
   font-size: 13px;
   text-wrap: nowrap;
+  transition: all 0.5s ease-in-out;
 }
+
 
 .noselect:hover {
   /* width: 130px; */

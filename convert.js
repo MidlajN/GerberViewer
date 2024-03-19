@@ -220,57 +220,6 @@ function viewPCBStackUp(files) {
 }
 
 
-// --------------------------- Function To Convert The SVG To PNG ---------------------------
-export async function svg2png(svg, swidth = null, sheight = null) {
-  console.log('swidth : ', swidth, 'sheight : ', sheight);
-  return new Promise((resolve, reject) => {
-    const svgBlob = new Blob([svg], { type: "image/svg+xml" });
-    // console.log(':: Blob created ::', svgBlob);
-    let blobURL = (window.URL || window.webkitURL || window).createObjectURL(svgBlob);
-    // console.log(':: Blob URL ::', blobURL);
-    const img = new Image();
-
-    img.onload = () => {
-      // console.log(':: Image loaded ::', img.src);
-      const canvas = document.createElement("canvas");
-
-      const scaleFactor = 1000 / 25.4;
-
-      const width = swidth ;
-      const height = sheight;
-      const scaledWidth = width * scaleFactor;
-      const scaledHeight = height * scaleFactor;
-
-      const toolWidth = 0.8;
-      const toolWidthErr = 0.02;
-      const scaledToolWidth = (toolWidth + toolWidthErr) * scaleFactor;
-
-      canvas.width = scaledWidth + scaledToolWidth * 2;
-      canvas.height = scaledHeight + scaledToolWidth * 2; 
-      
-      const ctx = canvas.getContext("2d");
-      
-      const canvasBg = document.getElementById('canvasBg').value;
-      ctx.fillStyle = canvasBg;
-      ctx.fillRect(0, 0, scaledWidth + scaledToolWidth * 2, scaledHeight + scaledToolWidth * 2);
-      ctx.drawImage(img, scaledToolWidth, scaledToolWidth, scaledWidth , scaledHeight );
-
-      (window.URL || window.webkitURL || window).revokeObjectURL(blobURL);
-
-      resolve(canvas);
-    };
-
-    // Handle errors during image loading
-    img.onerror = function (err) {
-      console.log('Error loading image:', err);
-      reject(err);
-
-      (window.URL || window.webkitURL || window).revokeObjectURL(blobURL);
-    };
-    img.src = blobURL;
-  });
-}
-
 // --------------------------- Function To Display SVGs ---------------------------
 function displaySVG(svgArray) {
   const { topStackSvg, bottomStackSvg,fullSvg } = svgArray;
@@ -362,17 +311,33 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     btn.classList.remove('active');
   })
 
-  let svgTopStyle = svgTop.querySelector('style');
-  let svgBottomStyle = svgBottom.querySelector('style');
-
   svgTop.setAttribute('data-name', topName);
   svgBottom.setAttribute('data-name', bottomName);
   
   // since both bottom and top layer has the same ID only need to use one
   const stackid = svgTop.getAttribute('data-stackid');
 
-  let svgStyleContent;
+  if (mode === 'bw') {
+    changeSvgColor(svgTop, stackid, 'bw');
+    changeSvgColor(svgBottom, stackid, 'bw');
+    document.getElementById('bw').classList.add('active');
 
+  } else if (mode === 'bwInvert') {
+    changeSvgColor(svgTop, stackid, 'bwInvert');
+    changeSvgColor(svgBottom, stackid, 'bwInvert');
+    document.getElementById('invert').classList.add('active');
+
+  } else {
+    changeSvgColor(svgTop, stackid, 'original');
+    changeSvgColor(svgBottom, stackid, 'original');
+    document.getElementById('original').classList.add('active');
+  }
+}
+
+
+export function changeSvgColor(svg, stackid, mode) {
+
+  let svgStyleContent;
   if (mode === 'bw') {
     svgStyleContent = `
     .${stackid}_fr4 {color: #000000  !important;}
@@ -383,9 +348,7 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #ffffff !important;}
     .${stackid}_out {color: #000000 !important;}
     `
-    document.getElementById('bw').classList.add('active');
-  
-  } else if (mode === 'bwInvert') {
+  } else if(mode === 'bwInvert') {
     svgStyleContent = `
     .${stackid}_fr4 {color: #ffffff  !important;}
     .${stackid}_cu {color: #000000 !important;}
@@ -395,7 +358,6 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #000000 !important;}
     .${stackid}_out {color: #ffffff !important;}
     `
-    document.getElementById('invert').classList.add('active');
   } else {
     svgStyleContent = `
     .${stackid}_fr4 {color: #666666  !important;}
@@ -406,53 +368,11 @@ export function updateSVG(topName = null, bottomName = null, mode) {
     .${stackid}_sp {color: #999999 !important;}
     .${stackid}_out {color: #000000 !important;}
     `
-    document.getElementById('original').classList.add('active');
   }
 
-  // update the style of the SVG
-  svgTopStyle.textContent = svgStyleContent;
-  svgBottomStyle.textContent = svgStyleContent
-}
-
-
-// --------------------------- Zip All The Images ---------------------------
-export function zipImages() {
-  const zip = new JSZip();
-
-  const canvas = document.getElementById('canvas');
-  const canvasElements = canvas.querySelectorAll('canvas');
-
-  function canvasToBlob (canvas, callback) {
-    canvas.toBlob(callback, 'image/png');
-  }
-  
-  // wait for all canvas to Blob conversion
-  Promise.all(
-    Array.from(canvasElements).map((canvas, index) => {
-      return new Promise((resolve) => {
-        canvasToBlob(canvas, (blob) => {
-          zip.file(canvas.getAttribute('data-name') + index + '_1500dpi.png', blob);
-          resolve();
-        });
-      })
-    })
-  ).then(() => {
-    // Generate The Zip Asynchronously
-    zip.generateAsync({ type: "blob" }).then((content) => {
-
-      const blobUrl = URL.createObjectURL(content);
-      // create a Blob URL for the Zip Content
-      const downloadLink = document.createElement("a");
-      downloadLink.href = blobUrl;
-      downloadLink.download = "pcbImages.zip";  
-      downloadLink.click();
-
-      // Clean up the Blob URL
-      window.URL.revokeObjectURL(blobUrl);
-    });
-  });
-}
-window.zipImages = zipImages;
+  let svgStyle = svg.querySelector('style');
+  svgStyle.textContent = svgStyleContent;
+} 
 
 
 // --------------------------- Function To Generate Outer SVG ---------------------------
