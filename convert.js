@@ -8,6 +8,8 @@ export let svgConf = {
   svgHeight : null,
   viewboxX : null,
   viewboxY : null,
+  viewboxW : null,
+  viewboxH : null
 }
 export function viewGerber(fileData) {
   const fileInput = fileData;
@@ -23,6 +25,8 @@ export function viewGerber(fileData) {
     svgConf.svgWidth = svg_width;
     svgConf.viewboxX = stackup.top.viewBox[0];
     svgConf.viewboxY = stackup.top.viewBox[1];
+    svgConf.viewboxW = stackup.top.viewBox[2];
+    svgConf.viewboxH = stackup.top.viewBox[3];
 
 
     let files = fileInput;
@@ -325,6 +329,7 @@ function displaySVG(svgArray) {
       path.setAttribute('d', d);
       path.setAttribute('fill', 'none');
       outlineG.setAttribute('id', 'drillMask');
+      outlineG.setAttribute('transform', `translate(${ svgConf.viewboxX + 100 } ${ svgConf.viewboxY + svgConf.viewboxH - 100 }) scale(0.99, -0.99) translate(${ -svgConf.viewboxX } ${ -svgConf.viewboxY })`);
       outlineG.appendChild(path);
       
       // Insert the Drill Mask into the SVG as the first child
