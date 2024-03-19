@@ -22,8 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvasBg = document.getElementById('canvasBg').value;
    
     const drillMask = stackSvg.querySelector('#drillMask');
-    const drillMaskPath = drillMask.querySelector('path');
-    drillMaskPath.setAttribute('fill', canvasBg === 'black' ? '#ffffff' : '#000000');
+    
+    if (drillMask) {
+      const drillMaskPath = drillMask.querySelector('path');
+      drillMaskPath.setAttribute('fill', canvasBg === 'black' ? '#ffffff' : '#000000');
+    }
 
     console.log('sg ::', stackSvg)
     if (!document.getElementById('sideToggle').checked){
@@ -51,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         pngDiv.appendChild(pngFooter);
       }, "image/png");
-      document.getElementById('canvas').appendChild(pngDiv);
+      document.getElementById('canvas').insertBefore(pngDiv, document.getElementById('canvas').firstChild)
       document.getElementById('zipBtn').style.display = 'flex';
     }).catch((err) => {
         console.log('Error : ', err);
