@@ -16,11 +16,13 @@ export async function createPNG(svgElement) {
   }
 
   const createDownloadLink = (blob, name) => {
+    const pngURL = (window.URL || window.webkitURL || window).createObjectURL(blob);
+    console.log('pngURL', pngURL);
     const link = document.createElement('a');
     link.setAttribute('id', 'pngDownload');
     link.classList.add('pngButton')
     link.download = `${name}_1000dpi.png`;
-    link.href = (window.URL || window.webkitURL || window).createObjectURL(blob);
+    link.href = pngURL;
     link.innerHTML = '<i class="fa-solid fa-download"></i>';
     return link;
   }
@@ -43,6 +45,13 @@ export async function createPNG(svgElement) {
     const extSpan = document.createElement('span');
     extSpan.textContent = '.png';
 
+    // const modsButton = document.createElement('button');
+    // modsButton.innerHTML = '<div class="text">Send To Mods</div><i class="fa-solid fa-gear"></i>';
+    // modsButton.classList.add('pngModsButton');
+    // modsButton.addEventListener('click', () => {
+    //   pngToMods(downloadLink.href);
+    // });
+
     const deleteButton = document.createElement('a');
     deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
     deleteButton.classList.add('deleteButton');
@@ -52,13 +61,15 @@ export async function createPNG(svgElement) {
     footerText.appendChild(extSpan);
 
     const downloadDiv = document.createElement('div');
+    downloadDiv.setAttribute('style', 'display:flex;align-items:center;justify-content:flex-end;');
+    // downloadDiv.appendChild(modsButton);
     downloadDiv.appendChild(downloadLink);
     downloadDiv.appendChild(deleteButton);
 
     footer.appendChild(footerText);
     footer.appendChild(downloadDiv);
 
-    return footer;
+    return footer;blobURL
   }
 
   const pngDiv = document.createElement('div');
@@ -82,6 +93,33 @@ export async function createPNG(svgElement) {
 
   return pngDiv;
 }
+
+function pngToMods(pngURL) {
+  console.log('pngToMods Called::', pngURL);
+  const url = 'https://localhost:8081/?program=programs/machines/Roland/MDX%20mill/PCB';
+
+  let interval;
+
+  function handleMsgFromMods(event) {
+    clearInterval(interval);
+    console.log('handleMsgFromMods Called::', event.data);
+    window.removeEventListener('message', handleMsgFromMods);
+  }
+
+  window.addEventListener('message', handleMsgFromMods);
+  console.log(':: Sending message to mods ::', pngURL);
+
+  const prox = window.open(url);
+  const imgUrl = pngURL;
+  
+  interval = setInterval(() => {
+    prox.postMessage({ image: imgUrl }, 'https://localhost:8081/?program=programs/machines/Roland/MDX%20mill/PCB');
+  }, 1000);
+
+}
+
+
+
 
 // --------------------------- Function To Convert The SVG To PNG ---------------------------
 export async function svg2png(svg, swidth = null, sheight = null, canvasBg) {

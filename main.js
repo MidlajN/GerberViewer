@@ -11,52 +11,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const dropArea = document.getElementById('dropArea');
   const gerberFileInput = document.getElementById('gerberFileInput');
   const renderBtn = document.getElementById('renderButton');
-  const sideToggle = document.getElementById('sideToggle');
+  
 
   renderBtn.addEventListener('click', async function(){
     const setup = document.getElementById('quickSetup').value;
-    if (setup === 'generate-all') {
-      for (const key in setupConfig) {
-        if (!sideToggle.checked && setupConfig[key].svgOptions.stack !== 'topstack') {
-          continue;
-        }
+    const sideToggle = document.getElementById('sideToggle').checked;
+    const canvas = document.getElementById('canvas');
+    const zipBtn = document.getElementById('zipBtn');
 
+    if (setup === 'generate-all') {
+      const canvasBg = document.getElementById('canvasBg');
+
+      for (const key in setupConfig) {
         const option = setupConfig[key];
         const stack = option['svgOptions']['stack'];
         const layerId = option['svgOptions']['layerid'];
+
+        if (!sideToggle.checked && stack !== 'topstack') continue;
 
         const svg = document.getElementById(stack);
         const svgClone = svg.cloneNode(true);
 
         const outerLayer = svgClone.querySelector(`#${stack}OuterLayer`);
-        if (stack === 'topstack') {
-          outerLayer.style.display = layerId === 'outline' ? 'block' : 'none';
-        } else {
-          outerLayer.style.display = 'none'
-        }
+        outerLayer.style.display = stack === 'topstack' ? ( layerId === 'outline' ? 'block' : 'none') : 'none';
 
-        const layers = svgClone.querySelector(`#${stack}MainLayer`).querySelectorAll('g');
         const clipPath = svgClone.querySelector(`#${stack}MainLayer`).getElementsByTagName('clipPath')[0];
         clipPath.style.display = layerId === 'outline' ? 'block' : 'none';
         
-        Array.from(layers).forEach((layer) => {
-          if (layer.hasAttribute('id')) {
-            if (layer.getAttribute('id').includes(layerId)) {
-              layer.style.display = 'block';
-            } else {
-              layer.style.display = 'none';
-            }
+        const layers = svgClone.querySelector(`#${stack}MainLayer`).querySelectorAll('g');
+        layers.forEach((layer) => {
+          if (layer.hasAttribute("id")) {
+            const id = layer.getAttribute('id');
+            layer.style.display = id.includes(layerId) ? 'block' : 'none';
           }
-        })
+        });
 
         const stackid = svgClone.querySelector(`#${ stack }MainLayer > svg`).getAttribute('data-stackid');
         svgClone.querySelector(`#${ stack }MainLayer > svg`).setAttribute('data-name', option['svgOptions']['dataname']);
         changeSvgColor(svgClone, stackid, option['svgOptions']['updateSvgConfig'][2]);
-        document.getElementById('canvasBg').value = option['svgOptions']['canvasValue'];
-
+        
+        canvasBg.value = option['svgOptions']['canvasValue'];
         createPNG(svgClone).then((pngDiv) => {
-          document.getElementById('canvas').insertBefore(pngDiv, document.getElementById('canvas').firstChild);
-          document.getElementById('zipBtn').style.display = 'flex';
+          canvas.insertBefore(pngDiv, canvas.firstChild);
+          zipBtn.style.display = 'flex';
         });
       }
     } else {
@@ -66,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
       let svgClone = svgParent.querySelector('svg').cloneNode(true);   // Create a Clone of the SVG from the SVG Div
       
       createPNG(svgClone).then((pngDiv) => {
-        document.getElementById('canvas').insertBefore(pngDiv, document.getElementById('canvas').firstChild);
-        document.getElementById('zipBtn').style.display = 'flex';
+        canvas.insertBefore(pngDiv, canvas.firstChild);
+        zipBtn.style.display = 'flex';
       });
     }
   })
@@ -360,3 +357,7 @@ sideToggle.addEventListener('change', () => {
     bottomBtn.classList.add('layerHide');
   }
 });
+
+
+
+

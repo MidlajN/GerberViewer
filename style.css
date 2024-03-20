@@ -502,6 +502,40 @@ align-items: center;
   transition: transform 500ms ease-in-out, background-color 500ms ease-in-out, color 500ms ease-in-out;
 }
 
+.pngModsButton {
+  display: flex;
+  padding: 5px 7px; 
+  border-radius: 50rem;
+  background: none;
+  border: none;
+  color: #0f9e7aa9;
+  cursor: pointer;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+  transition: width 500ms ease-in-out, background-color 500ms ease-in-out, color 500ms ease-in-out;
+}
+.pngModsButton .text {
+  width: 0;
+  opacity: 0;
+  text-wrap: nowrap;
+  transition: width 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .05rem;
+}
+
+.pngModsButton:hover {
+  background-color: #0f9e7aa9;
+  color: #ffffff; 
+}
+
+.pngModsButton:hover .text {
+  width: 5.5rem;
+  opacity: 1;
+  /* transform: translateX(3rem); */
+}
+
 /* .pngButton:hover {
 background-color: #885252;
 color: #2a83b6;
