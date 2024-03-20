@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const stack = option['svgOptions']['stack'];
         const layerId = option['svgOptions']['layerid'];
 
-        if (!sideToggle.checked && stack !== 'topstack') continue;
+        if (!sideToggle && stack !== 'topstack') continue;
 
         const svg = document.getElementById(stack);
         const svgClone = svg.cloneNode(true);
@@ -66,17 +66,19 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.insertBefore(pngDiv, canvas.firstChild);
         zipBtn.style.display = 'flex';
       });
+
+      console.log('svg', svgClone);
     }
   })
 
   dropArea.addEventListener('dragenter', (e) => {
     e.preventDefault();
-    dropArea.style.border = '2px dashed #ffff';
+    // dropArea.style.border = '2px dashed #ffff';
     dropArea.style.cursor = 'pointer';
   })
   dropArea.addEventListener('dragleave', (e) => {
     e.preventDefault();
-    dropArea.style.border = '2px dashed #ccc';
+    // dropArea.style.border = '2px dashed #ccc';
   })
   dropArea.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -125,10 +127,11 @@ function toggleButtonState() {
     button.disabled = !button.disabled; // Toggle the disabled state of each button
   });
 
-  if (document.getElementById('doubleSideToggle').classList.contains('layerHidden')) {
-    document.getElementById('doubleSideToggle').classList.remove('layerHidden')
+  const sideToggle = document.getElementById('doubleSideToggle');
+  if (sideToggle.classList.contains('layerHidden')) {
+    sideToggle.classList.remove('layerHidden')
   } else {
-    document.getElementById('doubleSideToggle').classList.add('layerHidden')
+    sideToggle.classList.add('layerHidden')
   }
 
   document.getElementById('quickSetup').disabled = !document.getElementById('quickSetup').disabled;
@@ -359,5 +362,34 @@ sideToggle.addEventListener('change', () => {
 });
 
 
+const refreshBtn = document.getElementById('refreshBtn');
+refreshBtn.addEventListener('click', () => {
 
+  ['fullLayers', 'toplayer', 'bottomlayer'].forEach(id => { document.getElementById(id).innerHTML = ''; });
+  
+  $('#result').fadeOut(300, () => $('#dropArea').fadeIn(300));
+  document.getElementById('sideToggle').checked = false;
+  toggleButtonState();
+
+  document.querySelectorAll('#layerSelector button').forEach(button => {
+    const style = button.getAttribute('data-initial-style');
+    if (style) {
+      button.setAttribute('style', style);
+      button.querySelector('i').classList.replace('fa-eye-slash', 'fa-eye');
+      button.querySelector('i').style.color = 'white';
+    }
+  })
+
+  document.getElementById('original').classList.add('active');
+  ['bw', 'bwInvert'].forEach(id => { document.getElementById(id).classList.remove('active') })
+  
+  document.getElementById('canvasBg').value = 'black';
+  document.getElementById('selectToolWidth').classList.add('layerHide');
+  document.getElementById('toolWidth').value = '0.8';
+
+  $('#buttonContainer').slideUp();
+  $('#allLayers,  #bottomlayersbtn').removeClass('active');
+  $('#toplayersbtn').addClass('active');
+
+});
 

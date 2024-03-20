@@ -150,7 +150,7 @@ setupSelect.addEventListener('change', () => {
         });
 
         $('#allLayers, #toplayersbtn, #bottomlayersbtn').removeClass('active');
-        $(`${isTopStack ? 'top' : 'bottom'}layersbtn`).addClass('active');
+        $(`#${isTopStack ? 'top' : 'bottom'}layersbtn`).addClass('active');
         $(`#renderButton`).attr('data-layer', `${ isTopStack ? 'toplayers' : 'bottomlayers' }`);
 
         // Show the Button Container
