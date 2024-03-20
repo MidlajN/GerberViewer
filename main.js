@@ -366,22 +366,26 @@ const refreshBtn = document.getElementById('refreshBtn');
 refreshBtn.addEventListener('click', () => {
 
   ['fullLayers', 'toplayer', 'bottomlayer'].forEach(id => { document.getElementById(id).innerHTML = ''; });
+  ['fullLayersParent', 'bottomlayers'].forEach(id => { document.getElementById(id).style.display = 'none'; });
+  document.getElementById('toplayers').style.display = 'block';
+
   
   $('#result').fadeOut(300, () => $('#dropArea').fadeIn(300));
   document.getElementById('sideToggle').checked = false;
   toggleButtonState();
 
-  document.querySelectorAll('#layerSelector button').forEach(button => {
+  document.querySelectorAll('#layerSelectors button').forEach(button => {
     const style = button.getAttribute('data-initial-style');
     if (style) {
       button.setAttribute('style', style);
+      console.log('style', style);
       button.querySelector('i').classList.replace('fa-eye-slash', 'fa-eye');
       button.querySelector('i').style.color = 'white';
     }
   })
 
   document.getElementById('original').classList.add('active');
-  ['bw', 'bwInvert'].forEach(id => { document.getElementById(id).classList.remove('active') })
+  ['bw', 'invert'].forEach(id => { document.getElementById(id).classList.remove('active') })
   
   document.getElementById('canvasBg').value = 'black';
   document.getElementById('selectToolWidth').classList.add('layerHide');

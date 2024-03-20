@@ -229,6 +229,7 @@ function displaySVG(svgArray) {
   const fullSVG = modifiedSVG(fullSvg, 'fullstack');
 
   document.getElementById('toplayer').appendChild(topStackSVG);
+  document.getElementById('toplayerlist').style.display = 'block';
   $('#buttonContainer').slideDown();
   document.getElementById('bottomlayerlist').classList.add('layerHidden')
   document.getElementById('bottomlayer').appendChild(bottomStackSVG);
