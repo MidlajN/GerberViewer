@@ -725,6 +725,7 @@ input:checked + .slider .twoSide {
   display: flex;
   justify-content:flex-end;
   align-items: center;
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 10px;
 }
@@ -762,6 +763,7 @@ input:checked + .slider .twoSide {
 .contentArea {
   height: 90%;
   position: relative;
+  min-height: 30rem;
 }
 .contentArea .layerBtnGroup {
   position: absolute;
@@ -953,7 +955,7 @@ h5{
     justify-content: space-between;
   }
   .pngCard {
-    width: 30%;
+    width: 28%;
     height: fit-content;
   }
   /* Navbar on the right  */
