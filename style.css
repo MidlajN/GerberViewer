@@ -98,7 +98,7 @@ outline: none;
 
 /* Gerber Section Div */
 .gerberSection {
-  height: 50rem;
+  /* height: 50rem; */
 }
 
 /* CSS */
@@ -465,9 +465,10 @@ transition: all 0.5s ease-in-out;
 
 /* PNG Container */
 .pngContainer {
-width: 100%;
-height: inherit;
-overflow: auto;
+  width: 100%;
+  height: inherit;
+  overflow: auto;
+  max-height: 48rem;
 }
 
 .pngContainer::-webkit-scrollbar {
