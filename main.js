@@ -39,14 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
         clipPath.style.display = layerId === 'outline' ? 'block' : 'none';
         
         const layers = svgClone.querySelector(`#${stack}MainLayer`).querySelectorAll('g');
+        const stackid = svgClone.querySelector(`#${ stack }MainLayer > svg`).getAttribute('data-stackid');
+
         layers.forEach((layer) => {
           if (layer.hasAttribute("id")) {
             const id = layer.getAttribute('id');
-            layer.style.display = id.includes(layerId) ? 'block' : 'none';
+            layer.style.display = id.includes(layerId) ? 'block' : id.includes(stackid) ? 'none' : '';
           }
         });
 
-        const stackid = svgClone.querySelector(`#${ stack }MainLayer > svg`).getAttribute('data-stackid');
         svgClone.querySelector(`#${ stack }MainLayer > svg`).setAttribute('data-name', option['svgOptions']['dataname']);
         changeSvgColor(svgClone, stackid, option['svgOptions']['updateSvgConfig'][2]);
         
