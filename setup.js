@@ -99,6 +99,7 @@ setupSelect.addEventListener('change', () => {
         // Get the SVG element and set the data-name attribute to render button
         const svg = document.getElementById(stack);
         svg.querySelector('g svg[data-stackid]').setAttribute('data-name', dataname);
+        const stackid = svg.querySelector('g svg[data-stackid]').getAttribute('data-stackid');
     
         // Get the G element which include the main pcb layers
         const svgMainG = document.getElementById(`${stack}MainLayer`);
@@ -111,13 +112,13 @@ setupSelect.addEventListener('change', () => {
             if (layer.hasAttribute("id")) {
                 if (layer.getAttribute('id').includes(layerid)) {
                     layer.style.display = 'block';
-                } else {
+                } else if (layer.getAttribute('id').includes(stackid)) {
                     layer.style.display = 'none';
                 }
             } 
         })
 
-        const allLayers = document.getElementById('fullstacklayer');
+        const allLayers = document.getElementById('fullstack');
         const allLayersG = allLayers.querySelector('g');
         const Gs = allLayersG.querySelectorAll('g');
 

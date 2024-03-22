@@ -287,7 +287,7 @@ function displaySVG(svgArray) {
     }
 
     // Add the Main Layer
-    svg.setAttribute('id', `${id}layer`);
+    // svg.setAttribute('id', `${id}layer`);
     mainG.appendChild(svg);
     mainG.setAttribute('id', `${id}MainLayer`);
     mainG.setAttribute('transform', 'translate(3, 3)');
@@ -304,8 +304,8 @@ function displaySVG(svgArray) {
 // --------------------------- Function To Update SVG Style ------------------------
 export function updateSVG(topName = null, bottomName = null, mode) {
 
-  const svgTop = document.getElementById('topstacklayer');
-  const svgBottom = document.getElementById('bottomstacklayer');
+  const svgTop = document.getElementById('topstack').querySelector('g svg[data-stackid]');
+  const svgBottom = document.getElementById('bottomstack').querySelector('g svg[data-stackid]');
 
   const colorButtons = document.querySelectorAll('#buttonContainer button');
   colorButtons.forEach((btn) => {
